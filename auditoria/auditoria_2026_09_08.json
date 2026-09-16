@@ -1,0 +1,137 @@
+[
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Inicio de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-09-08",
+        "hora": "16:39:35",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Cierre de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-09-08",
+        "hora": "16:39:51",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Inicio de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-09-08",
+        "hora": "16:39:57",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Cierre de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-09-08",
+        "hora": "16:40:51",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Inicio de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-09-08",
+        "hora": "17:21:30",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Pausar",
+        "modulo": "CRONOS SLA",
+        "fecha": "2026-09-08",
+        "hora": "17:41:23",
+        "ip": "127.0.0.1",
+        "detalles": "{\"segundos\": 25, \"tiempo\": \"00:25\", \"estado\": \"Verde\"}"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Pausar",
+        "modulo": "CRONOS SLA",
+        "fecha": "2026-09-08",
+        "hora": "17:41:38",
+        "ip": "127.0.0.1",
+        "detalles": "{\"segundos\": 25, \"tiempo\": \"00:25\", \"estado\": \"Verde\"}"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Inicio de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-09-08",
+        "hora": "17:44:06",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Iniciar CRONOS SLA",
+        "modulo": "CRONOS SLA",
+        "fecha": "2026-09-08",
+        "hora": "17:49:24",
+        "ip": "127.0.0.1",
+        "detalles": "{\"tiempo\":\"00:00\",\"segundos\":0,\"estado\":\"Verde\"}"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Alerta SLA 45s",
+        "modulo": "CRONOS SLA",
+        "fecha": "2026-09-08",
+        "hora": "17:50:09",
+        "ip": "127.0.0.1",
+        "detalles": "{\"tiempo\":\"00:45\",\"segundos\":45,\"estado\":\"Rojo\"}"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Alerta SLA 55s",
+        "modulo": "CRONOS SLA",
+        "fecha": "2026-09-08",
+        "hora": "17:50:19",
+        "ip": "127.0.0.1",
+        "detalles": "{\"tiempo\":\"00:55\",\"segundos\":55,\"estado\":\"Crítico\"}"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Alerta SLA 60s (Límite)",
+        "modulo": "CRONOS SLA",
+        "fecha": "2026-09-08",
+        "hora": "17:50:24",
+        "ip": "127.0.0.1",
+        "detalles": "{\"tiempo\":\"01:00\",\"segundos\":60,\"estado\":\"Crítico\"}"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Reiniciar CRONOS SLA",
+        "modulo": "CRONOS SLA",
+        "fecha": "2026-09-08",
+        "hora": "17:50:36",
+        "ip": "127.0.0.1",
+        "detalles": "{\"tiempo\":\"01:12\",\"segundos\":72,\"estado\":\"SLA Excedido\"}"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Generó clave secreta",
+        "modulo": "Generador",
+        "fecha": "2026-09-08",
+        "hora": "17:55:33",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Pausar",
+        "modulo": "CRONOS SLA",
+        "fecha": "2026-09-08",
+        "hora": "18:00:54",
+        "ip": "127.0.0.1",
+        "detalles": "{\"segundos\": 25, \"tiempo\": \"00:25\", \"estado\": \"Verde\"}"
+    }
+]

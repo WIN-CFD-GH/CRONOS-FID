@@ -1,0 +1,173 @@
+[
+    {
+        "usuario": "malcantara@win.pe",
+        "accion": "Cambio de contraseña (Primer Ingreso)",
+        "modulo": "Seguridad",
+        "fecha": "2026-08-23",
+        "hora": "12:18:00",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "malcantara@win.pe",
+        "accion": "Cierre de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:18:15",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Inicio de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:19:07",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Cambio de contraseña (Primer Ingreso)",
+        "modulo": "Seguridad",
+        "fecha": "2026-08-23",
+        "hora": "12:19:39",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Generó clave secreta",
+        "modulo": "Generador",
+        "fecha": "2026-08-23",
+        "hora": "12:19:53",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Cierre de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:20:44",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Inicio de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:20:56",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Cierre de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:21:43",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Inicio de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:21:52",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Cierre de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:21:57",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Inicio de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:22:31",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Cierre de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:24:20",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Inicio de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:35:26",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Cierre de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:42:24",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "malcantara@win.pe",
+        "accion": "Inicio de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:42:28",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "malcantara@win.pe",
+        "accion": "Cierre de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:42:49",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Inicio de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:42:53",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Reset contrasena usuario malcantara@win.pe",
+        "modulo": "Administración",
+        "fecha": "2026-08-23",
+        "hora": "12:43:22",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Cierre de sesión",
+        "modulo": "Sistema",
+        "fecha": "2026-08-23",
+        "hora": "12:50:01",
+        "ip": "127.0.0.1",
+        "detalles": ""
+    }
+]

@@ -1,0 +1,47 @@
+[
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Navegación Módulo",
+        "modulo": "Tipificaciones",
+        "fecha": "2026-09-14",
+        "hora": "11:08:43",
+        "ip": "127.0.0.1",
+        "detalles": "Cambio a pestaña Tipificaciones"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Navegación Módulo",
+        "modulo": "Tickets",
+        "fecha": "2026-09-14",
+        "hora": "11:08:44",
+        "ip": "127.0.0.1",
+        "detalles": "Cambio a pestaña Tickets"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Navegación Módulo",
+        "modulo": "Derivaciones",
+        "fecha": "2026-09-14",
+        "hora": "11:08:46",
+        "ip": "127.0.0.1",
+        "detalles": "Cambio a pestaña Derivaciones"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Navegación Módulo",
+        "modulo": "Acuerdos de Voz",
+        "fecha": "2026-09-14",
+        "hora": "11:08:47",
+        "ip": "127.0.0.1",
+        "detalles": "Cambio a pestaña Acuerdos de Voz"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Navegación Módulo",
+        "modulo": "Clave Secreta",
+        "fecha": "2026-09-14",
+        "hora": "11:08:49",
+        "ip": "127.0.0.1",
+        "detalles": "Cambio a pestaña Clave Secreta"
+    }
+]

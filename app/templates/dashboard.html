@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrador - WIN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'win-orange': '#FF6B00',
+                        'win-orange-dark': '#E65D00',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8fafc;
+        }
+        .tab-active {
+            border-bottom: 2px solid #FF6B00;
+            color: #FF6B00;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <nav class="bg-white shadow-sm border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-win-orange">Panel de Control</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm font-medium text-slate-500">Hola, {{ user.nombre }} ({{ user.rol }})</span>
+                    <a href="{{ url_for('app_main') }}" class="text-sm text-win-orange hover:text-win-orange-dark font-medium">Volver a App</a>
+                    <a href="{{ url_for('logout') }}" class="text-sm text-slate-500 hover:text-slate-700">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="mb-4 p-4 rounded-xl {% if category == 'error' %}bg-red-100 text-red-700 border border-red-200{% else %}bg-green-100 text-green-700 border border-green-200{% endif %}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                <p class="text-sm text-slate-500 font-medium">Asesores Activos (24h)</p>
+                <p class="text-2xl font-bold text-slate-800">{{ kpis.usuarios_activos }}</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                <p class="text-sm text-slate-500 font-medium">Consultas / Plantillas</p>
+                <p class="text-2xl font-bold text-win-orange">{{ kpis.consultas }} / {{ kpis.plantillas }}</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                <p class="text-sm text-slate-500 font-medium">Tickets / Derivaciones</p>
+                <p class="text-2xl font-bold text-green-600">{{ kpis.tickets }} / {{ kpis.derivaciones }}</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                <p class="text-sm text-slate-500 font-medium">Usuarios Registrados</p>
+                <p class="text-2xl font-bold text-blue-600">{{ kpis.total_usuarios }}</p>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="border-b border-slate-200 mb-6">
+            <nav class="-mb-px flex space-x-8">
+                <button onclick="switchTab('audit')" id="tab-audit" class="tab-active whitespace-nowrap py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700">
+                    📊 Historial de Auditoría
+                </button>
+                <button onclick="switchTab('cronos')" id="tab-cronos" class="whitespace-nowrap py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 flex items-center gap-1.5">
+                    ⏱️ Analítica CRONOS SLA
+                </button>
+                {% if user.rol in ['Administrador', 'Coordinador'] %}
+                <button onclick="switchTab('users')" id="tab-users" class="whitespace-nowrap py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700">
+                    👥 Administración de Usuarios
+                </button>
+                {% endif %}
+            </nav>
+        </div>
+
+        <!-- TAB CONTENT: AUDITORIA -->
+        <div id="content-audit">
+            <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span>📜</span> Registro de Actividades
+                    </h2>
+                    <p class="text-xs text-slate-500">Historial completo de auditoría, búsquedas, tickets y acciones en el sistema.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <input type="text" id="audit-filter-input" placeholder="Filtrar por usuario, acción o módulo..." class="text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-win-orange w-48 sm:w-64">
+                    <button onclick="exportAuditExcel()" class="inline-flex items-center gap-2 px-4 py-2 border border-transparent text-xs font-bold rounded-xl shadow-sm text-white bg-green-600 hover:bg-green-700 transition active:scale-95 shrink-0" title="Exportar Historial de Auditoría a Excel">
+                        <i class="fa-solid fa-file-excel text-sm"></i>
+                        <span>📥 Exportar a Excel</span>
+                    </button>
+                </div>
+            </div>
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Fecha / Hora</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Usuario</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Módulo</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Acción</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Detalles</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-slate-200">
+                            {% for log in logs %}
+                            <tr class="audit-history-row hover:bg-slate-50 transition">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{{ log.fecha }} {{ log.hora }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{{ log.usuario_correo }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">{{ log.modulo }}</span></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">{{ log.accion }}</td>
+                                <td class="px-6 py-4 text-sm text-slate-500 truncate max-w-xs" title="{{ log.detalles }}">{{ log.detalles }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT: CRONOS SLA -->
+        <div id="content-cronos" class="hidden space-y-6">
+            
+            <!-- Encabezado de la Sección -->
+            <div class="bg-gradient-to-r from-slate-900 to-slate-800 p-6 rounded-2xl text-white shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span class="p-2.5 bg-win-orange/20 border border-win-orange/40 rounded-xl text-win-orange text-xl">⏱️</span>
+                        <div>
+                            <h2 class="text-2xl font-black tracking-wide">ANALÍTICA CRONOS SLA</h2>
+                            <p class="text-xs md:text-sm text-slate-300 mt-0.5">Métricas de interacción operativa, tiempos de retención y control de calidad por asesor.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 flex-wrap">
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10 text-xs font-semibold">
+                        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span>Telemetría en Vivo</span>
+                    </div>
+                    <button onclick="exportCronosExcel()" class="inline-flex items-center gap-2 bg-win-orange hover:bg-win-orangeHover text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition active:scale-95" title="Exportar Analítica CRONOS SLA a Excel">
+                        <i class="fa-solid fa-file-excel text-sm"></i>
+                        <span>📊 Exportar Analítica CRONOS SLA</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TARJETAS DE INDICADORES PRINCIPALES (Métricas 1, 2, 3, 5, 6, 7) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- MÉTRICA 1: Total de Activaciones -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Activaciones (Iniciar)</span>
+                            <span class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-xs font-bold"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                        <p class="text-3xl font-black text-slate-800">{{ cronos.inicios_hoy }} <span class="text-xs font-normal text-slate-400">hoy</span></p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+                        <span>Semanal: <strong class="text-slate-700">{{ cronos.inicios_semana }}</strong></span>
+                        <span>Mensual: <strong class="text-slate-700">{{ cronos.inicios_mes }}</strong></span>
+                    </div>
+                </div>
+
+                <!-- MÉTRICA 2 & 5: Detenciones (Pausar) & Promedio -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Detenciones (Pausar)</span>
+                            <span class="p-1.5 bg-amber-50 text-amber-600 rounded-lg text-xs font-bold"><i class="fa-solid fa-pause"></i></span>
+                        </div>
+                        <p class="text-3xl font-black text-amber-600">{{ cronos.total_pausas }}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+                        <span>Tiempo Promedio al Pausar:</span>
+                        <strong class="text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded">{{ cronos.promedio_pausa }}s</strong>
+                    </div>
+                </div>
+
+                <!-- MÉTRICA 3 & 6: Reinicios & Promedio -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Reinicios (Reiniciar)</span>
+                            <span class="p-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold"><i class="fa-solid fa-rotate-left"></i></span>
+                        </div>
+                        <p class="text-3xl font-black text-blue-600">{{ cronos.total_reinicios }}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+                        <span>Tiempo Promedio al Reiniciar:</span>
+                        <strong class="text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded">{{ cronos.promedio_reinicio }}s</strong>
+                    </div>
+                </div>
+
+                <!-- MÉTRICA 7: Eventos SLA Crítico -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-red-500">Alertas Críticas SLA</span>
+                            <span class="p-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-bold"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                        </div>
+                        <p class="text-3xl font-black text-red-600">{{ cronos.criticos.total_general }}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600 font-bold">
+                        <span class="text-orange-600">45s: {{ cronos.criticos.total_45 }}</span>
+                        <span class="text-red-600">55s: {{ cronos.criticos.total_55 }}</span>
+                        <span class="text-red-800">60s: {{ cronos.criticos.total_60 }}</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MÉTRICA 4: Distribución de Uso por Rango de Tiempo -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base">MÉTRICA 4: Distribución de Uso por Rango de Tiempo</h3>
+                        <p class="text-xs text-slate-500">Cantidad de detenciones y reinicios según los segundos transcurridos.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 text-center">
+                    <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl">
+                        <span class="text-xs font-bold text-emerald-800 block">0 a 15 s</span>
+                        <span class="text-2xl font-black text-emerald-600 mt-1 block">{{ cronos.rangos.r0_15 }}</span>
+                        <span class="text-[10px] text-emerald-700 font-medium">Gestión rápida</span>
+                    </div>
+                    <div class="bg-teal-50 border border-teal-200 p-3.5 rounded-xl">
+                        <span class="text-xs font-bold text-teal-800 block">16 a 30 s</span>
+                        <span class="text-2xl font-black text-teal-600 mt-1 block">{{ cronos.rangos.r16_30 }}</span>
+                        <span class="text-[10px] text-teal-700 font-medium">Dentro del SLA</span>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl">
+                        <span class="text-xs font-bold text-amber-800 block">31 a 45 s</span>
+                        <span class="text-2xl font-black text-amber-600 mt-1 block">{{ cronos.rangos.r31_45 }}</span>
+                        <span class="text-[10px] text-amber-700 font-medium">Preventivo / Alerta</span>
+                    </div>
+                    <div class="bg-red-50 border border-red-200 p-3.5 rounded-xl">
+                        <span class="text-xs font-bold text-red-800 block">46 a 60 s</span>
+                        <span class="text-2xl font-black text-red-600 mt-1 block">{{ cronos.rangos.r46_60 }}</span>
+                        <span class="text-[10px] text-red-700 font-medium">Crítico</span>
+                    </div>
+                    <div class="bg-slate-100 border border-slate-300 p-3.5 rounded-xl">
+                        <span class="text-xs font-bold text-slate-800 block">&gt; 60 s</span>
+                        <span class="text-2xl font-black text-slate-700 mt-1 block">{{ cronos.rangos.rmas_60 }}</span>
+                        <span class="text-[10px] text-slate-500 font-medium">SLA Excedido</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRÁFICOS (Grid 2x2) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Gráfico 1: Pausas por Asesor -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-sm mb-1 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                        1. Pausas por Asesor
+                    </h3>
+                    <p class="text-xs text-slate-500 mb-4">Frecuencia de pausas realizadas por cada usuario.</p>
+                    <div class="h-64">
+                        <canvas id="chartPausasAsesor"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico 2: Reinicios por Asesor -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-sm mb-1 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                        2. Reinicios por Asesor
+                    </h3>
+                    <p class="text-xs text-slate-500 mb-4">Frecuencia de reinicios del cronómetro por cada usuario.</p>
+                    <div class="h-64">
+                        <canvas id="chartReiniciosAsesor"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico 3: Distribución por Estado SLA -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-sm mb-1 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                        3. Distribución de Eventos por Semáforo SLA
+                    </h3>
+                    <p class="text-xs text-slate-500 mb-4">Proporción de acciones ocurridas en cada estado del semáforo.</p>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="chartEstadosSLA"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico 4: Tendencia Diaria -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-sm mb-1 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-win-orange"></span>
+                        4. Tendencia Diaria de Uso CRONOS SLA
+                    </h3>
+                    <p class="text-xs text-slate-500 mb-4">Evolución de interacciones totales a lo largo del tiempo.</p>
+                    <div class="h-64">
+                        <canvas id="chartTendenciaDiaria"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MÉTRICA 8: Ranking de Uso CRONOS SLA -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base">MÉTRICA 8: Ranking de Uso CRONOS SLA por Asesor</h3>
+                        <p class="text-xs text-slate-500">Listado consolidado de interacción y promedio de retención operativa ordenado por actividad.</p>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">#</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Asesor / Usuario</th>
+                                <th class="px-4 py-3 text-center text-xs font-bold text-emerald-600 uppercase">Inicios (▶)</th>
+                                <th class="px-4 py-3 text-center text-xs font-bold text-amber-600 uppercase">Pausas (⏸)</th>
+                                <th class="px-4 py-3 text-center text-xs font-bold text-blue-600 uppercase">Reinicios (↺)</th>
+                                <th class="px-4 py-3 text-center text-xs font-bold text-purple-600 uppercase">Promedio Uso</th>
+                                <th class="px-4 py-3 text-center text-xs font-bold text-slate-700 uppercase">Total Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-slate-100 text-sm">
+                            {% for r in cronos.ranking %}
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="px-4 py-3 text-slate-400 font-mono font-bold">{{ loop.index }}</td>
+                                <td class="px-4 py-3 font-semibold text-slate-900">{{ r.usuario }}</td>
+                                <td class="px-4 py-3 text-center font-bold text-emerald-600">{{ r.inicios }}</td>
+                                <td class="px-4 py-3 text-center font-bold text-amber-600">{{ r.pausas }}</td>
+                                <td class="px-4 py-3 text-center font-bold text-blue-600">{{ r.reinicios }}</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="bg-purple-50 text-purple-700 font-bold px-2 py-0.5 rounded text-xs">
+                                        {{ r.promedio_segundos }}s
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-center font-black text-slate-800">{{ r.total }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="px-4 py-8 text-center text-slate-400 text-xs italic">
+                                    No se han registrado interacciones con el CRONOS SLA aún.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- DETALLE HISTÓRICO: TABLA DE AUDITORÍA CRONOS SLA -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-base">Detalle Histórico de Auditoría CRONOS SLA</h3>
+                        <p class="text-xs text-slate-500">Registro cronológico detallado con estado SLA y segundo exacto de la acción.</p>
+                    </div>
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <input type="text" id="cronos-filter-input" placeholder="Filtrar por asesor, acción o estado..." class="w-full sm:w-64 text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-win-orange">
+                        <button onclick="exportCronosExcel()" class="inline-flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition active:scale-95 shrink-0" title="Exportar Analítica a Excel">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Exportar</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto max-h-96">
+                    <table id="cronos-history-table" class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50 sticky top-0 z-10">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Fecha</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Hora</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Usuario</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Acción</th>
+                                <th class="px-4 py-3 text-center text-xs font-bold text-slate-500 uppercase">Tiempo Cronos SLA</th>
+                                <th class="px-4 py-3 text-center text-xs font-bold text-slate-500 uppercase">Estado SLA</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-slate-100 text-sm">
+                            {% for item in cronos.tabla_historica %}
+                            <tr class="cronos-history-row hover:bg-slate-50 transition">
+                                <td class="px-4 py-2.5 text-slate-500 font-mono text-xs">{{ item.fecha }}</td>
+                                <td class="px-4 py-2.5 text-slate-500 font-mono text-xs">{{ item.hora }}</td>
+                                <td class="px-4 py-2.5 font-medium text-slate-900 text-xs">{{ item.usuario }}</td>
+                                <td class="px-4 py-2.5">
+                                    {% if item.accion == 'Iniciar' %}
+                                        <span class="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-xs font-bold">▶ Iniciar</span>
+                                    {% elif item.accion == 'Pausar' %}
+                                        <span class="inline-flex items-center gap-1 text-amber-700 bg-amber-50 px-2 py-0.5 rounded text-xs font-bold">⏸ Pausar</span>
+                                    {% elif item.accion == 'Reiniciar' %}
+                                        <span class="inline-flex items-center gap-1 text-blue-700 bg-blue-50 px-2 py-0.5 rounded text-xs font-bold">↺ Reiniciar</span>
+                                    {% else %}
+                                        <span class="inline-flex items-center gap-1 text-red-700 bg-red-50 px-2 py-0.5 rounded text-xs font-bold">🚨 {{ item.accion }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-4 py-2.5 text-center font-mono font-bold text-slate-700">{{ item.tiempo }}</td>
+                                <td class="px-4 py-2.5 text-center">
+                                    {% if 'Verde' in item.estado %}
+                                        <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">✔ Verde</span>
+                                    {% elif 'Ámbar' in item.estado or 'Ambar' in item.estado %}
+                                        <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-800">⚠ Ámbar</span>
+                                    {% elif 'Rojo' in item.estado %}
+                                        <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-red-100 text-red-800">🔴 Rojo</span>
+                                    {% else %}
+                                        <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-red-200 text-red-900 font-extrabold animate-pulse">🚨 Crítico</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs italic">
+                                    No hay registros de auditoría de CRONOS SLA disponibles.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        {% if user.rol in ['Administrador', 'Coordinador'] %}
+        <!-- TAB CONTENT: USUARIOS -->
+        <div id="content-users" class="hidden">
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                    <p class="text-xs text-slate-500">Admin.</p><p class="text-lg font-bold">{{ kpis.administradores }}</p>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                    <p class="text-xs text-slate-500">Coord.</p><p class="text-lg font-bold">{{ kpis.coordinadores }}</p>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                    <p class="text-xs text-slate-500">Supervisores</p><p class="text-lg font-bold">{{ kpis.supervisores }}</p>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                    <p class="text-xs text-slate-500">Formadores</p><p class="text-lg font-bold">{{ kpis.formadores }}</p>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                    <p class="text-xs text-slate-500">Calidad</p><p class="text-lg font-bold">{{ kpis.calidad }}</p>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                    <p class="text-xs text-slate-500">Asesores</p><p class="text-lg font-bold">{{ kpis.asesores }}</p>
+                </div>
+                <div class="bg-red-50 p-3 rounded-xl border border-red-200 text-center">
+                    <p class="text-xs text-red-600">Pendientes</p><p class="text-lg font-bold text-red-700">{{ kpis.pendientes_cambio }}</p>
+                </div>
+            </div>
+
+            <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-xl font-semibold text-slate-800">Directorio de Usuarios</h2>
+                <button onclick="openModal('modal-create')" class="inline-flex items-center px-4 py-2 bg-win-orange text-white text-sm font-medium rounded-lg shadow-sm hover:bg-win-orange-dark">
+                    + Crear Usuario
+                </button>
+            </div>
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Nombre / Correo</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Rol</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Estado</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-slate-200">
+                            {% for u in usuarios %}
+                            {% if u.estado != 'Eliminado' %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-slate-900">{{ u.nombre }}</div>
+                                    <div class="text-sm text-slate-500">{{ u.correo }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{{ u.rol }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if u.estado == 'Activo' %}
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Activo</span>
+                                    {% else %}
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactivo</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                    {% if user.rol == 'Coordinador' and u.rol in ['Administrador', 'Coordinador'] %}
+                                        <span class="text-slate-400 text-xs italic">Solo lectura</span>
+                                    {% else %}
+                                        <button onclick="openEditModal({{ u.id }}, '{{ u.nombre }}', '{{ u.correo }}', '{{ u.rol }}', '{{ u.estado }}')" class="text-blue-600 hover:text-blue-900">Editar</button>
+                                        <button onclick="openResetModal({{ u.id }}, '{{ u.correo }}')" class="text-orange-600 hover:text-orange-900">Reset</button>
+                                        <form action="{{ url_for('cambiar_estado', id=u.id) }}" method="POST" class="inline" onsubmit="return confirm('¿Confirma eliminar este usuario de la plataforma?');">
+                                            <input type="hidden" name="estado" value="Eliminado">
+                                            <button type="submit" class="text-red-600 hover:text-red-900">Eliminar</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL CREAR USUARIO -->
+        <div id="modal-create" class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+                <h3 class="text-lg font-bold mb-4">Crear Nuevo Usuario</h3>
+                <form action="{{ url_for('crear_usuario') }}" method="POST" class="space-y-4">
+                    <div><label class="block text-sm font-medium mb-1">Nombre Completo</label><input type="text" name="nombre" required class="w-full border rounded-lg p-2"></div>
+                    <div><label class="block text-sm font-medium mb-1">Correo Electrónico</label><input type="email" name="correo" required class="w-full border rounded-lg p-2"></div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Contraseña Temporal</label>
+                        <div class="flex space-x-2">
+                            <input type="text" name="password" id="create_password" required class="w-full border rounded-lg p-2">
+                            <button type="button" onclick="generatePassword('create_password')" class="px-3 py-2 bg-slate-200 rounded-lg text-sm hover:bg-slate-300">Generar</button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Rol</label>
+                            <select name="rol" class="w-full border rounded-lg p-2">
+                                <option value="Administrador">Administrador</option>
+                                <option value="Coordinador">Coordinador</option>
+                                <option value="Supervisor">Supervisor</option>
+                                <option value="Formador">Formador</option>
+                                <option value="Calidad">Calidad</option>
+                                <option value="Asesor" selected>Asesor</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Estado</label>
+                            <select name="estado" class="w-full border rounded-lg p-2">
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" onclick="closeModal('modal-create')" class="px-4 py-2 border rounded-lg text-slate-600">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-win-orange text-white rounded-lg">Crear Usuario</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL EDITAR USUARIO -->
+        <div id="modal-edit" class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+                <h3 class="text-lg font-bold mb-4">Editar Usuario</h3>
+                <form id="form-edit" method="POST" class="space-y-4">
+                    <div><label class="block text-sm font-medium mb-1">Nombre Completo</label><input type="text" name="nombre" id="edit_nombre" required class="w-full border rounded-lg p-2"></div>
+                    <div><label class="block text-sm font-medium mb-1">Correo Electrónico</label><input type="email" name="correo" id="edit_correo" required class="w-full border rounded-lg p-2"></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Rol</label>
+                            <select name="rol" id="edit_rol" class="w-full border rounded-lg p-2">
+                                <option value="Administrador">Administrador</option>
+                                <option value="Coordinador">Coordinador</option>
+                                <option value="Supervisor">Supervisor</option>
+                                <option value="Formador">Formador</option>
+                                <option value="Calidad">Calidad</option>
+                                <option value="Asesor">Asesor</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Estado</label>
+                            <select name="estado" id="edit_estado" class="w-full border rounded-lg p-2">
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" onclick="closeModal('modal-edit')" class="px-4 py-2 border rounded-lg text-slate-600">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL RESET CONTRASEÑA -->
+        <div id="modal-reset" class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+                <h3 class="text-lg font-bold mb-4">Restablecer Contraseña</h3>
+                <p class="text-sm text-slate-500 mb-4">Se obligará a <span id="reset_correo_lbl" class="font-bold"></span> a cambiar esta clave en su próximo ingreso.</p>
+                <form id="form-reset" method="POST" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Nueva Contraseña Temporal</label>
+                        <div class="flex space-x-2">
+                            <input type="text" name="nueva_clave" id="reset_password" required class="w-full border rounded-lg p-2">
+                            <button type="button" onclick="generatePassword('reset_password')" class="px-3 py-2 bg-slate-200 rounded-lg text-sm hover:bg-slate-300">Generar</button>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" onclick="closeModal('modal-reset')" class="px-4 py-2 border rounded-lg text-slate-600">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg">Confirmar Reset</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+    </main>
+
+    <script>
+        const cronosData = {{ cronos | tojson | safe }};
+        let chartsInitialized = false;
+
+        function switchTab(tab) {
+            document.getElementById('tab-audit').classList.remove('tab-active', 'text-win-orange');
+            document.getElementById('tab-cronos').classList.remove('tab-active', 'text-win-orange');
+            {% if user.rol in ['Administrador', 'Coordinador'] %}
+            document.getElementById('tab-users').classList.remove('tab-active', 'text-win-orange');
+            {% endif %}
+            
+            document.getElementById('tab-' + tab).classList.add('tab-active', 'text-win-orange');
+            
+            document.getElementById('content-audit').classList.add('hidden');
+            document.getElementById('content-cronos').classList.add('hidden');
+            {% if user.rol in ['Administrador', 'Coordinador'] %}
+            document.getElementById('content-users').classList.add('hidden');
+            {% endif %}
+            
+            document.getElementById('content-' + tab).classList.remove('hidden');
+
+            if (tab === 'cronos' && !chartsInitialized) {
+                initCronosCharts();
+                chartsInitialized = true;
+            }
+        }
+
+        function initCronosCharts() {
+            // 1. Pausas por asesor
+            const pausasLabels = Object.keys(cronosData.pausas_por_asesor || {});
+            const pausasValues = Object.values(cronosData.pausas_por_asesor || {});
+            const ctxPausas = document.getElementById('chartPausasAsesor');
+            if (ctxPausas) {
+                new Chart(ctxPausas, {
+                    type: 'bar',
+                    data: {
+                        labels: pausasLabels.length ? pausasLabels.map(u => u.split('@')[0]) : ['Sin datos'],
+                        datasets: [{
+                            label: 'Pausas',
+                            data: pausasValues.length ? pausasValues : [0],
+                            backgroundColor: '#F59E0B',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                    }
+                });
+            }
+
+            // 2. Reinicios por asesor
+            const reiniciosLabels = Object.keys(cronosData.reinicios_por_asesor || {});
+            const reiniciosValues = Object.values(cronosData.reinicios_por_asesor || {});
+            const ctxReinicios = document.getElementById('chartReiniciosAsesor');
+            if (ctxReinicios) {
+                new Chart(ctxReinicios, {
+                    type: 'bar',
+                    data: {
+                        labels: reiniciosLabels.length ? reiniciosLabels.map(u => u.split('@')[0]) : ['Sin datos'],
+                        datasets: [{
+                            label: 'Reinicios',
+                            data: reiniciosValues.length ? reiniciosValues : [0],
+                            backgroundColor: '#3B82F6',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                    }
+                });
+            }
+
+            // 3. Distribución por Estado SLA
+            const dist = cronosData.estados_dist || {};
+            const ctxEstados = document.getElementById('chartEstadosSLA');
+            if (ctxEstados) {
+                new Chart(ctxEstados, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Verde', 'Ámbar', 'Rojo', 'Crítico', 'SLA Excedido'],
+                        datasets: [{
+                            data: [
+                                dist['Verde'] || 0,
+                                dist['Ámbar'] || 0,
+                                dist['Rojo'] || 0,
+                                dist['Crítico'] || 0,
+                                dist['SLA Excedido'] || 0
+                            ],
+                            backgroundColor: ['#10B981', '#F59E0B', '#EF4444', '#DC2626', '#991B1B']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+                        }
+                    }
+                });
+            }
+
+            // 4. Tendencia Diaria
+            const fechas = cronosData.tendencia?.fechas || [];
+            const valores = cronosData.tendencia?.valores || [];
+            const ctxTendencia = document.getElementById('chartTendenciaDiaria');
+            if (ctxTendencia) {
+                new Chart(ctxTendencia, {
+                    type: 'line',
+                    data: {
+                        labels: fechas.length ? fechas : ['Hoy'],
+                        datasets: [{
+                            label: 'Interacciones CRONOS SLA',
+                            data: valores.length ? valores : [0],
+                            borderColor: '#FF6B00',
+                            backgroundColor: 'rgba(255, 107, 0, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#FF6B00'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                    }
+                });
+            }
+        }
+
+        // Funciones de Exportación a Excel con filtros dinámicos
+        function exportAuditExcel() {
+            const input = document.getElementById('audit-filter-input');
+            const term = input ? input.value.trim() : '';
+            let url = "{{ url_for('export_excel') }}?tipo=audit";
+            if (term) {
+                url += "&q=" + encodeURIComponent(term);
+            }
+            window.location.href = url;
+        }
+
+        function exportCronosExcel() {
+            const input = document.getElementById('cronos-filter-input');
+            const term = input ? input.value.trim() : '';
+            let url = "{{ url_for('export_excel') }}?tipo=cronos";
+            if (term) {
+                url += "&q=" + encodeURIComponent(term);
+            }
+            window.location.href = url;
+        }
+
+        // Filtro en tiempo real para auditoría general
+        const auditFilterInput = document.getElementById('audit-filter-input');
+        if (auditFilterInput) {
+            auditFilterInput.addEventListener('keyup', function() {
+                const term = this.value.toLowerCase().trim();
+                const rows = document.querySelectorAll('.audit-history-row');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(term) ? '' : 'none';
+                });
+            });
+        }
+
+        // Filtro en tiempo real para la tabla histórica de CRONOS SLA
+        const filterInput = document.getElementById('cronos-filter-input');
+        if (filterInput) {
+            filterInput.addEventListener('keyup', function() {
+                const term = this.value.toLowerCase().trim();
+                const rows = document.querySelectorAll('.cronos-history-row');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(term) ? '' : 'none';
+                });
+            });
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function generatePassword(inputId) {
+            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&";
+            let pwd = "Win@";
+            for(let i=0; i<6; i++) {
+                pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById(inputId).value = pwd;
+        }
+
+        function openEditModal(id, nombre, correo, rol, estado) {
+            document.getElementById('form-edit').action = '/admin/usuarios/editar/' + id;
+            document.getElementById('edit_nombre').value = nombre;
+            document.getElementById('edit_correo').value = correo;
+            document.getElementById('edit_rol').value = rol;
+            document.getElementById('edit_estado').value = estado;
+            openModal('modal-edit');
+        }
+
+        function openResetModal(id, correo) {
+            document.getElementById('form-reset').action = '/admin/usuarios/reset/' + id;
+            document.getElementById('reset_correo_lbl').innerText = correo;
+            document.getElementById('reset_password').value = '';
+            openModal('modal-reset');
+        }
+    </script>
+</body>
+</html>

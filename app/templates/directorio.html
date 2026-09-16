@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directorio de Escalamiento WIN - Fidelización</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        background: "#1e1e1e",
+                        foreground: "#ffffff",
+                        card: "#2a2a2a",
+                        border: "#3f3f46",
+                        primary: {
+                            DEFAULT: "#FF6A00",
+                            foreground: "#ffffff"
+                        },
+                        muted: {
+                            DEFAULT: "#27272a",
+                            foreground: "#a1a1aa"
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #52525b;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden text-sm flex font-sans">
+    <div id="root" class="h-full w-full flex"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        // --- ICONS ---
+        const IconSearch = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>;
+        const IconSend = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>;
+        const IconCopy = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>;
+        const IconCheck = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>;
+        const IconTrash2 = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>;
+
+        // --- DATA ---
+        const directoriosData = [
+            // FIDELIZACIONES
+            {
+                area: "Fidelizaciones",
+                escenario: "1. Reactivación por suspensión",
+                proceso: "Cuando cliente se comunica a la central solicitando la reactivación por error en el sistema.",
+                correoPara: "lideresfidelizacionwin@win.pe",
+                correoCC: "",
+                asunto: "FIDELIZACIÓN / REACTIVACIÓN POR SUSPENSIÓN / NOMBRE Y APELLIDOS / DNI",
+                cuerpo: "Buenos días/tardes/noches, estimados:\n\nReciban un cordial saludo, el cliente se encuentra sin registro en NCE estado desactivado, pese a que se valida estado vigente en el portal de documentos, por lo cual se solicita la reactivación inmediata del servicio del cliente.\nNombre: \nDni: \nC de Pedido: \nMAC: \n\nQuedo atento a sus comentarios.",
+                tipificacion: "PRINT ESTADO DEL CONTROL FLAG"
+            },
+            {
+                area: "Fidelizaciones",
+                escenario: "2. Reanudación o Desistimiento de servicio",
+                proceso: "Cuando cliente se comunica a la central solicitando la reanudación o desiste de la baja.",
+                correoPara: "lideresfidelizacionwin@win.pe",
+                correoCC: "",
+                asunto: "FIDELIZACIÓN/ REANUDACIÓN POR BAJA / NOMBRE Y APELLIDOS / DNI",
+                cuerpo: "Buenos días /tardes / noches, estimados:\n\nSolicito su apoyo con el caso, cliente se encuentra sin servicio, tiene el router desmatriculado y solicita continuar con el servicio.\nNombre: \nDni: \nC de Pedido: \nMAC: \nPlan actual: \n\nQuedo atento a sus comentarios.",
+                tipificacion: "FOTO DE LA PARTE INFERIOR DEL ROUTER (solo para reanudación)"
+            },
+            {
+                area: "Fidelizaciones",
+                escenario: "4. Activación de SVA por Fidelización a costo de Oferta Comercial",
+                proceso: "Cuando cliente acepta activar SVA a costo de la Oferta Comercial Vigente, solo con autorización",
+                correoPara: "backoffice@win.pe",
+                correoCC: "fidelizacionwin@win.pe; cbocanegra@win.pe; lideresfidelizacionwin@win.pe",
+                asunto: "FIDELIZACIÓN / ALTA DE SVA - COSTO OFERTA COMERCIAL (INDICAR MES) / NOMBRE Y APELLIDOS / DNI",
+                cuerpo: "Buenos días/tardes/noches, estimados:\n\nReciban un cordial saludo, su completo apoyo para proceder con la alta del SVA (FONOWIN/WINTV/DGO/MESH/WINBOX) para el cliente en mención el cual acepta mantener el servicio y la contratación del SVA indicado con el costo de la Oferta Comercial vigente al (INDICAR MES), se adjuntan datos del cliente:\n\nNombre: \nDni: \nC. de Pedido: \nF. Instalación: \n\nQuedo atento a sus comentarios.",
+                tipificacion: "FOTO DE LA TIPIFICACIÓN"
+            },
+            // BACKOFFICE
+            {
+                area: "Backoffice",
+                escenario: "1. Solicitud de contratos",
+                proceso: "Cuando cliente se comunica a la central solicitando el envío de su contrato inicial por correo.",
+                correoPara: "backoffice@win.pe",
+                correoCC: "fidelizacionwin@win.pe; cbocanegra@win.pe; lideresfidelizacionwin@win.pe",
+                asunto: "FIDELIZACIÓN / SOLICITUD DE CONTRATO (NOMBRES Y APELLIDOS DE CLIENTE)",
+                cuerpo: "Buenos días/tardes/noches, estimados:\n\nReciban un cordial saludo, el cliente en mención solicita el envío de su contrato por correo.\n\nCliente: \nDNI/CE/RUC: \nCorreo electrónico: \n\nPor favor, su apoyo con lo solicitado.\nQuedo atento a sus comentarios,",
+                tipificacion: "NA"
+            },
+            {
+                area: "Backoffice",
+                escenario: "13. Baja por deuda del cleinte",
+                proceso: "Cliente cuenta con baja en aplicativos por deuda, se confirma que tiene más de 90 días calendarios con recibo pendiente",
+                correoPara: "backoffice@win.pe",
+                correoCC: "fidelizacionwin@win.pe; cbocanegra@win.pe; lideresfidelizacionwin@win.pe",
+                asunto: "FIDELIZACIÓN / BAJA DE SERVICIO POR DEUDA/ NOMBRE Y APELLIDOS DEL CLIENTE",
+                cuerpo: "Buenos días/tardes/noches, estimados:\n\nReciban un cordial saludo, por favor su apoyo para proceder con el recojo de los equipos para el cliente en mención ya que se verifica se encuentra dado de baja por deuda, adjuntos datos del cliente.\n\nCliente: \nDNI/CE/RUC: \nTelefono de contacto: \nDirección: \n\nPor favor su apoyo para escalar al área encargada.\nQuedo atento a sus comentarios,",
+                tipificacion: "NA"
+            },
+            // FACTURACIÓN
+            {
+                area: "Facturación",
+                escenario: "2. Reactivación de servicio por falta de pago",
+                proceso: "Cuando cliente ya hizo el pago de su servicio y se valida el pago en ECOM, pero sigue suspendido y supera el plazo de 24 horas.",
+                correoPara: "backoffice@win.pe;recaudacionycobranzas@win.pe",
+                correoCC: "soportefacturacion@win.pe; fidelizacionwin@win.pe; lideresfidelizacionwin@win.pe",
+                asunto: "FIDELIZACIÓN / REACTIVACIÓN DE SERVICIO (NOMBRES Y APELLIDOS DE CLIENTE)",
+                cuerpo: "Buenos días/tardes/noches, estimados:\n\nReciban un cordial saludo, el cliente (nombres y apellidos) con DNI/CE/RUC (número de documento) se encuentra suspendido en sistema, pero ya hizo el pago que tenía pendiente y este se refleja en ECOM. Adjunto captura correspondiente.\n\n(Se pega captura del estado de cuenta en ECOM)\n\nPor favor, su apoyo con lo solicitado.\nQuedo atento a sus comentarios,",
+                tipificacion: ""
+            },
+            // PROGRAMACIONES
+            {
+                area: "Programaciones",
+                escenario: "1. Traslado de servicio",
+                proceso: "Cuando cliente responde el correo aceptando el costo del traslado de servicio, se reenvía la respuesta a programaciones con los datos del cliente.",
+                correoPara: "programaciones@winet.com.pe",
+                correoCC: "backoffice@win.pe; retenciones@winet.com.pe; lideresfidelizacionwin@win.pe",
+                asunto: "TRASLADO DE SERVICIO (NOMBRES Y APELLIDOS DE CLIENTE)",
+                cuerpo: "Buenos días/tardes/noches estimados,\n\nReciban un cordial saludo, el cliente en mención desea el traslado de su servicio y ya aceptó el costo correspondiente. Brindo sus datos:\n\nCliente: \nDNI/RUC/CE: \nNúmero de contacto: \nNúmero adicional: \nDirección nueva: \nTipo de vivienda: \nCantidad de pisos: \nPermiten tendido aéreo: \n\nPor favor, su apoyo con la coordinación.\nQuedo atento a sus comentarios,",
+                tipificacion: "Variación - Servicios Solicitados - Cobro de traslado"
+            },
+            // ATENCION TECNOLOGICA
+            {
+                area: "Atención Tecnológica",
+                escenario: "1. Pruebas por ticket pendiente",
+                proceso: "Cuando se adjunta pruebas de problema reportado por cliente y ya se ha creado un ticket.",
+                correoPara: "atenciontecnologica@win.pe",
+                correoCC: "rfidelizacionwin@win.pe; lideresfidelizacionwin@win.pe",
+                asunto: "FIDELIZACIÓN / N° DE TICKET AT- (NOMBRES Y APELLIDOS DE CLIENTE)",
+                cuerpo: "Buenos días/tardes/noches, estimados:\n\nReciban un cordial saludo, el cliente (nombres completos) con DNI/CE/RUC (número de documento) se comunicó a la central reportando (se detalla el problema de cliente) y adjunta las siguientes pruebas para que se le pueda brindar el soporte necesario.\n\nPor favor, su apoyo con este caso.\nQuedo atento a sus comentarios,",
+                tipificacion: ""
+            }
+        ];
+
+        const areas = ["Todas", ...new Set(directoriosData.map(d => d.area))];
+
+        // --- COMPONENTS ---
+        
+        const Button = ({ children, onClick, variant = 'primary', className = '', type = "button", disabled=false, title="" }) => {
+            const baseStyle = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50 px-4 py-2";
+            const variants = {
+                primary: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+                secondary: "bg-muted text-foreground hover:bg-muted/80 border border-border",
+                ghost: "hover:bg-muted hover:text-foreground text-muted-foreground",
+            };
+            return (
+                <button type={type} title={title} disabled={disabled} onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className}`}>
+                    {children}
+                </button>
+            );
+        };
+
+        const Input = ({ value, onChange, placeholder, className = '', ...props }) => (
+            <input 
+                value={value} 
+                onChange={onChange} 
+                placeholder={placeholder}
+                className={`flex h-9 w-full rounded-md border border-border bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+                {...props}
+            />
+        );
+
+        const Label = ({ children, className = '' }) => (
+            <label className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${className}`}>
+                {children}
+            </label>
+        );
+
+        // --- MAIN APP ---
+        const App = () => {
+            const [search, setSearch] = useState("");
+            const [selectedArea, setSelectedArea] = useState("Todas");
+            const [selectedEscenario, setSelectedEscenario] = useState(null);
+
+            // Form states
+            const [correoDe, setCorreoDe] = useState("jleoni@win.pe");
+            const [correoPara, setCorreoPara] = useState("");
+            const [correoCC, setCorreoCC] = useState("");
+            const [correoAsunto, setCorreoAsunto] = useState("");
+            const [correoCuerpo, setCorreoCuerpo] = useState("");
+            
+            // Dynamic Variables
+            const [variables, setVariables] = useState({});
+            
+            // UI States
+            const [toast, setToast] = useState(null);
+
+            const showToast = (message) => {
+                setToast(message);
+                setTimeout(() => setToast(null), 3000);
+            };
+
+            // Filter logic
+            const filteredData = useMemo(() => {
+                return directoriosData.filter(d => {
+                    const matchArea = selectedArea === "Todas" || d.area === selectedArea;
+                    const matchSearch = d.escenario.toLowerCase().includes(search.toLowerCase()) || d.area.toLowerCase().includes(search.toLowerCase());
+                    return matchArea && matchSearch;
+                });
+            }, [search, selectedArea]);
+
+            // Load scenario
+            const handleSelectScenario = (escenario) => {
+                setSelectedEscenario(escenario);
+                setCorreoPara(escenario.correoPara || "");
+                setCorreoCC(escenario.correoCC || "");
+                setCorreoAsunto(escenario.asunto || "");
+                setCorreoCuerpo(escenario.cuerpo || "");
+                setVariables({}); // Reset vars on new selection
+            };
+
+            // Detect variables
+            const detectedVars = useMemo(() => {
+                if (!correoCuerpo && !correoAsunto) return [];
+                
+                const vars = new Set();
+                const textToAnalyze = `${correoAsunto} \n ${correoCuerpo}`;
+
+                // Regex para extraer campos tipo "Campo:"
+                const colonRegex = /([A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s\.]+):\s*(?=\n|$)/g;
+                let match;
+                while ((match = colonRegex.exec(correoCuerpo)) !== null) {
+                    const varName = match[1].trim();
+                    if(varName && !['Atte', 'Cliente'].includes(varName)) vars.add(varName);
+                }
+
+                // Regex para extraer patrones tipo [DNI], (NOMBRES Y APELLIDOS)
+                const bracketRegex = /[\[\(]([A-ZÁÉÍÓÚÑ\s]+)[\]\)]/g;
+                while ((match = bracketRegex.exec(textToAnalyze)) !== null) {
+                    vars.add(match[1].trim());
+                }
+
+                // Casos especiales fijos encontrados en asuntos
+                if (textToAnalyze.includes("NOMBRE Y APELLIDOS") || textToAnalyze.includes("NOMBRES Y APELLIDOS")) vars.add("Nombres y Apellidos");
+                if (textToAnalyze.includes("DNI") && !vars.has("Dni") && !vars.has("DNI/CE/RUC") && !vars.has("DNI/RUC/CE")) vars.add("DNI");
+                if (textToAnalyze.includes("INDICAR MES")) vars.add("Mes de Oferta");
+                
+                return Array.from(vars);
+            }, [selectedEscenario]); // Only recompute on scenario change
+
+            // Handle variable change
+            const handleVarChange = (varName, value) => {
+                setVariables(prev => ({...prev, [varName]: value}));
+            };
+
+            // Derived Asunto and Cuerpo based on variables
+            const finalAsunto = useMemo(() => {
+                let txt = correoAsunto;
+                // Reemplazos de asunto
+                if(variables["Nombres y Apellidos"]) {
+                    txt = txt.replace(/NOMBRE(S)? Y APELLIDOS( DE CLIENTE)?/gi, variables["Nombres y Apellidos"].toUpperCase());
+                }
+                if(variables["DNI"]) {
+                    txt = txt.replace(/DNI/g, variables["DNI"]);
+                }
+                if(variables["Mes de Oferta"]) {
+                    txt = txt.replace(/\(?INDICAR MES\)?/gi, variables["Mes de Oferta"].toUpperCase());
+                }
+                return txt;
+            }, [correoAsunto, variables]);
+
+            const finalCuerpo = useMemo(() => {
+                let txt = correoCuerpo;
+                
+                // Reemplazar patrones "Campo: "
+                Object.entries(variables).forEach(([key, val]) => {
+                    if(!val) return;
+                    
+                    // Reemplazo para campos con dos puntos (ej. "Nombre: ")
+                    const regexColon = new RegExp(`(${key}):\\s*(?=\\n|$)`, 'gi');
+                    txt = txt.replace(regexColon, `$1: ${val}`);
+
+                    // Reemplazo para placeholders [DNI] o (NOMBRES)
+                    const regexPlaceholder = new RegExp(`[\\[\\(]${key}[\\]\\)]`, 'gi');
+                    txt = txt.replace(regexPlaceholder, val);
+                });
+
+                // Caso especial Nombres en el texto
+                if(variables["Nombres y Apellidos"]) {
+                    txt = txt.replace(/\(nombres y apellidos\)/gi, variables["Nombres y Apellidos"]);
+                    txt = txt.replace(/\(nombres completos\)/gi, variables["Nombres y Apellidos"]);
+                    txt = txt.replace(/\(nombre del cliente\)/gi, variables["Nombres y Apellidos"]);
+                }
+
+                return txt;
+            }, [correoCuerpo, variables]);
+
+
+            // Actions
+            const handleCopy = (text, name) => {
+                navigator.clipboard.writeText(text);
+                showToast(`${name} copiado al portapapeles`);
+            };
+
+            const handleSimulate = () => {
+                const signature = `\n\nAtte.\nJhonny E. León Illescas\nFORMADOR DE CANALES ESPECIALIZADOS\nEL INTERNET HOGAR\n#1 EN SATISFACCIÓN AL CLIENTE\nSegún OSIPTEL`;
+                const fullEmail = `Para: ${correoPara}\nCC: ${correoCC}\nAsunto: ${finalAsunto}\n\n${finalCuerpo}${signature}`;
+                navigator.clipboard.writeText(fullEmail);
+                showToast("Correo copiado y listo para enviar");
+                
+                // Guardar historial
+                const hist = JSON.parse(localStorage.getItem('win_email_hist') || '[]');
+                hist.unshift({ asunto: finalAsunto, fecha: new Date().toLocaleString() });
+                if(hist.length > 5) hist.pop();
+                localStorage.setItem('win_email_hist', JSON.stringify(hist));
+            };
+
+            const handleClear = () => {
+                setCorreoPara("");
+                setCorreoCC("");
+                setCorreoAsunto("");
+                setCorreoCuerpo("");
+                setVariables({});
+                setSelectedEscenario(null);
+            };
+
+            return (
+                <div className="flex h-full w-full bg-background text-foreground overflow-hidden">
+                    {/* TOAST */}
+                    {toast && (
+                        <div className="absolute top-4 right-4 z-50 bg-green-600 text-white px-4 py-2 rounded-md shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+                            <IconCheck /> {toast}
+                        </div>
+                    )}
+
+                    {/* LEFT SIDEBAR - SELECTOR */}
+                    <div className="w-80 border-r border-border bg-card flex flex-col flex-shrink-0">
+                        <div className="p-4 border-b border-border space-y-4">
+                            <h2 className="font-bold text-lg text-primary tracking-tight">Directorio Escalamiento</h2>
+                            <div className="relative">
+                                <span className="absolute left-2.5 top-2.5 text-muted-foreground"><IconSearch /></span>
+                                <Input 
+                                    placeholder="Buscar escenario o área..." 
+                                    className="pl-8 bg-background border-border"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {areas.map(area => (
+                                    <button 
+                                        key={area}
+                                        onClick={() => setSelectedArea(area)}
+                                        className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${selectedArea === area ? 'bg-primary text-primary-foreground' : 'bg-background border border-border text-muted-foreground hover:bg-muted'}`}
+                                    >
+                                        {area}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+                            {filteredData.map((item, i) => (
+                                <button 
+                                    key={i}
+                                    onClick={() => handleSelectScenario(item)}
+                                    className={`w-full text-left p-3 rounded-md text-sm transition-colors ${selectedEscenario?.escenario === item.escenario ? 'bg-primary/10 border border-primary/20 text-primary' : 'hover:bg-muted border border-transparent'}`}
+                                >
+                                    <div className="font-semibold truncate">{item.escenario}</div>
+                                    <div className="text-xs text-muted-foreground truncate">{item.area}</div>
+                                </button>
+                            ))}
+                            {filteredData.length === 0 && (
+                                <div className="text-center p-4 text-muted-foreground text-sm">No se encontraron escenarios.</div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* MAIN CONTENT */}
+                    <div className="flex-1 flex flex-col h-full bg-background relative overflow-y-auto">
+                        
+                        {/* HEADER - ACTIONS */}
+                        <div className="p-4 border-b border-border bg-card flex items-center justify-between sticky top-0 z-10">
+                            <div className="flex gap-2">
+                                <Button onClick={handleSimulate} disabled={!selectedEscenario} className="gap-2">
+                                    <IconSend /> Simular Envío
+                                </Button>
+                                <Button variant="secondary" onClick={() => handleCopy(finalAsunto, "Asunto")} disabled={!selectedEscenario} title="Copiar Asunto">
+                                    <IconCopy />
+                                </Button>
+                                <Button variant="secondary" onClick={() => handleCopy(finalCuerpo, "Cuerpo")} disabled={!selectedEscenario} title="Copiar Cuerpo">
+                                    <IconCopy />
+                                </Button>
+                                <Button variant="ghost" onClick={handleClear} disabled={!selectedEscenario} title="Limpiar Formulario">
+                                    <IconTrash2 />
+                                </Button>
+                            </div>
+                        </div>
+
+                        {/* EDITOR & SMART FORM */}
+                        <div className="flex-1 p-6 flex flex-col lg:flex-row gap-6">
+                            
+                            {/* EMAIL COMPOSER */}
+                            <div className="flex-1 flex flex-col space-y-4 max-w-4xl">
+                                
+                                {/* CABECERAS */}
+                                <div className="bg-card p-4 rounded-lg border border-border space-y-3 shadow-sm">
+                                    <div className="flex items-center gap-3">
+                                        <Label className="w-16 text-muted-foreground text-right">De</Label>
+                                        <select 
+                                            value={correoDe}
+                                            onChange={e => setCorreoDe(e.target.value)}
+                                            className="flex h-9 w-full rounded-md border border-border bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+                                        >
+                                            <option value="jleoni@win.pe">jleoni@win.pe (Jhonny León)</option>
+                                            <option value="otro@win.pe">Otro remitente...</option>
+                                        </select>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Label className="w-16 text-muted-foreground text-right">Para</Label>
+                                        <Input value={correoPara} onChange={e => setCorreoPara(e.target.value)} className="bg-background" />
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Label className="w-16 text-muted-foreground text-right">CC</Label>
+                                        <Input value={correoCC} onChange={e => setCorreoCC(e.target.value)} className="bg-background" />
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Label className="w-16 text-muted-foreground text-right">Asunto</Label>
+                                        <Input value={finalAsunto} onChange={e => setCorreoAsunto(e.target.value)} className="bg-background font-semibold" />
+                                    </div>
+                                </div>
+
+                                {/* CUERPO */}
+                                <div className="flex-1 bg-card rounded-lg border border-border p-4 shadow-sm flex flex-col min-h-[400px]">
+                                    <textarea 
+                                        className="w-full flex-1 bg-transparent resize-none focus:outline-none text-sm text-foreground leading-relaxed font-sans"
+                                        value={finalCuerpo}
+                                        onChange={e => setCorreoCuerpo(e.target.value)}
+                                        placeholder="Seleccione un escenario para cargar la plantilla o escriba su mensaje aquí..."
+                                    />
+                                    
+                                    {/* FIRMA */}
+                                    <div className="mt-8 pt-4 border-t border-border flex items-center gap-6">
+                                        <div className="w-32 h-32 bg-[#FF6A00] rounded flex items-center justify-center p-2 flex-shrink-0 relative overflow-hidden">
+                                            {/* Simulación del logo WIN */}
+                                            <div className="text-white font-black text-5xl tracking-tighter" style="font-family: sans-serif;">win</div>
+                                            <div className="absolute bottom-3 text-[7px] text-white font-semibold">EL INTERNET DE LOS WINNERS</div>
+                                        </div>
+                                        <div className="space-y-1 text-sm font-sans">
+                                            <div className="text-[#FF6A00] font-bold text-xl">Jhonny E. León Illescas</div>
+                                            <div className="text-[11px] tracking-wider uppercase font-semibold text-gray-300">FORMADOR DE CANALES ESPECIALIZADOS</div>
+                                            <div className="w-full h-px bg-border my-2"></div>
+                                            <div className="text-[#FF6A00] font-black text-sm">EL INTERNET HOGAR</div>
+                                            <div className="font-black text-lg text-gray-200">#1 EN SATISFACCIÓN AL CLIENTE</div>
+                                            <div className="inline-block bg-yellow-400 text-black text-[9px] font-black px-2 py-0.5 rounded mt-1">Según OSIPTEL</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* RIGHT SIDEBAR - SMART FORM */}
+                            <div className="w-full lg:w-80 flex flex-col gap-4">
+                                <div className="bg-card border border-border rounded-lg p-4 shadow-sm flex-1">
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+                                        <h3 className="font-semibold text-sm">Detector Inteligente</h3>
+                                    </div>
+                                    
+                                    {!selectedEscenario ? (
+                                        <div className="text-muted-foreground text-sm text-center py-8">
+                                            Selecciona un escenario para detectar variables automáticamente.
+                                        </div>
+                                    ) : detectedVars.length === 0 ? (
+                                        <div className="text-muted-foreground text-sm text-center py-8 bg-background rounded-md border border-dashed border-border">
+                                            No se requieren datos adicionales.
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-4">
+                                            <p className="text-xs text-muted-foreground mb-4">Completa los datos para autollenar la plantilla:</p>
+                                            {detectedVars.map(v => (
+                                                <div key={v} className="space-y-1.5">
+                                                    <Label className="text-xs text-primary">{v}</Label>
+                                                    <Input 
+                                                        placeholder={`Ingresar ${v.toLowerCase()}...`}
+                                                        value={variables[v] || ""}
+                                                        onChange={(e) => handleVarChange(v, e.target.value)}
+                                                        className="h-8 text-xs bg-background"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {/* INFO TIP */}
+                                    {selectedEscenario?.tipificacion && selectedEscenario.tipificacion !== "NA" && (
+                                        <div className="mt-6 p-3 bg-primary/10 border border-primary/20 rounded-md">
+                                            <Label className="text-xs text-primary block mb-1">Tipificación Adicional:</Label>
+                                            <p className="text-xs font-mono">{selectedEscenario.tipificacion}</p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* HISTORIAL */}
+                                <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
+                                    <h3 className="font-semibold text-sm mb-3">Últimos generados</h3>
+                                    <div className="space-y-2">
+                                        {JSON.parse(localStorage.getItem('win_email_hist') || '[]').map((h, i) => (
+                                            <div key={i} className="text-xs p-2 bg-background border border-border rounded truncate">
+                                                <div className="text-muted-foreground mb-0.5">{h.fecha}</div>
+                                                {h.asunto}
+                                            </div>
+                                        ))}
+                                        {JSON.parse(localStorage.getItem('win_email_hist') || '[]').length === 0 && (
+                                            <div className="text-xs text-muted-foreground">No hay historial aún.</div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

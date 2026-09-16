@@ -1,0 +1,29 @@
+[
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Iniciar CRONOS SLA",
+        "modulo": "CRONOS SLA",
+        "fecha": "2026-09-11",
+        "hora": "11:20:35",
+        "ip": "127.0.0.1",
+        "detalles": "{\"tiempo\":\"00:00\",\"segundos\":0,\"estado\":\"Verde\"}"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Alerta SLA 45s",
+        "modulo": "CRONOS SLA",
+        "fecha": "2026-09-11",
+        "hora": "11:21:20",
+        "ip": "127.0.0.1",
+        "detalles": "{\"tiempo\":\"00:45\",\"segundos\":45,\"estado\":\"Rojo\"}"
+    },
+    {
+        "usuario": "jleoni@win.pe",
+        "accion": "Reiniciar CRONOS SLA",
+        "modulo": "CRONOS SLA",
+        "fecha": "2026-09-11",
+        "hora": "11:21:27",
+        "ip": "127.0.0.1",
+        "detalles": "{\"tiempo\":\"00:52\",\"segundos\":52,\"estado\":\"Rojo\"}"
+    }
+]
