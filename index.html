@@ -7967,7 +7967,14 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
          * Persistencia reactiva, Restablecimiento de contraseña y Mapeo de Roles).
          */
         const AuthManager = {
+            isAuthenticating: false,
             async login(email, password, remember = true) {
+                if (this.isAuthenticating) {
+                    console.warn('[DEBUG_FIREBASE] Login ignorado: ya existe un proceso de autenticacion en curso.');
+                    return null;
+                }
+                this.isAuthenticating = true;
+                console.log('Login Ejecutado');
                 const cleanEmail = (email || '').trim().toLowerCase();
                 const cleanPass = password || '';
 
@@ -8005,7 +8012,11 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
                             console.log("Usuario de Sesión:", mappedUser.nombre || mappedUser.correo);
                             console.log("Rol de Sesión:", mappedUser.rol);
 
-                            updateHeaderUserUI(mappedUser);
+                            if (typeof updateHeaderUserUI === 'function') {
+                                updateHeaderUserUI(mappedUser);
+                            } else {
+                                console.warn('updateHeaderUserUI no existe');
+                            }
                             applyRolePermissions(mappedUser.rol);
                             console.log("Usuario mostrado:", mappedUser.nombre || mappedUser.correo);
 
@@ -8046,7 +8057,11 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
                         console.log("Rol de Sesión:", mappedUser.rol);
 
                         // 5. Registro obligatorio después de cargar cabecera
-                        updateHeaderUserUI(mappedUser);
+                        if (typeof updateHeaderUserUI === 'function') {
+                                updateHeaderUserUI(mappedUser);
+                            } else {
+                                console.warn('updateHeaderUserUI no existe');
+                            }
                         applyRolePermissions(mappedUser.rol);
                         console.log("Usuario mostrado:", mappedUser.nombre || mappedUser.correo);
 
@@ -8106,6 +8121,7 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
                     }
                     return null;
                 } finally {
+                    this.isAuthenticating = false;
                     if (btnLogin) {
                         btnLogin.disabled = false;
                         btnLogin.innerHTML = `<span>INICIAR SESIÓN</span><i class="fa-solid fa-arrow-right text-xs"></i>`;
@@ -8183,6 +8199,7 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
                     console.log('[DEBUG_FIREBASE] Registrando onAuthStateChanged observer...');
                     if (typeof firebase !== 'undefined' && firebase.auth) {
                         firebase.auth().onAuthStateChanged(async (fbUser) => {
+                            console.log('AuthStateChanged');
                             console.log('[DEBUG_FIREBASE] onAuthStateChanged disparado. Usuario:', fbUser ? fbUser.email : 'Nulo (Desconectado)');
                             if (fbUser) {
                                 // 2. Registro obligatorio después de Firebase Login
@@ -8202,7 +8219,11 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
                                 console.log("Rol de Sesión:", mapped.rol);
 
                                 // 5. Registro obligatorio después de cargar cabecera
-                                updateHeaderUserUI(mapped);
+                                if (typeof updateHeaderUserUI === 'function') {
+                                    updateHeaderUserUI(mapped);
+                                } else {
+                                    console.warn('updateHeaderUserUI no existe');
+                                }
                                 applyRolePermissions(mapped.rol);
                                 console.log("Usuario mostrado:", mapped.nombre || mapped.correo);
 
@@ -8987,6 +9008,60 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
         }
 
         // =========================================================================
+        // SINCRONIZACIÓN VISUAL Y DINÁMICA DEL USUARIO AUTENTICADO
+        // =========================================================================
+        function updateHeaderUserUI(user) {
+            try {
+                if (!user) user = window.CRONOS_CURRENT_USER || (window.CRONOS_USERS_DB && window.CRONOS_USERS_DB[0]);
+                if (!user) return;
+                const rol = user.rol || "Asesor";
+                const style = typeof getRoleBadgeStyle === 'function' ? getRoleBadgeStyle(rol) : { badgeClass: 'bg-slate-700 text-white shadow-sm', textClass: 'text-slate-700', abbr: 'Asesor' };
+
+                // Indicador Permanente en Cabecera
+                const elHeaderNombre = document.getElementById('header-user-nombre');
+                const elHeaderCorreo = document.getElementById('header-user-correo');
+                const elHeaderRol = document.getElementById('header-user-rol');
+
+                if (elHeaderNombre) elHeaderNombre.textContent = user.nombre || "Usuario WIN";
+                if (elHeaderCorreo) elHeaderCorreo.textContent = user.correo || "usuario@win.pe";
+                if (elHeaderRol) {
+                    elHeaderRol.textContent = rol.toUpperCase();
+                    elHeaderRol.className = `text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow-sm inline-block ${style.badgeClass}`;
+                }
+
+                // Botón Avatar de Cabecera
+                const elMenuAvatar = document.getElementById('user-menu-avatar');
+                const elMenuName = document.getElementById('user-menu-name');
+                const elMenuRole = document.getElementById('user-menu-role');
+
+                const initials = user.avatar || (user.nombre ? user.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'US');
+                if (elMenuAvatar) elMenuAvatar.textContent = initials;
+                if (elMenuName) elMenuName.textContent = user.nombre || "Usuario WIN";
+                if (elMenuRole) {
+                    elMenuRole.textContent = style.abbr || rol;
+                    elMenuRole.className = `inline-block text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded shadow-sm ${style.badgeClass}`;
+                }
+
+                // Tarjeta Dropdown de Usuario
+                const elDropAvatar = document.getElementById('user-dropdown-avatar');
+                const elDropName = document.getElementById('user-dropdown-name');
+                const elDropEmail = document.getElementById('user-dropdown-email');
+                const elDropRole = document.getElementById('user-dropdown-role');
+
+                if (elDropAvatar) elDropAvatar.textContent = initials;
+                if (elDropName) elDropName.textContent = user.nombre || "Usuario WIN";
+                if (elDropEmail) elDropEmail.textContent = user.correo || "usuario@win.pe";
+                if (elDropRole) {
+                    elDropRole.textContent = rol.toUpperCase();
+                    elDropRole.className = `text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${style.badgeClass}`;
+                }
+            } catch (err) {
+                console.warn('[updateHeaderUserUI] Error al actualizar UI de cabecera:', err);
+            }
+        }
+        window.updateHeaderUserUI = updateHeaderUserUI;
+
+        // =========================================================================
         // CONTROL DINÁMICO DE ROLES Y PERMISOS
         // =========================================================================
         function hasPermission(permissionKey) {
@@ -9038,7 +9113,11 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             if (menuHistory) menuHistory.style.display = (permissions.historialAccesos !== false && permissions.auditoria !== false && userRole !== 'Asesor') ? '' : 'none';
 
             if (window.CRONOS_CURRENT_USER) {
-                updateHeaderUserUI(window.CRONOS_CURRENT_USER);
+                if (typeof updateHeaderUserUI === 'function') {
+                    updateHeaderUserUI(window.CRONOS_CURRENT_USER);
+                } else {
+                    console.warn('updateHeaderUserUI no existe');
+                }
             }
 
             renderDashboard();
@@ -10460,6 +10539,12 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
 
         async function handleLoginSubmit(event) {
             if (event && event.preventDefault) event.preventDefault();
+            console.log('Intento Login');
+
+            if (AuthManager.isAuthenticating) {
+                console.warn('[LOGIN] Intento cancelado: Autenticacion en curso.');
+                return false;
+            }
 
             try {
                 const emailInput = document.getElementById('login-email');
@@ -10491,7 +10576,11 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             window.CRONOS_CURRENT_USER = user;
             SessionManager.saveSession(user);
             AuditManager.logLogin(user);
-            updateHeaderUserUI(user);
+            if (typeof updateHeaderUserUI === 'function') {
+                updateHeaderUserUI(user);
+            } else {
+                console.warn('updateHeaderUserUI no existe');
+            }
             applyRolePermissions(user.rol);
             showApp();
 
@@ -11123,15 +11212,10 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             }
         });
 
-        // Delegación de submit para el formulario de login y botón
+                // Control de submit para el formulario de login
         document.addEventListener('DOMContentLoaded', function () {
-            const loginForm = document.getElementById('form-login');
-            if (loginForm) {
-                loginForm.addEventListener('submit', handleLoginSubmit);
-            }
-            // NOTA: Se ha eliminado el listener 'click' redundante en btn-login
-            // ya que al ser un botón type="submit", el evento submit del formulario ya cubre todo.
-            // Esto evita que handleLoginSubmit se ejecute dos veces en paralelo (Race condition Firebase).
+            // NOTA: El formulario #form-login ya cuenta con onsubmit="handleLoginSubmit(event)" en el HTML.
+            // Se ha eliminado el addEventListener duplicado para prevenir doble ejecucion y rate limiting (auth/too-many-requests).
         });
 
         window.onload = function () {
