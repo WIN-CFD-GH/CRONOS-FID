@@ -8532,7 +8532,7 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
         }
 
         /**
-         * Limpieza automática de datos históricos de pruebas para el pase a producción.
+         * Limpieza de claves locales obsoletas (sin alterar colecciones reales en Firestore).
          */
         async function cleanProductionTestData() {
             try {
@@ -8544,33 +8544,11 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
                     'cronos_module_stats', 'estadisticasModulos',
                     'cronos_metrics_data'
                 ];
-                keysToClean.forEach(k => localStorage.removeItem(k));
-
-                if (window.db) {
-                    try {
-                        const audSnap = await window.db.collection('auditoria').get();
-                        if (audSnap && !audSnap.empty) {
-                            const audDeletes = audSnap.docs.map(doc => doc.ref.delete());
-                            await Promise.all(audDeletes);
-                            console.log(`[CRONOS FID - Producción] ${audSnap.size} registros eliminados de 'auditoria'.`);
-                        }
-                    } catch (eAud) {
-                        console.warn('[CRONOS FID] Limpieza de auditoria:', eAud);
-                    }
-
-                    try {
-                        const slaSnap = await window.db.collection('cronos_sla').get();
-                        if (slaSnap && !slaSnap.empty) {
-                            const slaDeletes = slaSnap.docs.map(doc => doc.ref.delete());
-                            await Promise.all(slaDeletes);
-                            console.log(`[CRONOS FID - Producción] ${slaSnap.size} eventos eliminados de 'cronos_sla'.`);
-                        }
-                    } catch (eSla) {
-                        console.warn('[CRONOS FID] Limpieza de cronos_sla:', eSla);
-                    }
-                }
+                keysToClean.forEach(k => {
+                    try { localStorage.removeItem(k); } catch (e) { }
+                });
             } catch (err) {
-                console.warn('[CRONOS FID] Error en cleanProductionTestData:', err);
+                console.warn('[CRONOS FID] Limpieza local:', err);
             }
         }
 
@@ -8600,23 +8578,17 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
                 timestamp: now.getTime()
             };
 
+            if (!window.CRONOS_SESSIONS_LOG) window.CRONOS_SESSIONS_LOG = [];
             window.CRONOS_SESSIONS_LOG.unshift(sessionEntry);
             if (window.CRONOS_SESSIONS_LOG.length > 500) {
                 window.CRONOS_SESSIONS_LOG = window.CRONOS_SESSIONS_LOG.slice(0, 500);
             }
-            saveSessionsLogToLocalStorage();
 
-            const usrInDb = window.CRONOS_USERS_DB.find(u => u.uid === user.uid);
-            if (usrInDb) {
-                if (tipo === 'login') {
-                    usrInDb.sesiones = (usrInDb.sesiones || 0) + 1;
-                    usrInDb.ultimoAcceso = fechaStr + ", " + horaStr;
-                    if (!usrInDb.primerAcceso) usrInDb.primerAcceso = usrInDb.ultimoAcceso;
-                }
-                saveUsersToLocalStorage();
+            if (window.AuditManager && typeof window.AuditManager.logEvent === 'function') {
+                window.AuditManager.logEvent(tipo === 'login' ? "INICIO_SESION" : "CIERRE_SESION", "Autenticación", tipo === 'login' ? `Ingreso exitoso a CRONOS FID (${user.nombre})` : `Sesión finalizada por ${user.nombre}`);
+            } else {
+                logAuditEvent(tipo === 'login' ? "INICIO_SESION" : "CIERRE_SESION", "Autenticación", tipo === 'login' ? "Ingreso exitoso" : "Sesión finalizada", user);
             }
-
-            logAuditEvent(tipo === 'login' ? "Inicio de sesión" : "Cierre de sesión", "Autenticación", tipo === 'login' ? "Ingreso exitoso" : "Sesión finalizada", user);
         }
 
         // =========================================================================
@@ -8624,13 +8596,12 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
         // =========================================================================
         document.addEventListener('click', function (e) {
             if (window.CRONOS_METRICS) {
-                window.CRONOS_METRICS.clicsTotal++;
-                saveMetricsToLocalStorage();
+                window.CRONOS_METRICS.clicsTotal = (window.CRONOS_METRICS.clicsTotal || 0) + 1;
                 const elClics = document.getElementById('dash-card-clics');
                 const elTotal = document.getElementById('dash-card-interac-total');
                 if (elClics) elClics.textContent = window.CRONOS_METRICS.clicsTotal.toLocaleString();
                 if (elTotal) {
-                    const totalInt = window.CRONOS_METRICS.clicsTotal + window.CRONOS_METRICS.navTotal + window.CRONOS_METRICS.funcTotal;
+                    const totalInt = (window.CRONOS_ACCESS_LOGS ? window.CRONOS_ACCESS_LOGS.length : 0) + (window.CRONOS_SLA_EVENTS ? window.CRONOS_SLA_EVENTS.length : 0) + window.CRONOS_METRICS.clicsTotal;
                     elTotal.textContent = totalInt.toLocaleString();
                 }
             }
@@ -8638,53 +8609,19 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
 
         function trackModuleAccess(moduleKey) {
             const modName = getModuleNameByKey(moduleKey);
-            const now = new Date();
-            const fechaStr = now.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const horaStr = now.toLocaleTimeString('es-PE', { hour12: false });
             const user = window.CRONOS_CURRENT_USER || { uid: "usr_win_001", nombre: "Usuario WIN", correo: "usuario@win.pe", rol: "Asesor" };
 
-            if (window.CRONOS_MODULE_STATS[moduleKey] !== undefined) {
+            if (window.CRONOS_MODULE_STATS && window.CRONOS_MODULE_STATS[moduleKey] !== undefined) {
                 window.CRONOS_MODULE_STATS[moduleKey]++;
+            }
+
+            if (window.CRONOS_METRICS) window.CRONOS_METRICS.navTotal = (window.CRONOS_METRICS.navTotal || 0) + 1;
+
+            if (window.AuditManager && typeof window.AuditManager.logModuleAccess === 'function') {
+                window.AuditManager.logModuleAccess(modName, user);
             } else {
-                window.CRONOS_MODULE_STATS[moduleKey] = 1;
+                logAuditEvent("ACCESO_MODULO", modName, `Usuario accedió al módulo ${modName}`, user);
             }
-
-            window.CRONOS_METRICS.navTotal++;
-
-            AuditManager.logModuleAccess(modName);
-
-            const accessEntry = {
-                id: "acc-" + Date.now(),
-                uid: user.uid,
-                usuario: user.nombre,
-                correo: user.correo,
-                rol: user.rol,
-                modulo: modName,
-                fecha: fechaStr,
-                hora: horaStr,
-                timestamp: now.getTime()
-            };
-
-            window.CRONOS_ACCESS_HISTORY.unshift(accessEntry);
-            if (window.CRONOS_ACCESS_HISTORY.length > 500) {
-                window.CRONOS_ACCESS_HISTORY = window.CRONOS_ACCESS_HISTORY.slice(0, 500);
-            }
-
-            const usrInDb = window.CRONOS_USERS_DB.find(u => u.uid === user.uid);
-            if (usrInDb) {
-                usrInDb.accesos = (usrInDb.accesos || 0) + 1;
-                usrInDb.ultimoAcceso = fechaStr + ", " + horaStr;
-                if (!usrInDb.primerAcceso) usrInDb.primerAcceso = usrInDb.ultimoAcceso;
-
-                const userModules = new Set(window.CRONOS_ACCESS_HISTORY.filter(a => a.uid === user.uid).map(a => a.modulo));
-                userModules.add(modName);
-                usrInDb.modulosUtilizados = userModules.size;
-            }
-
-            saveModuleStatsToLocalStorage();
-            saveAccessHistoryToLocalStorage();
-            saveMetricsToLocalStorage();
-            saveUsersToLocalStorage();
 
             renderDashboard();
         }
@@ -8708,81 +8645,55 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
                     modulo: "CRONOS SLA",
                     accion: accion,
                     tiempoExacto: tiempoExacto,
-                    tiempoSegundos: tiempoSegundos || 0,
+                    tiempoSegundos: typeof tiempoSegundos === 'number' ? tiempoSegundos : (parseInt(tiempoSegundos) || 0),
                     estadoSLA: estadoSLA,
                     timestamp: now.getTime(),
                     fechaHora: now.toISOString()
                 };
 
                 // Guardar en Firestore colección 'cronos_sla'
-                if (window.SLAManager && typeof window.SLAManager.writeSLAEvent === 'function') {
-                    await window.SLAManager.writeSLAEvent(slaEvent);
-                } else {
-                    const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
-                    if (firestoreDb) {
-                        await firestoreDb.collection('cronos_sla').add(slaEvent);
-                        console.log("SLA WRITE:", slaEvent);
-                    }
+                const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
+                if (firestoreDb) {
+                    await firestoreDb.collection('cronos_sla').add(slaEvent);
+                    console.log("[Firestore] Evento registrado en 'cronos_sla':", slaEvent);
                 }
 
+                if (!window.CRONOS_SLA_EVENTS) window.CRONOS_SLA_EVENTS = [];
                 window.CRONOS_SLA_EVENTS.unshift(slaEvent);
-                if (window.CRONOS_SLA_EVENTS.length > 500) {
-                    window.CRONOS_SLA_EVENTS = window.CRONOS_SLA_EVENTS.slice(0, 500);
+
+                if (window.AuditManager && typeof window.AuditManager.logEvent === 'function') {
+                    window.AuditManager.logEvent("USO_CRONOS_SLA", "CRONOS SLA", `${accion} (${tiempoExacto} - ${estadoSLA})`);
                 }
 
-                if (accion === 'Iniciar' || accion === 'Reanudar') {
-                    window.CRONOS_METRICS.slaInicios++;
-                } else if (accion === 'Pausa') {
-                    window.CRONOS_METRICS.slaPausas++;
-                } else if (accion === 'Reinicio') {
-                    window.CRONOS_METRICS.slaReinicios++;
-                } else if (accion === 'Alcanzó 45s') {
-                    window.CRONOS_METRICS.sla45++;
-                    window.CRONOS_METRICS.slaAlertas++;
-                } else if (accion === 'Alcanzó 60s') {
-                    window.CRONOS_METRICS.sla60++;
-                    window.CRONOS_METRICS.slaAlertas++;
-                } else if (accion === 'Superó 70s') {
-                    window.CRONOS_METRICS.sla70++;
-                    window.CRONOS_METRICS.slaAlertas++;
-                }
-                window.CRONOS_METRICS.funcTotal++;
-
-                const usrInDb = window.CRONOS_USERS_DB.find(u => u.uid === user.uid);
-                if (usrInDb) {
+                const usrInDb = (window.CRONOS_USERS_DB || []).find(u => u.uid === user.uid || (u.correo && user.correo && u.correo.toLowerCase() === user.correo.toLowerCase()));
+                if (usrInDb && window.UserManager && typeof window.UserManager.updateUser === 'function') {
                     usrInDb.usoSLA = (usrInDb.usoSLA || 0) + 1;
-                    UserManager.updateUser(usrInDb.uid, { usoSLA: usrInDb.usoSLA }).catch(e => console.error("FIRESTORE ERROR:", e));
+                    window.UserManager.updateUser(usrInDb.uid, { usoSLA: usrInDb.usoSLA }).catch(e => console.error("FIRESTORE ERROR:", e));
                 }
-
-                logAuditEvent("USO_CRONOS_SLA", "CRONOS SLA", accion + " (" + tiempoExacto + " - " + estadoSLA + ")", user);
-
-                saveSLAEventsToLocalStorage();
-                saveMetricsToLocalStorage();
 
                 renderDashboard();
                 renderSLAModule();
             } catch (error) {
-                console.error("FIRESTORE ERROR:", error);
+                console.error("FIRESTORE ERROR [logSLAEvent]:", error);
             }
         }
         window.logSLAEvent = logSLAEvent;
         window.logAuditEvent = logAuditEvent;
 
         function trackFunctionUsage(nombreFuncion, modulo) {
-            window.CRONOS_METRICS.funcTotal++;
-            saveMetricsToLocalStorage();
+            if (window.CRONOS_METRICS) window.CRONOS_METRICS.funcTotal = (window.CRONOS_METRICS.funcTotal || 0) + 1;
             logAuditEvent(nombreFuncion, modulo || "Herramientas", "Ejecutado con éxito");
             renderDashboardMetricsOnly();
         }
 
         function trackActiveUserTime(secondsToAdd) {
             if (!window.CRONOS_CURRENT_USER) return;
-            const usr = window.CRONOS_USERS_DB.find(u => u.uid === window.CRONOS_CURRENT_USER.uid);
+            const usr = (window.CRONOS_USERS_DB || []).find(u => u.uid === window.CRONOS_CURRENT_USER.uid || (u.correo && window.CRONOS_CURRENT_USER.correo && u.correo.toLowerCase() === window.CRONOS_CURRENT_USER.correo.toLowerCase()));
             if (usr) {
                 usr.tiempoAcumuladoSeconds = (usr.tiempoAcumuladoSeconds || 0) + secondsToAdd;
                 usr.tiempoAcumulado = formatAccumulatedSeconds(usr.tiempoAcumuladoSeconds);
-                if (usr.tiempoAcumuladoSeconds % 10 === 0) {
-                    UserManager.updateUser(usr.uid, {
+                if (usr.tiempoAcumuladoSeconds % 10 === 0 && window.UserManager) {
+                    window.UserManager.updateUser(usr.uid, {
                         tiempoAcumuladoSeconds: usr.tiempoAcumuladoSeconds,
                         tiempoAcumulado: usr.tiempoAcumulado
                     }).catch(console.error);
@@ -8791,72 +8702,200 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
         }
 
         // =========================================================================
-        // MOTOR DE CÁLCULO DE MÉTRICAS REALES DEL DASHBOARD
+        // MOTOR DE CÁLCULO DE MÉTRICAS REALES DEL DASHBOARD (100% FIRESTORE)
         // =========================================================================
         function calculateRealDashboardMetrics() {
             const now = Date.now();
-            const todayStr = new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const today = new Date();
+            const todayStr = today.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const todayISO = today.toISOString().split('T')[0];
 
+            const auditLogs = window.CRONOS_ACCESS_LOGS || [];
+            const slaEvents = window.CRONOS_SLA_EVENTS || [];
+
+            function getLogMs(item) {
+                if (typeof item.timestamp === 'number' && item.timestamp > 0) return item.timestamp;
+                if (item.fechaHora) {
+                    const t = new Date(item.fechaHora).getTime();
+                    if (!isNaN(t) && t > 0) return t;
+                }
+                return 0;
+            }
+
+            function isToday(item) {
+                if (item.fecha && item.fecha === todayStr) return true;
+                if (item.fechaHora && item.fechaHora.startsWith(todayISO)) return true;
+                const ms = getLogMs(item);
+                if (ms > 0) {
+                    return new Date(ms).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }) === todayStr;
+                }
+                return false;
+            }
+
+            // 1. USUARIOS ACTIVOS (desde auditoria, cronos_sla y sesión actual)
+            const activeTodaySet = new Set();
             const active24hSet = new Set();
             const active7dSet = new Set();
-            const activeTodaySet = new Set();
 
-            window.CRONOS_SESSIONS_LOG.forEach(s => {
-                const diffMs = now - (s.timestamp || now);
-                if (diffMs <= 24 * 3600 * 1000) active24hSet.add(s.usuario || s.uid);
-                if (diffMs <= 7 * 24 * 3600 * 1000) active7dSet.add(s.usuario || s.uid);
-                if (s.fecha === todayStr) activeTodaySet.add(s.usuario || s.uid);
+            auditLogs.forEach(log => {
+                const u = log.usuario || log.correo || log.nombre;
+                if (!u || u === 'Sistema') return;
+                const ms = getLogMs(log);
+                const diffMs = ms > 0 ? (now - ms) : Infinity;
+                if (isToday(log) || diffMs <= 24 * 3600 * 1000) activeTodaySet.add(u);
+                if (diffMs <= 24 * 3600 * 1000 || isToday(log)) active24hSet.add(u);
+                if (diffMs <= 7 * 24 * 3600 * 1000) active7dSet.add(u);
+            });
+
+            slaEvents.forEach(ev => {
+                const u = ev.usuario || ev.correo;
+                if (!u || u === 'Sistema') return;
+                const ms = getLogMs(ev);
+                const diffMs = ms > 0 ? (now - ms) : Infinity;
+                if (isToday(ev) || diffMs <= 24 * 3600 * 1000) activeTodaySet.add(u);
+                if (diffMs <= 24 * 3600 * 1000 || isToday(ev)) active24hSet.add(u);
+                if (diffMs <= 7 * 24 * 3600 * 1000) active7dSet.add(u);
             });
 
             if (window.CRONOS_CURRENT_USER) {
-                active24hSet.add(window.CRONOS_CURRENT_USER.nombre);
-                active7dSet.add(window.CRONOS_CURRENT_USER.nombre);
-                activeTodaySet.add(window.CRONOS_CURRENT_USER.nombre);
+                const curName = window.CRONOS_CURRENT_USER.nombre || window.CRONOS_CURRENT_USER.correo;
+                if (curName) {
+                    activeTodaySet.add(curName);
+                    active24hSet.add(curName);
+                    active7dSet.add(curName);
+                }
             }
 
-            let sesHoy = 0, sesSem = 0, sesMes = 0;
-            window.CRONOS_SESSIONS_LOG.forEach(s => {
-                if (s.tipo === 'login') {
-                    const diffMs = now - (s.timestamp || now);
-                    if (s.fecha === todayStr) sesHoy++;
+            // 2. SESIONES INICIADAS (desde auditoria, eventos INICIO_SESION)
+            let sesHoy = 0, sesSem = 0, sesMes = 0, sesTotal = 0;
+            auditLogs.forEach(log => {
+                const accionNorm = (log.accion || '').toUpperCase().trim();
+                const isLogin = accionNorm === 'INICIO_SESION' || accionNorm === 'INICIO DE SESIÓN' || accionNorm === 'LOGIN' || accionNorm.includes('INICIO');
+                if (isLogin) {
+                    sesTotal++;
+                    const ms = getLogMs(log);
+                    const diffMs = ms > 0 ? (now - ms) : Infinity;
+                    if (isToday(log) || diffMs <= 24 * 3600 * 1000) sesHoy++;
                     if (diffMs <= 7 * 24 * 3600 * 1000) sesSem++;
                     if (diffMs <= 30 * 24 * 3600 * 1000) sesMes++;
                 }
             });
-            const sesTotal = window.CRONOS_SESSIONS_LOG.filter(s => s.tipo === 'login').length || sesHoy;
+            if (sesTotal === 0 && window.CRONOS_CURRENT_USER) {
+                sesHoy = 1;
+                sesSem = 1;
+                sesMes = 1;
+                sesTotal = 1;
+            }
 
-            const clics = window.CRONOS_METRICS.clicsTotal || 0;
-            const nav = window.CRONOS_METRICS.navTotal || 0;
-            const func = window.CRONOS_METRICS.funcTotal || 0;
-            const totalInterac = clics + nav + func;
+            // 3. EVENTOS CRONOS SLA (desde Firestore coleccion cronos_sla)
+            let slaIni = 0, slaPau = 0, slaRst = 0;
+            let sla45 = 0, sla60 = 0, sla70 = 0;
+            let sumPauseSecs = 0, countPauseSecs = 0;
 
-            const slaIni = window.CRONOS_METRICS.slaInicios || 0;
-            const slaPau = window.CRONOS_METRICS.slaPausas || 0;
-            const slaRst = window.CRONOS_METRICS.slaReinicios || 0;
-            const totalSLA = slaIni + slaPau + slaRst;
+            slaEvents.forEach(ev => {
+                const acc = (ev.accion || '').toLowerCase().trim();
+                const secs = typeof ev.tiempoSegundos === 'number' ? ev.tiempoSegundos : (parseInt(ev.tiempoSegundos) || 0);
 
-            const modEntries = Object.entries(window.CRONOS_MODULE_STATS);
+                if (acc === 'iniciar' || acc === 'reanudar' || acc.includes('inici')) {
+                    slaIni++;
+                } else if (acc === 'pausa' || acc.includes('paus')) {
+                    slaPau++;
+                } else if (acc === 'reinicio' || acc.includes('reinici')) {
+                    slaRst++;
+                }
+
+                if (acc.includes('45s') || (secs >= 45 && secs < 60)) {
+                    sla45++;
+                }
+                if (acc.includes('60s') || (secs >= 60 && secs <= 70)) {
+                    sla60++;
+                }
+                if (acc.includes('70s') || secs > 70) {
+                    sla70++;
+                }
+
+                if (secs > 0) {
+                    sumPauseSecs += secs;
+                    countPauseSecs++;
+                }
+            });
+
+            const totalSLA = slaEvents.length;
+            const slaPromedioStr = countPauseSecs > 0 ? Math.round(sumPauseSecs / countPauseSecs) + "s" : "0s";
+
+            // 4. USO POR MÓDULO (desde Firestore auditoria eventos ACCESO_MODULO)
+            const moduleStats = {
+                generator: 0,
+                tipificaciones: 0,
+                tickets: 0,
+                derivaciones: 0,
+                acuerdos_voz: 0,
+                dashboard: 0,
+                auditoria: 0,
+                analitica_sla: 0,
+                gestion_usuarios: 0
+            };
+
+            function mapModuleToKey(modName) {
+                if (!modName) return null;
+                const norm = modName.toLowerCase().trim();
+                if (norm.includes('clave') || norm.includes('generator') || norm.includes('secreta')) return 'generator';
+                if (norm.includes('tipificaci')) return 'tipificaciones';
+                if (norm.includes('ticket') || norm.includes('tecnol')) return 'tickets';
+                if (norm.includes('derivaci') || norm.includes('discord')) return 'derivaciones';
+                if (norm.includes('acuerdos') || norm.includes('voz')) return 'acuerdos_voz';
+                if (norm.includes('dashboard')) return 'dashboard';
+                if (norm.includes('auditor')) return 'auditoria';
+                if (norm.includes('sla') || norm.includes('analitica')) return 'analitica_sla';
+                if (norm.includes('usuario') || norm.includes('gestion')) return 'gestion_usuarios';
+                return null;
+            }
+
+            let navCount = 0;
+            auditLogs.forEach(log => {
+                const accionNorm = (log.accion || '').toUpperCase().trim();
+                const isModAccess = accionNorm === 'ACCESO_MODULO' || accionNorm.includes('ACCESO');
+                const key = mapModuleToKey(log.modulo) || mapModuleToKey(log.accion);
+                if (key && moduleStats[key] !== undefined) {
+                    moduleStats[key]++;
+                    navCount++;
+                } else if (isModAccess) {
+                    navCount++;
+                }
+            });
+
+            window.CRONOS_MODULE_STATS = moduleStats;
+
+            const modEntries = Object.entries(moduleStats);
             modEntries.sort((a, b) => b[1] - a[1]);
             const top1Key = (modEntries[0] && modEntries[0][1] > 0) ? modEntries[0][0] : null;
             const top1Count = (modEntries[0] && modEntries[0][1] > 0) ? modEntries[0][1] : 0;
             const top2Key = (modEntries[1] && modEntries[1][1] > 0) ? modEntries[1][0] : null;
-            const top2Count = (modEntries[1] && modEntries[1][1] > 0) ? modEntries[1][1] : 0;
+            const top2Count = (modEntries[1] && modEntries[1][1] > 0) ? modEntries[1][0] : 0;
             const totalModAccess = modEntries.reduce((sum, curr) => sum + curr[1], 0);
             const top1Pct = totalModAccess > 0 ? Math.round((top1Count / totalModAccess) * 100) : 0;
 
-            const lastAccess = window.CRONOS_ACCESS_HISTORY[0] || window.CRONOS_ACCESS_LOGS[0] || {
-                usuario: "-",
-                fecha: "-",
-                hora: "-",
-                rol: "-"
-            };
+            // 5. INTERACCIONES TOTALES (desde auditoria + cronos_sla + clics)
+            const funcCount = auditLogs.filter(l => (l.accion || '').toUpperCase() !== 'ACCESO_MODULO' && (l.accion || '').toUpperCase() !== 'INICIO_SESION').length + slaEvents.length;
+            const clicsCount = (window.CRONOS_METRICS && window.CRONOS_METRICS.clicsTotal) ? window.CRONOS_METRICS.clicsTotal : Math.max(auditLogs.length + slaEvents.length, 1);
+            const totalInterac = auditLogs.length + slaEvents.length + (window.CRONOS_METRICS ? (window.CRONOS_METRICS.clicsTotal || 0) : 0);
 
-            const pauseEvents = window.CRONOS_SLA_EVENTS.filter(e => e.accion === 'Pausa' && e.tiempoSegundos > 0);
-            let slaPromedioStr = "0s";
-            if (pauseEvents.length > 0) {
-                const avgSecs = Math.round(pauseEvents.reduce((acc, e) => acc + e.tiempoSegundos, 0) / pauseEvents.length);
-                slaPromedioStr = avgSecs + "s";
-            }
+            // 6. ÚLTIMO ACCESO REGISTRADO (desde auditoria evento INICIO_SESION más reciente)
+            const loginLogs = auditLogs.filter(l => {
+                const a = (l.accion || '').toUpperCase().trim();
+                return a === 'INICIO_SESION' || a === 'INICIO DE SESIÓN' || a === 'LOGIN' || a.includes('INICIO');
+            });
+            const lastLogin = loginLogs[0] || auditLogs[0] || (window.CRONOS_CURRENT_USER ? {
+                usuario: window.CRONOS_CURRENT_USER.nombre || "Usuario WIN",
+                fecha: todayStr,
+                hora: new Date().toLocaleTimeString('es-PE', { hour12: false }),
+                rol: window.CRONOS_CURRENT_USER.rol || "Asesor"
+            } : {
+                usuario: "—",
+                fecha: "—",
+                hora: "—",
+                rol: "Asesor"
+            });
 
             return {
                 usuariosHoy: activeTodaySet.size,
@@ -8867,26 +8906,26 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
                 sesionesMes: sesMes,
                 sesionesTotal: sesTotal,
                 totalInterac: totalInterac,
-                clics: clics,
-                nav: nav,
-                func: func,
+                clics: clicsCount,
+                nav: navCount || totalModAccess,
+                func: funcCount,
                 totalSLA: totalSLA,
                 slaIni: slaIni,
                 slaPau: slaPau,
                 slaRst: slaRst,
-                sla45: window.CRONOS_METRICS.sla45 || 0,
-                sla60: window.CRONOS_METRICS.sla60 || 0,
-                sla70: window.CRONOS_METRICS.sla70 || 0,
+                sla45: sla45,
+                sla60: sla60,
+                sla70: sla70,
                 slaPromedio: slaPromedioStr,
                 topModuloNombre: top1Key ? getModuleNameByKey(top1Key) : "Sin datos",
                 topModuloCount: top1Count,
                 topModuloPct: top1Pct,
                 segundoModuloNombre: top2Key ? getModuleNameByKey(top2Key) : "Sin datos",
                 segundoModuloCount: top2Count,
-                lastUser: lastAccess.usuario,
-                lastDate: lastAccess.fecha === todayStr ? "Hoy" : lastAccess.fecha,
-                lastTime: lastAccess.hora,
-                lastRol: lastAccess.rol
+                lastUser: lastLogin.usuario || lastLogin.nombre || "Usuario WIN",
+                lastDate: (lastLogin.fecha === todayStr || (lastLogin.fechaHora && lastLogin.fechaHora.startsWith(todayISO))) ? "Hoy" : (lastLogin.fecha || "Hoy"),
+                lastTime: lastLogin.hora || "—",
+                lastRol: lastLogin.rol || "Asesor"
             };
         }
 
@@ -8959,89 +8998,22 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             return !!rolePerms[permissionKey];
         }
 
-        // =========================================================================
-        // SINCRONIZACIÓN VISUAL Y DINÁMICA DEL USUARIO AUTENTICADO
-        // =========================================================================
-        function updateHeaderUserUI(user) {
-            if (!user) user = window.CRONOS_CURRENT_USER || (window.CRONOS_USERS_DB && window.CRONOS_USERS_DB[0]);
-            if (!user) return;
-            const rol = user.rol || "Asesor";
-            const style = getRoleBadgeStyle(rol);
+        function applyRolePermissions(role) {
+            const userRole = role || (window.CRONOS_CURRENT_USER ? window.CRONOS_CURRENT_USER.rol : 'Asesor');
+            const permissions = (window.CRONOS_PERMISSIONS && window.CRONOS_PERMISSIONS[userRole]) || {};
 
-            // Indicador Permanente en Cabecera
-            const elHeaderNombre = document.getElementById('header-user-nombre');
-            const elHeaderCorreo = document.getElementById('header-user-correo');
-            const elHeaderRol = document.getElementById('header-user-rol');
-
-            if (elHeaderNombre) elHeaderNombre.textContent = user.nombre || "Usuario WIN";
-            if (elHeaderCorreo) elHeaderCorreo.textContent = user.correo || "usuario@win.pe";
-            if (elHeaderRol) {
-                elHeaderRol.textContent = rol.toUpperCase();
-                elHeaderRol.className = `text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow-sm inline-block ${style.badgeClass}`;
-            }
-
-            // Botón Avatar de Cabecera
-            const elMenuAvatar = document.getElementById('user-menu-avatar');
-            const elMenuName = document.getElementById('user-menu-name');
-            const elMenuRole = document.getElementById('user-menu-role');
-
-            const initials = user.avatar || (user.nombre ? user.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'US');
-            if (elMenuAvatar) elMenuAvatar.textContent = initials;
-            if (elMenuName) elMenuName.textContent = user.nombre || "Usuario WIN";
-            if (elMenuRole) {
-                elMenuRole.textContent = style.abbr || rol;
-                elMenuRole.className = `inline-block text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded shadow-sm ${style.badgeClass}`;
-            }
-
-            // Tarjeta Dropdown de Usuario
-            const elDropAvatar = document.getElementById('user-dropdown-avatar');
-            const elDropName = document.getElementById('user-dropdown-name');
-            const elDropEmail = document.getElementById('user-dropdown-email');
-            const elDropRole = document.getElementById('user-dropdown-role');
-
-            if (elDropAvatar) elDropAvatar.textContent = initials;
-            if (elDropName) elDropName.textContent = user.nombre || "Usuario WIN";
-            if (elDropEmail) elDropEmail.textContent = user.correo || "usuario@win.pe";
-            if (elDropRole) {
-                elDropRole.textContent = rol.toUpperCase();
-                elDropRole.className = `text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${style.badgeClass}`;
-            }
-
-            // Modal Perfil de Usuario
-            const modalAvatar = document.getElementById('modal-profile-avatar');
-            const modalName = document.getElementById('modal-profile-name');
-            const modalCargo = document.getElementById('modal-profile-cargo');
-            const modalRol = document.getElementById('modal-profile-rol');
-            const modalEmail = document.getElementById('modal-profile-email');
-            const modalLastAcc = document.getElementById('modal-profile-last-access');
-
-            if (modalAvatar) modalAvatar.textContent = initials;
-            if (modalName) modalName.textContent = user.nombre || "Usuario WIN";
-            if (modalCargo) modalCargo.textContent = user.cargo || "Especialista WIN";
-            if (modalRol) modalRol.textContent = rol;
-            if (modalEmail) modalEmail.textContent = user.correo || "usuario@win.pe";
-            if (modalLastAcc) modalLastAcc.textContent = user.ultimoAcceso || new Date().toLocaleString('es-PE');
-        }
-
-        function applyRolePermissions(userRole) {
-            const permissions = (window.CRONOS_PERMISSIONS && window.CRONOS_PERMISSIONS[userRole]) ||
-                (window.CRONOS_DEFAULT_PERMISSIONS && window.CRONOS_DEFAULT_PERMISSIONS[userRole]) ||
-                (window.CRONOS_DEFAULT_PERMISSIONS && window.CRONOS_DEFAULT_PERMISSIONS["Asesor"]) || {};
-
-            // Pestañas Operativas
             const tabGen = document.getElementById('tab-generator');
             const tabTip = document.getElementById('tab-tipificaciones');
             const tabTic = document.getElementById('tab-tickets');
             const tabDer = document.getElementById('tab-derivaciones');
             const tabAcu = document.getElementById('tab-acuerdos-voz');
 
-            if (tabGen) tabGen.style.display = permissions.generator !== false ? '' : 'none';
-            if (tabTip) tabTip.style.display = permissions.tipificaciones !== false ? '' : 'none';
-            if (tabTic) tabTic.style.display = permissions.tickets !== false ? '' : 'none';
-            if (tabDer) tabDer.style.display = permissions.derivaciones !== false ? '' : 'none';
-            if (tabAcu) tabAcu.style.display = permissions.acuerdos_voz !== false ? '' : 'none';
+            if (tabGen) tabGen.style.display = permissions.claveSecreta ? '' : 'none';
+            if (tabTip) tabTip.style.display = permissions.tipificaciones ? '' : 'none';
+            if (tabTic) tabTic.style.display = permissions.ticketsTecnologicos ? '' : 'none';
+            if (tabDer) tabDer.style.display = permissions.derivacionesDiscord ? '' : 'none';
+            if (tabAcu) tabAcu.style.display = permissions.acuerdosVoz ? '' : 'none';
 
-            // Módulos Administrativos
             const tabDash = document.getElementById('tab-dashboard');
             const tabAud = document.getElementById('tab-auditoria');
             const tabSLA = document.getElementById('tab-analitica-sla');
@@ -9049,17 +9021,15 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
 
             if (tabDash) tabDash.style.display = permissions.dashboard ? '' : 'none';
             if (tabAud) tabAud.style.display = permissions.auditoria ? '' : 'none';
-            if (tabSLA) tabSLA.style.display = (permissions.analitica_sla !== false && permissions.analiticaSLA !== false && permissions.dashboard) ? '' : 'none';
+            if (tabSLA) tabSLA.style.display = permissions.analitica_sla ? '' : 'none';
             if (tabUsr) tabUsr.style.display = (permissions.gestion_usuarios || permissions.gestionUsuarios || userRole === 'Administrador' || userRole === 'Formador') ? '' : 'none';
 
-            // Columna Lateral Fija: Módulos Admin (Ocultar completamente para Asesores)
-            const sidebarAdmin = document.getElementById('sidebar-admin-modules') || document.getElementById('admin-sidebar-section');
-            const hasAnyAdmin = permissions.dashboard || permissions.auditoria || permissions.analitica_sla || permissions.gestion_usuarios;
+            const hasAnyAdmin = permissions.dashboard || permissions.auditoria || permissions.analitica_sla || permissions.gestion_usuarios || permissions.configuracion || permissions.accesoTotal;
+            const sidebarAdmin = document.getElementById('sidebar-admin-section');
             if (sidebarAdmin) {
                 sidebarAdmin.style.display = hasAnyAdmin ? '' : 'none';
             }
 
-            // Opciones del Menú Desplegable (Control de Visibilidad por Rol)
             const menuSettings = document.getElementById('menu-opt-settings');
             const menuUsers = document.getElementById('menu-opt-users');
             const menuHistory = document.getElementById('menu-opt-history');
@@ -9067,7 +9037,6 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             if (menuUsers) menuUsers.style.display = (permissions.gestion_usuarios || userRole === 'Administrador' || userRole === 'Formador') ? '' : 'none';
             if (menuHistory) menuHistory.style.display = (permissions.historialAccesos !== false && permissions.auditoria !== false && userRole !== 'Asesor') ? '' : 'none';
 
-            // Actualizar interfaz con datos del usuario activo
             if (window.CRONOS_CURRENT_USER) {
                 updateHeaderUserUI(window.CRONOS_CURRENT_USER);
             }
@@ -9078,6 +9047,57 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
         // =========================================================================
         // RENDERING DEL CENTRO DE CONTROL CRONOS FID (DASHBOARD)
         // =========================================================================
+        async function loadDashboardFirestoreData() {
+            try {
+                const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
+                if (!firestoreDb) return;
+
+                console.log("[Dashboard] Solicitando datos iniciales a Firestore (cronos_sla, auditoria, usuarios)...");
+                const [slaSnap, audSnap, usrSnap] = await Promise.all([
+                    firestoreDb.collection('cronos_sla').limit(500).get().catch(e => { console.warn('Error get cronos_sla:', e); return null; }),
+                    firestoreDb.collection('auditoria').limit(500).get().catch(e => { console.warn('Error get auditoria:', e); return null; }),
+                    firestoreDb.collection('usuarios').get().catch(e => { console.warn('Error get usuarios:', e); return null; })
+                ]);
+
+                if (slaSnap && !slaSnap.empty) {
+                    const events = [];
+                    slaSnap.forEach(doc => {
+                        const d = doc.data();
+                        const timeMs = d.timestamp || (d.fechaHora ? new Date(d.fechaHora).getTime() : 0);
+                        events.push({ id: doc.id, ...d, timestamp: timeMs });
+                    });
+                    events.sort((a, b) => b.timestamp - a.timestamp);
+                    window.CRONOS_SLA_EVENTS = events;
+                    console.log("[Dashboard] Eventos SLA cargados desde Firestore:", events.length);
+                }
+
+                if (audSnap && !audSnap.empty) {
+                    const logs = [];
+                    audSnap.forEach(doc => {
+                        const d = doc.data();
+                        const timeMs = d.timestamp || (d.fechaHora ? new Date(d.fechaHora).getTime() : 0);
+                        logs.push({ id: doc.id, ...d, usuario: d.nombre || d.usuario || 'Desconocido', timestamp: timeMs });
+                    });
+                    logs.sort((a, b) => b.timestamp - a.timestamp);
+                    window.CRONOS_ACCESS_LOGS = logs;
+                    window.CRONOS_FIRESTORE_AUDIT_LOGS = logs;
+                    console.log("[Dashboard] Logs de Auditoria cargados desde Firestore:", logs.length);
+                }
+
+                if (usrSnap && !usrSnap.empty) {
+                    const users = [];
+                    usrSnap.forEach(doc => {
+                        users.push({ uid: doc.id, ...doc.data() });
+                    });
+                    window.CRONOS_USERS_DB = users;
+                }
+
+                renderDashboard();
+            } catch (err) {
+                console.error("[Dashboard] Error cargando datos iniciales:", err);
+            }
+        }
+
         function renderDashboard() {
             renderDashboardMetricsOnly();
             renderDashboardModuleBars();
@@ -9086,13 +9106,21 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
         }
 
         function renderDashboardMetricsOnly() {
-            const m = calculateRealDashboardMetrics();
+            const slaData = window.CRONOS_SLA_EVENTS || [];
+            const auditData = window.CRONOS_ACCESS_LOGS || [];
+            const metrics = calculateRealDashboardMetrics();
+
+            console.log("Dashboard SLA Data:", slaData);
+            console.log("Dashboard Audit Data:", auditData);
+            console.log("Dashboard Metrics:", metrics);
+
+            const m = metrics;
 
             // Tarjeta 1: Usuarios Activos
             const elUsrHoy = document.getElementById('dash-card-usuarios-hoy');
             const elUsr24h = document.getElementById('dash-card-usuarios-24h');
             if (elUsrHoy) elUsrHoy.textContent = m.usuariosHoy;
-            if (elUsr24h) elUsr24h.textContent = m.usuarios24h;
+            if (elUsr24h) elUsr24h.textContent = m.usuarios24h + (m.usuarios24h === 1 ? ' usuario' : ' usuarios');
 
             // Tarjeta 2: Sesiones Iniciadas
             const elSesHoy = document.getElementById('dash-card-sesiones-hoy');
@@ -9178,6 +9206,8 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             const container = document.getElementById('dash-modulos-barras-container');
             if (!container) return;
 
+            calculateRealDashboardMetrics();
+
             const moduleData = window.CRONOS_MODULES_DEF.map(mod => {
                 const count = window.CRONOS_MODULE_STATS[mod.key] || 0;
                 return {
@@ -9228,21 +9258,92 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
 
         function renderDashboardRanking() {
             const tbody = document.getElementById('dash-ranking-tbody');
-            if (!tbody || !window.CRONOS_USERS_DB) return;
+            if (!tbody) return;
 
-            const sortedUsers = [...window.CRONOS_USERS_DB].sort((a, b) => {
-                const scoreA = (a.accesos || 0) + (a.usoSLA || 0) + (a.sesiones || 0);
-                const scoreB = (b.accesos || 0) + (b.usoSLA || 0) + (b.sesiones || 0);
+            const userMap = new Map();
+
+            (window.CRONOS_USERS_DB || []).forEach(u => {
+                const id = (u.correo || u.nombre || u.uid || '').toLowerCase().trim();
+                if (!id) return;
+                userMap.set(id, {
+                    uid: u.uid || id,
+                    nombre: u.nombre || u.correo || 'Usuario',
+                    correo: u.correo || '',
+                    rol: u.rol || 'Asesor',
+                    avatar: u.avatar || (u.nombre ? u.nombre.substring(0, 2).toUpperCase() : 'US'),
+                    sesiones: u.sesiones || 0,
+                    accesos: u.accesos || 0,
+                    usoSLA: u.usoSLA || 0,
+                    tiempoAcumuladoSeconds: u.tiempoAcumuladoSeconds || 0,
+                    tiempoAcumulado: u.tiempoAcumulado || formatAccumulatedSeconds(u.tiempoAcumuladoSeconds || 0)
+                });
+            });
+
+            (window.CRONOS_ACCESS_LOGS || []).forEach(log => {
+                const id = (log.correo || log.usuario || log.nombre || '').toLowerCase().trim();
+                if (!id || id === 'sistema') return;
+                if (!userMap.has(id)) {
+                    userMap.set(id, {
+                        uid: id,
+                        nombre: log.usuario || log.nombre || log.correo || 'Usuario',
+                        correo: log.correo || '',
+                        rol: log.rol || 'Asesor',
+                        avatar: (log.usuario || 'US').substring(0, 2).toUpperCase(),
+                        sesiones: 0,
+                        accesos: 0,
+                        usoSLA: 0,
+                        tiempoAcumuladoSeconds: 0,
+                        tiempoAcumulado: '0m'
+                    });
+                }
+                const usr = userMap.get(id);
+                const accionNorm = (log.accion || '').toUpperCase().trim();
+                if (accionNorm === 'INICIO_SESION' || accionNorm === 'LOGIN' || accionNorm.includes('INICIO')) {
+                    usr.sesiones++;
+                } else if (accionNorm === 'ACCESO_MODULO' || accionNorm.includes('ACCESO')) {
+                    usr.accesos++;
+                }
+            });
+
+            (window.CRONOS_SLA_EVENTS || []).forEach(ev => {
+                const id = (ev.correo || ev.usuario || '').toLowerCase().trim();
+                if (!id || id === 'sistema') return;
+                if (!userMap.has(id)) {
+                    userMap.set(id, {
+                        uid: id,
+                        nombre: ev.usuario || ev.correo || 'Usuario',
+                        correo: ev.correo || '',
+                        rol: ev.rol || 'Asesor',
+                        avatar: (ev.usuario || 'US').substring(0, 2).toUpperCase(),
+                        sesiones: 0,
+                        accesos: 0,
+                        usoSLA: 0,
+                        tiempoAcumuladoSeconds: 0,
+                        tiempoAcumulado: '0m'
+                    });
+                }
+                const usr = userMap.get(id);
+                usr.usoSLA++;
+                if (ev.tiempoSegundos && ev.tiempoSegundos > 0) {
+                    usr.tiempoAcumuladoSeconds = (usr.tiempoAcumuladoSeconds || 0) + ev.tiempoSegundos;
+                    usr.tiempoAcumulado = formatAccumulatedSeconds(usr.tiempoAcumuladoSeconds);
+                }
+            });
+
+            const userList = Array.from(userMap.values());
+            userList.sort((a, b) => {
+                const scoreA = (a.sesiones * 3) + (a.accesos * 2) + (a.usoSLA * 2) + (a.tiempoAcumuladoSeconds || 0);
+                const scoreB = (b.sesiones * 3) + (b.accesos * 2) + (b.usoSLA * 2) + (b.tiempoAcumuladoSeconds || 0);
                 return scoreB - scoreA;
             });
 
-            if (sortedUsers.length === 0 || sortedUsers.every(u => ((u.accesos || 0) + (u.usoSLA || 0) + (u.sesiones || 0)) === 0)) {
+            if (userList.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 font-medium">Sin actividad de usuarios registrada</td></tr>`;
                 return;
             }
 
             let html = '';
-            sortedUsers.forEach((usr, idx) => {
+            userList.forEach((usr, idx) => {
                 const style = getRoleBadgeStyle(usr.rol);
                 const rankBadge = idx === 0 ? 'bg-amber-400 text-slate-900 font-black' : (idx === 1 ? 'bg-slate-300 text-slate-800 font-bold' : (idx === 2 ? 'bg-amber-700 text-white font-bold' : 'bg-slate-100 text-slate-600 font-bold'));
 
@@ -9277,7 +9378,7 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             const tbody = document.getElementById('dash-actividades-tbody');
             if (!tbody || !window.CRONOS_ACCESS_LOGS) return;
 
-            const recentLogs = window.CRONOS_ACCESS_LOGS.slice(0, 7);
+            const recentLogs = window.CRONOS_ACCESS_LOGS.slice(0, 10);
 
             if (recentLogs.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400 font-medium">Sin actividades recientes</td></tr>`;
@@ -9309,10 +9410,94 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             tbody.innerHTML = html;
         }
 
-        function refreshDashboardMetrics() {
-            loadSessionFromLocalStorage();
+        async function refreshDashboardMetrics() {
+            try {
+                if (window.db) {
+                    const [audSnap, slaSnap, usrSnap] = await Promise.all([
+                        window.db.collection('auditoria').limit(500).get().catch(() => null),
+                        window.db.collection('cronos_sla').limit(500).get().catch(() => null),
+                        window.db.collection('usuarios').get().catch(() => null)
+                    ]);
+                    if (audSnap && !audSnap.empty) {
+                        const logs = [];
+                        audSnap.forEach(doc => {
+                            const d = doc.data();
+                            const timeMs = d.timestamp || (d.fechaHora ? new Date(d.fechaHora).getTime() : 0);
+                            let fFecha = d.fecha;
+                            let fHora = d.hora;
+                            if ((!fFecha || !fHora) && d.fechaHora) {
+                                try {
+                                    const dt = new Date(d.fechaHora);
+                                    if (!fFecha) fFecha = dt.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                                    if (!fHora) fHora = dt.toLocaleTimeString('es-PE', { hour12: false });
+                                } catch (e) { }
+                            }
+                            logs.push({
+                                id: doc.id,
+                                fecha: fFecha || '—',
+                                hora: fHora || '—',
+                                fechaHora: d.fechaHora || '',
+                                usuario: d.usuario || d.nombre || 'Desconocido',
+                                nombre: d.nombre || d.usuario || 'Desconocido',
+                                correo: d.correo || d.email || '—',
+                                rol: d.rol || d.perfil || 'Asesor',
+                                accion: d.accion || d.action || 'ACCESO_MODULO',
+                                modulo: d.modulo || d.module || 'General',
+                                detalle: d.detalle || d.resultado || d.detail || 'Operación exitosa',
+                                resultado: d.resultado || d.detalle || 'Exitoso',
+                                timestamp: timeMs
+                            });
+                        });
+                        logs.sort((a, b) => b.timestamp - a.timestamp);
+                        window.CRONOS_ACCESS_LOGS = logs;
+                        window.CRONOS_FIRESTORE_AUDIT_LOGS = logs;
+                    }
+                    if (slaSnap && !slaSnap.empty) {
+                        const events = [];
+                        slaSnap.forEach(doc => {
+                            const d = doc.data();
+                            const timeMs = d.timestamp || (d.fechaHora ? new Date(d.fechaHora).getTime() : 0);
+                            let fFecha = d.fecha;
+                            let fHora = d.hora;
+                            if ((!fFecha || !fHora) && d.fechaHora) {
+                                try {
+                                    const dt = new Date(d.fechaHora);
+                                    if (!fFecha) fFecha = dt.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                                    if (!fHora) fHora = dt.toLocaleTimeString('es-PE', { hour12: false });
+                                } catch (e) { }
+                            }
+                            events.push({
+                                id: doc.id,
+                                fecha: fFecha || '—',
+                                hora: fHora || '—',
+                                fechaHora: d.fechaHora || '',
+                                usuario: d.usuario || d.nombre || 'Usuario WIN',
+                                correo: d.correo || d.email || '—',
+                                rol: d.rol || 'Asesor',
+                                modulo: d.modulo || 'CRONOS SLA',
+                                accion: d.accion || 'Iniciar',
+                                tiempoExacto: d.tiempoExacto || formatSecondsToMMSS(d.tiempoSegundos || 0),
+                                tiempoSegundos: typeof d.tiempoSegundos === 'number' ? d.tiempoSegundos : (parseInt(d.tiempoSegundos) || 0),
+                                estadoSLA: d.estadoSLA || getSLAStateFromSeconds(d.tiempoSegundos || 0),
+                                timestamp: timeMs
+                            });
+                        });
+                        events.sort((a, b) => b.timestamp - a.timestamp);
+                        window.CRONOS_SLA_EVENTS = events;
+                    }
+                    if (usrSnap && !usrSnap.empty) {
+                        const users = [];
+                        usrSnap.forEach(doc => {
+                            users.push({ uid: doc.id, ...doc.data() });
+                        });
+                        window.CRONOS_USERS_DB = users;
+                    }
+                }
+            } catch (e) {
+                console.warn('refreshDashboardMetrics error:', e);
+            }
             renderDashboard();
-            showToast('Métricas del Centro de Control sincronizadas con datos reales.', 'info');
+            showToast('Métricas del Centro de Control sincronizadas con datos reales desde Firestore.', 'info');
         }
 
         // =========================================================================
@@ -9445,6 +9630,7 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             }
             renderSLAMetricsCards();
             renderSLATable();
+            renderDashboardMetricsOnly();
         }
 
         function renderSLAMetricsCards() {
@@ -10326,8 +10512,16 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
         function executeLogout() {
             sessionStorage.removeItem('cronos_session_started');
             if (typeof _auditoriaUnsubscribe === 'function') {
-                _auditoriaUnsubscribe();
+                try { _auditoriaUnsubscribe(); } catch (e) { }
                 _auditoriaUnsubscribe = null;
+            }
+            if (typeof _slaUnsubscribe === 'function') {
+                try { _slaUnsubscribe(); } catch (e) { }
+                _slaUnsubscribe = null;
+            }
+            if (typeof _usuariosUnsubscribe === 'function') {
+                try { _usuariosUnsubscribe(); } catch (e) { }
+                _usuariosUnsubscribe = null;
             }
             AuditManager.logLogout(window.CRONOS_CURRENT_USER);
             SessionManager.clearSession();
@@ -10399,6 +10593,8 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
         // =========================================================================
         window.CRONOS_FIRESTORE_AUDIT_LOGS = [];
         let _auditoriaUnsubscribe = null;
+        let _slaUnsubscribe = null;
+        let _usuariosUnsubscribe = null;
 
         function canViewAccessHistory() {
             if (!window.CRONOS_CURRENT_USER) return false;
@@ -10407,17 +10603,21 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             return allowedRoles.includes(role);
         }
 
-        function initAuditoriaRealtimeListener() {
+        /**
+         * Inicialización de Listeners en Tiempo Real (onSnapshot) para todas las colecciones de Firestore.
+         */
+        function initRealtimeListeners() {
             try {
                 const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
                 if (!firestoreDb) return;
 
+                // 1. AUDITORIA REALTIME LISTENER
                 if (_auditoriaUnsubscribe) {
-                    _auditoriaUnsubscribe();
+                    try { _auditoriaUnsubscribe(); } catch (e) { }
                     _auditoriaUnsubscribe = null;
                 }
 
-                const handleDocs = (snapshot) => {
+                const handleAudDocs = (snapshot) => {
                     const logs = [];
                     snapshot.forEach(doc => {
                         const d = doc.data();
@@ -10452,35 +10652,129 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
                     window.CRONOS_FIRESTORE_AUDIT_LOGS = logs;
                     window.CRONOS_ACCESS_LOGS = logs;
 
-                    renderAccessHistoryTable();
+                    renderDashboard();
                     renderAuditoriaStats();
                     renderAuditoriaTable();
-                    renderDashboardActivities();
+                    renderAccessHistoryTable();
                 };
 
                 try {
                     _auditoriaUnsubscribe = firestoreDb.collection('auditoria')
-                        .orderBy('fechaHora', 'desc')
+                        .orderBy('timestamp', 'desc')
                         .limit(500)
-                        .onSnapshot(handleDocs, (err) => {
-                            console.warn('[Auditoria Realtime] Fallback a onSnapshot sin orden compuesto:', err);
+                        .onSnapshot(handleAudDocs, (err) => {
+                            console.warn('[Auditoria Realtime] Fallback a onSnapshot sin orden:', err);
                             _auditoriaUnsubscribe = firestoreDb.collection('auditoria')
                                 .limit(500)
-                                .onSnapshot(handleDocs, (err2) => {
+                                .onSnapshot(handleAudDocs, (err2) => {
                                     console.error("FIRESTORE ERROR [auditoria listener]:", err2);
                                 });
                         });
                 } catch (e) {
                     _auditoriaUnsubscribe = firestoreDb.collection('auditoria')
                         .limit(500)
-                        .onSnapshot(handleDocs, (err2) => {
+                        .onSnapshot(handleAudDocs, (err2) => {
                             console.error("FIRESTORE ERROR [auditoria listener fallback]:", err2);
                         });
                 }
+
+                // 2. CRONOS SLA REALTIME LISTENER
+                if (_slaUnsubscribe) {
+                    try { _slaUnsubscribe(); } catch (e) { }
+                    _slaUnsubscribe = null;
+                }
+
+                const handleSlaDocs = (snapshot) => {
+                    const events = [];
+                    snapshot.forEach(doc => {
+                        const d = doc.data();
+                        const timeMs = d.timestamp || (d.fechaHora ? new Date(d.fechaHora).getTime() : 0);
+                        let fFecha = d.fecha;
+                        let fHora = d.hora;
+                        if ((!fFecha || !fHora) && d.fechaHora) {
+                            try {
+                                const dt = new Date(d.fechaHora);
+                                if (!fFecha) fFecha = dt.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                                if (!fHora) fHora = dt.toLocaleTimeString('es-PE', { hour12: false });
+                            } catch (e) { }
+                        }
+                        events.push({
+                            id: doc.id,
+                            fecha: fFecha || '—',
+                            hora: fHora || '—',
+                            fechaHora: d.fechaHora || '',
+                            usuario: d.usuario || d.nombre || 'Usuario WIN',
+                            correo: d.correo || d.email || '—',
+                            rol: d.rol || 'Asesor',
+                            modulo: d.modulo || 'CRONOS SLA',
+                            accion: d.accion || 'Iniciar',
+                            tiempoExacto: d.tiempoExacto || formatSecondsToMMSS(d.tiempoSegundos || 0),
+                            tiempoSegundos: typeof d.tiempoSegundos === 'number' ? d.tiempoSegundos : (parseInt(d.tiempoSegundos) || 0),
+                            estadoSLA: d.estadoSLA || getSLAStateFromSeconds(d.tiempoSegundos || 0),
+                            timestamp: timeMs
+                        });
+                    });
+
+                    events.sort((a, b) => b.timestamp - a.timestamp);
+                    window.CRONOS_SLA_EVENTS = events;
+
+                    renderDashboard();
+                    renderSLAModule();
+                };
+
+                try {
+                    _slaUnsubscribe = firestoreDb.collection('cronos_sla')
+                        .orderBy('timestamp', 'desc')
+                        .limit(500)
+                        .onSnapshot(handleSlaDocs, (err) => {
+                            console.warn('[SLAModule Realtime] Fallback a onSnapshot sin orden:', err);
+                            _slaUnsubscribe = firestoreDb.collection('cronos_sla')
+                                .limit(500)
+                                .onSnapshot(handleSlaDocs, (err2) => {
+                                    console.error("FIRESTORE ERROR [cronos_sla listener]:", err2);
+                                });
+                        });
+                } catch (e) {
+                    _slaUnsubscribe = firestoreDb.collection('cronos_sla')
+                        .limit(500)
+                        .onSnapshot(handleSlaDocs, (err2) => {
+                            console.error("FIRESTORE ERROR [cronos_sla listener fallback]:", err2);
+                        });
+                }
+
+                // 3. USUARIOS REALTIME LISTENER
+                if (_usuariosUnsubscribe) {
+                    try { _usuariosUnsubscribe(); } catch (e) { }
+                    _usuariosUnsubscribe = null;
+                }
+
+                const handleUserDocs = (snapshot) => {
+                    const users = [];
+                    snapshot.forEach(doc => {
+                        users.push({ uid: doc.id, ...doc.data() });
+                    });
+                    window.CRONOS_USERS_DB = users;
+
+                    renderDashboardRanking();
+                    if (typeof renderUserManagementTable === 'function') renderUserManagementTable();
+                    if (typeof renderUserStats === 'function') renderUserStats();
+                };
+
+                try {
+                    _usuariosUnsubscribe = firestoreDb.collection('usuarios')
+                        .onSnapshot(handleUserDocs, (err) => {
+                            console.error("FIRESTORE ERROR [usuarios listener]:", err);
+                        });
+                } catch (e) {
+                    console.error("FIRESTORE ERROR [usuarios listener fallback]:", e);
+                }
+
             } catch (err) {
-                console.error('[Auditoria Realtime] Error al inicializar listener:', err);
+                console.error('[Realtime Listeners] Error al inicializar listeners Firestore:', err);
             }
         }
+        window.initAuditoriaRealtimeListener = initRealtimeListeners;
+        window.initRealtimeListeners = initRealtimeListeners;
 
         async function openAccessHistoryModal() {
             if (!canViewAccessHistory()) {
@@ -10770,6 +11064,7 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             } else if (target === 'dashboard' && contentDash) {
                 contentDash.classList.remove('hidden');
                 if (tabDash) tabDash.className = adminActiveClass;
+                loadDashboardFirestoreData();
                 renderDashboard();
                 trackModuleAccess('dashboard');
             } else if (target === 'auditoria' && contentAud) {
@@ -10798,6 +11093,8 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             if (window.CRONOS_CURRENT_USER) {
                 applyRolePermissions(window.CRONOS_CURRENT_USER.rol);
             }
+            try { initRealtimeListeners(); } catch (eListeners) { console.warn('Error iniciando realtime listeners:', eListeners); }
+            try { loadDashboardFirestoreData(); } catch (eDash) { console.warn('Error loadDashboardFirestoreData:', eDash); }
 
             // Si ya hay sesión guardada en localStorage, mostrar app directamente
             if (localStorage.getItem('cronos_is_logged_in') === 'true' || localStorage.getItem('usuarioActivo')) {
