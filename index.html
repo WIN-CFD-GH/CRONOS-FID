@@ -1229,6 +1229,12 @@
                                 <i class="fa-solid fa-clock-rotate-left text-slate-400 w-4 text-center"></i>
                                 <span>Historial de Accesos</span>
                             </button>
+                            <button type="button" id="menu-opt-exports"
+                                onclick="openExportCenterModal(); toggleUserDropdown(event);"
+                                class="w-full text-left px-4 py-2 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2.5 transition cursor-pointer">
+                                <i class="fa-solid fa-file-export text-slate-400 w-4 text-center"></i>
+                                <span>Centro de Exportaciones</span>
+                            </button>
                             <button type="button" id="menu-opt-settings"
                                 onclick="showToast('Configuracion del sistema preparada para Firebase', 'info'); toggleUserDropdown(event);"
                                 class="w-full text-left px-4 py-2 hover:bg-slate-50 text-slate-600 flex items-center gap-2.5 transition cursor-pointer">
@@ -2942,7 +2948,7 @@
                                 class="bg-white/10 hover:bg-white/20 text-white px-3.5 py-2 rounded-xl text-xs font-bold border border-white/20 transition-all flex items-center gap-2 cursor-pointer">
                                 <i class="fa-solid fa-rotate-right text-xs"></i> Actualizar Métricas
                             </button>
-                            <button onclick="exportDashboardReport()"
+                            <button onclick="openExportCenterModal('dashboard')"
                                 class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md hover:shadow-emerald-600/30 transition-all flex items-center gap-2 cursor-pointer">
                                 <i class="fa-solid fa-file-excel"></i> Exportar Reporte
                             </button>
@@ -3391,7 +3397,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="exportAuditoriaReport()"
+                            <button onclick="openExportCenterModal('auditoria')"
                                 class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm cursor-pointer active:scale-95">
                                 <i class="fa-regular fa-file-excel"></i>
                                 <span>Exportar Auditoría</span>
@@ -3556,7 +3562,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="exportSLAReport()"
+                            <button onclick="openExportCenterModal('cronos_sla')"
                                 class="bg-purple-600 hover:bg-purple-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm cursor-pointer active:scale-95">
                                 <i class="fa-regular fa-file-excel"></i>
                                 <span>Exportar SLA Data</span>
@@ -3987,6 +3993,28 @@
                                             class="bg-amber-400 text-slate-900 text-[9px] px-1.5 py-0.2 rounded font-extrabold">Admin</span>
                                     </div>
                                     <div class="text-[10px] text-slate-400 font-normal">Cuentas y Permisos</div>
+                                </div>
+                            </div>
+                            <i
+                                class="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </button>
+
+                        <!-- Botón: Centro de Exportaciones (Fase 4.0) -->
+                        <button id="sidebar-btn-exports" onclick="openExportCenterModal()"
+                            class="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-xs transition-all border border-slate-200/80 hover:border-emerald-300 group cursor-pointer text-left">
+                            <div class="flex items-center gap-2.5">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-white shadow-xs border border-slate-200 flex items-center justify-center text-slate-600 group-hover:text-emerald-600 transition-colors">
+                                    <i class="fa-solid fa-file-export"></i>
+                                </div>
+                                <div>
+                                    <div
+                                        class="flex items-center gap-1.5 font-extrabold text-slate-800 group-hover:text-emerald-800 transition-colors">
+                                        <span>Exportaciones</span>
+                                        <span
+                                            class="bg-emerald-600 text-white text-[9px] px-1.5 py-0.2 rounded font-extrabold">Fase 4.0</span>
+                                    </div>
+                                    <div class="text-[10px] text-slate-400 font-normal">Centro Histórico XLSX / CSV</div>
                                 </div>
                             </div>
                             <i
@@ -9419,7 +9447,7 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             if (tabSLA) tabSLA.style.display = (!isAsesor && (permissions.analitica_sla || isAdminOrSup)) ? '' : 'none';
             if (tabUsr) tabUsr.style.display = (!isAsesor && (permissions.gestion_usuarios || permissions.gestionUsuarios || isAdminOrSup)) ? '' : 'none';
 
-            const hasAnyAdmin = !isAsesor && (permissions.dashboard || permissions.auditoria || permissions.analitica_sla || permissions.gestion_usuarios || permissions.gestionUsuarios || isAdminOrSup);
+            const hasAnyAdmin = !isAsesor && (permissions.dashboard || permissions.auditoria || permissions.analitica_sla || permissions.gestion_usuarios || permissions.gestionUsuarios || permissions.exportExcel || isAdminOrSup);
             const sidebarAdmin = document.getElementById('sidebar-admin-modules') || document.getElementById('sidebar-admin-section');
             if (sidebarAdmin) {
                 if (hasAnyAdmin) {
@@ -9437,6 +9465,12 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
             if (menuSettings) menuSettings.style.display = (!isAsesor && (permissions.configuracion || isAdminOrSup)) ? '' : 'none';
             if (menuUsers) menuUsers.style.display = (!isAsesor && (permissions.gestion_usuarios || isAdminOrSup)) ? '' : 'none';
             if (menuHistory) menuHistory.style.display = (permissions.historialAccesos !== false && permissions.auditoria !== false && !isAsesor) ? '' : 'none';
+
+            const menuExports = document.getElementById('menu-opt-exports');
+            if (menuExports) menuExports.style.display = (!isAsesor && (permissions.exportExcel || isAdminOrSup)) ? '' : 'none';
+
+            const sidebarExports = document.getElementById('sidebar-btn-exports');
+            if (sidebarExports) sidebarExports.style.display = (!isAsesor && (permissions.exportExcel || isAdminOrSup)) ? '' : 'none';
 
             if (window.CRONOS_CURRENT_USER) {
                 if (typeof updateHeaderUserUI === 'function') {
@@ -10114,121 +10148,960 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
         }
 
         // =========================================================================
-        // EXPORTACIÓN DE REPORTES EN FORMATO EXCEL (CSV UTF-8 BOM)
+        // FASE 4.0 - CENTRO AVANZADO DE EXPORTACIONES HISTÓRICAS (FIRESTORE)
         // =========================================================================
         function downloadCSV(filename, csvContent) {
-            const bom = "﻿";
-            const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
-            if (link.download !== undefined) {
-                const url = URL.createObjectURL(blob);
-                link.setAttribute("href", url);
-                link.setAttribute("download", filename);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => { URL.revokeObjectURL(url); }, 1500);
         }
 
+        function parseDocTimestamp(doc) {
+            if (!doc) return 0;
+            if (typeof doc.timestamp === 'number' && doc.timestamp > 0) return doc.timestamp;
+            if (doc.fechaHora) {
+                const ms = new Date(doc.fechaHora).getTime();
+                if (!isNaN(ms) && ms > 0) return ms;
+            }
+            if (doc.fecha) {
+                const parts = String(doc.fecha).trim().split(/[\/\-\.]/);
+                if (parts.length === 3) {
+                    let y, m, d;
+                    if (parts[0].length === 4) {
+                        y = parseInt(parts[0], 10);
+                        m = parseInt(parts[1], 10) - 1;
+                        d = parseInt(parts[2], 10);
+                    } else {
+                        d = parseInt(parts[0], 10);
+                        m = parseInt(parts[1], 10) - 1;
+                        y = parseInt(parts[2], 10);
+                    }
+                    let h = 0, min = 0, sec = 0;
+                    if (doc.hora) {
+                        const t = String(doc.hora).trim().split(':');
+                        h = parseInt(t[0], 10) || 0;
+                        min = parseInt(t[1], 10) || 0;
+                        sec = parseInt(t[2], 10) || 0;
+                    }
+                    const dt = new Date(y, m, d, h, min, sec);
+                    if (!isNaN(dt.getTime())) return dt.getTime();
+                }
+            }
+            return 0;
+        }
+
+        const ExportCenterManager = {
+            currentModule: 'dashboard',
+            currentPeriod: 'mes',
+            currentFormat: 'xlsx',
+            isProcessing: false,
+
+            getPeriodDateRange(periodType, customStart, customEnd) {
+                const now = new Date();
+                const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0).getTime();
+                const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).getTime();
+
+                let startMs = 0;
+                let endMs = todayEnd;
+                let label = "";
+
+                switch (periodType) {
+                    case 'hoy':
+                        startMs = todayStart;
+                        endMs = todayEnd;
+                        label = `Hoy (${now.toLocaleDateString('es-PE')})`;
+                        break;
+                    case 'semana':
+                        startMs = todayStart - (7 * 24 * 60 * 60 * 1000);
+                        endMs = todayEnd;
+                        label = `Últimos 7 días (${new Date(startMs).toLocaleDateString('es-PE')} al ${now.toLocaleDateString('es-PE')})`;
+                        break;
+                    case 'mes':
+                        startMs = todayStart - (30 * 24 * 60 * 60 * 1000);
+                        endMs = todayEnd;
+                        label = `Últimos 30 días (${new Date(startMs).toLocaleDateString('es-PE')} al ${now.toLocaleDateString('es-PE')})`;
+                        break;
+                    case '3meses':
+                        startMs = todayStart - (90 * 24 * 60 * 60 * 1000);
+                        endMs = todayEnd;
+                        label = `Últimos 3 meses (90 días: ${new Date(startMs).toLocaleDateString('es-PE')} al ${now.toLocaleDateString('es-PE')})`;
+                        break;
+                    case '6meses':
+                        // RETENCIÓN MÍNIMA REQUERIDA: 180 DÍAS (6 MESES)
+                        startMs = todayStart - (180 * 24 * 60 * 60 * 1000);
+                        endMs = todayEnd;
+                        label = `Últimos 6 meses (180 días - Retención Oficial: ${new Date(startMs).toLocaleDateString('es-PE')} al ${now.toLocaleDateString('es-PE')})`;
+                        break;
+                    case 'personalizado':
+                        if (customStart) {
+                            const s = new Date(customStart + "T00:00:00");
+                            startMs = !isNaN(s.getTime()) ? s.getTime() : 0;
+                        } else {
+                            startMs = 0;
+                        }
+                        if (customEnd) {
+                            const e = new Date(customEnd + "T23:59:59.999");
+                            endMs = !isNaN(e.getTime()) ? e.getTime() : todayEnd;
+                        } else {
+                            endMs = todayEnd;
+                        }
+                        label = `Rango Personalizado (${customStart || 'Inicio'} al ${customEnd || 'Fin'})`;
+                        break;
+                    default:
+                        startMs = todayStart;
+                        endMs = todayEnd;
+                        label = "Hoy";
+                }
+
+                return { startMs, endMs, label };
+            },
+
+            async fetchFirestoreHistorical(collectionName, startMs, endMs) {
+                const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
+                let records = [];
+
+                if (firestoreDb) {
+                    try {
+                        const qSnap = await firestoreDb.collection(collectionName)
+                            .where('timestamp', '>=', startMs)
+                            .where('timestamp', '<=', endMs)
+                            .get();
+
+                        qSnap.forEach(doc => {
+                            records.push({ id: doc.id, ...doc.data() });
+                        });
+                        console.log(`[ExportCenter] ${collectionName} obtenido por timestamp: ${records.length} docs`);
+                    } catch (queryErr) {
+                        console.warn(`[ExportCenter] Query directa con where falló (${queryErr.message}). Ejecutando consulta de respaldo...`);
+                        try {
+                            const allSnap = await firestoreDb.collection(collectionName).get();
+                            allSnap.forEach(doc => {
+                                const data = doc.data();
+                                const ms = parseDocTimestamp(data);
+                                if (ms >= startMs && ms <= endMs) {
+                                    records.push({ id: doc.id, ...data, timestamp: ms });
+                                }
+                            });
+                            console.log(`[ExportCenter] ${collectionName} obtenido via fallback: ${records.length} docs`);
+                        } catch (fallbackErr) {
+                            console.error(`[ExportCenter] Error en fallback de colección ${collectionName}:`, fallbackErr);
+                        }
+                    }
+                }
+
+                // Complementar con datos en memoria (CRONOS_ACCESS_LOGS o CRONOS_SLA_EVENTS)
+                const localSource = collectionName === 'auditoria' ? (window.CRONOS_ACCESS_LOGS || []) : (window.CRONOS_SLA_EVENTS || []);
+                localSource.forEach(item => {
+                    const ms = parseDocTimestamp(item);
+                    if (ms >= startMs && ms <= endMs) {
+                        const alreadyExists = records.some(r =>
+                            (r.id && item.id && r.id === item.id) ||
+                            (r.timestamp === ms && (r.accion === item.accion) && (r.usuario === item.usuario || r.correo === item.correo))
+                        );
+                        if (!alreadyExists) {
+                            records.push(item);
+                        }
+                    }
+                });
+
+                // Ordenar cronológicamente descendente
+                records.sort((a, b) => parseDocTimestamp(b) - parseDocTimestamp(a));
+                return records;
+            },
+
+            openModal(moduleKey = 'dashboard') {
+                if (!hasPermission('exportExcel')) {
+                    showToast('Acceso denegado: Tu perfil no cuenta con permisos de exportación.', 'error');
+                    return;
+                }
+
+                const modal = document.getElementById('modal-centro-exportaciones');
+                if (!modal) return;
+
+                this.setModule(moduleKey);
+                this.populateUserDropdown();
+                this.setPeriod(this.currentPeriod || 'mes');
+                this.setFormat(this.currentFormat || 'xlsx');
+
+                const todayStr = new Date().toISOString().split('T')[0];
+                const prev30 = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString().split('T')[0];
+                const sInput = document.getElementById('export-date-start');
+                const eInput = document.getElementById('export-date-end');
+                if (sInput && !sInput.value) sInput.value = prev30;
+                if (eInput && !eInput.value) eInput.value = todayStr;
+
+                modal.classList.remove('hidden');
+                this.updatePreviewCount();
+            },
+
+            closeModal() {
+                const modal = document.getElementById('modal-centro-exportaciones');
+                if (modal) modal.classList.add('hidden');
+            },
+
+            setModule(modKey) {
+                this.currentModule = modKey;
+                const tabs = ['dashboard', 'auditoria', 'cronos_sla'];
+                tabs.forEach(t => {
+                    const btn = document.getElementById(`export-tab-btn-${t}`);
+                    if (btn) {
+                        if (t === modKey) {
+                            btn.className = "flex-1 py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all bg-emerald-600 text-white shadow-md cursor-pointer";
+                        } else {
+                            btn.className = "flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 cursor-pointer";
+                        }
+                    }
+                });
+
+                const roleFilterDiv = document.getElementById('export-filter-role-container');
+                const actionFilterDiv = document.getElementById('export-filter-action-container');
+                const slaFilterDiv = document.getElementById('export-filter-sla-container');
+
+                if (roleFilterDiv) roleFilterDiv.style.display = (modKey === 'auditoria' || modKey === 'cronos_sla') ? 'block' : 'none';
+                if (actionFilterDiv) actionFilterDiv.style.display = (modKey === 'auditoria') ? 'block' : 'none';
+                if (slaFilterDiv) slaFilterDiv.style.display = (modKey === 'cronos_sla') ? 'block' : 'none';
+
+                const titleSpan = document.getElementById('export-modal-selected-module-title');
+                if (titleSpan) {
+                    titleSpan.textContent = modKey === 'dashboard' ? 'Dashboard Ejecutivo' : (modKey === 'auditoria' ? 'Auditoría Operativa' : 'Analítica CRONOS SLA');
+                }
+
+                this.updatePreviewCount();
+            },
+
+            setPeriod(periodKey) {
+                this.currentPeriod = periodKey;
+                const pills = ['hoy', 'semana', 'mes', '3meses', '6meses', 'personalizado'];
+                pills.forEach(p => {
+                    const btn = document.getElementById(`export-period-${p}`);
+                    if (btn) {
+                        if (p === periodKey) {
+                            btn.className = "px-2.5 py-2 rounded-xl text-xs font-extrabold transition-all bg-emerald-600 text-white shadow-xs cursor-pointer text-center";
+                        } else {
+                            btn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer text-center";
+                        }
+                    }
+                });
+
+                const customDatesContainer = document.getElementById('export-custom-dates-container');
+                if (customDatesContainer) {
+                    customDatesContainer.style.display = (periodKey === 'personalizado') ? 'grid' : 'none';
+                }
+
+                this.updatePreviewCount();
+            },
+
+            setFormat(formatKey) {
+                this.currentFormat = formatKey;
+                const optXlsx = document.getElementById('export-format-card-xlsx');
+                const optCsv = document.getElementById('export-format-card-csv');
+
+                if (optXlsx && optCsv) {
+                    if (formatKey === 'xlsx') {
+                        optXlsx.className = "p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50/50 flex items-center gap-3.5 cursor-pointer transition shadow-xs";
+                        optCsv.className = "p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center gap-3.5 cursor-pointer transition";
+                    } else {
+                        optXlsx.className = "p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center gap-3.5 cursor-pointer transition";
+                        optCsv.className = "p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50/50 flex items-center gap-3.5 cursor-pointer transition shadow-xs";
+                    }
+                }
+            },
+
+            populateUserDropdown() {
+                const sel = document.getElementById('export-filter-user');
+                if (!sel) return;
+                const prev = sel.value || 'todos';
+                sel.innerHTML = '<option value="todos">Todos los Asesores y Usuarios</option>';
+
+                const users = window.CRONOS_USERS_DB || [];
+                const sorted = [...users].sort((a, b) => (a.nombre || a.usuario || '').localeCompare(b.nombre || b.usuario || ''));
+                sorted.forEach(u => {
+                    const opt = document.createElement('option');
+                    opt.value = (u.correo || u.nombre || u.usuario || '').trim();
+                    opt.textContent = `${u.nombre || u.usuario || 'Usuario'} [${u.rol || 'Asesor'}]${u.correo ? ' • ' + u.correo : ''}`;
+                    sel.appendChild(opt);
+                });
+                sel.value = prev;
+            },
+
+            async updatePreviewCount() {
+                const previewBadge = document.getElementById('export-preview-badge');
+                if (!previewBadge) return;
+
+                previewBadge.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-emerald-600"></i> Verificando registros...`;
+
+                try {
+                    const cStart = document.getElementById('export-date-start')?.value;
+                    const cEnd = document.getElementById('export-date-end')?.value;
+                    const { startMs, endMs, label } = this.getPeriodDateRange(this.currentPeriod, cStart, cEnd);
+
+                    const userFilter = document.getElementById('export-filter-user')?.value || 'todos';
+                    const roleFilter = document.getElementById('export-filter-role')?.value || 'todos';
+                    const actionFilter = document.getElementById('export-filter-action')?.value || 'todas';
+                    const slaStatusFilter = document.getElementById('export-filter-sla-status')?.value || 'todos';
+
+                    const labelEl = document.getElementById('export-period-summary-label');
+                    if (labelEl) labelEl.textContent = label;
+
+                    let countText = "";
+                    if (this.currentModule === 'dashboard') {
+                        const audLogs = (window.CRONOS_ACCESS_LOGS || []).filter(l => {
+                            const ms = parseDocTimestamp(l);
+                            return ms >= startMs && ms <= endMs;
+                        });
+                        const slaLogs = (window.CRONOS_SLA_EVENTS || []).filter(s => {
+                            const ms = parseDocTimestamp(s);
+                            return ms >= startMs && ms <= endMs;
+                        });
+                        countText = `${audLogs.length} logs auditoría • ${slaLogs.length} eventos SLA`;
+                    } else if (this.currentModule === 'auditoria') {
+                        let audLogs = (window.CRONOS_ACCESS_LOGS || []).filter(l => {
+                            const ms = parseDocTimestamp(l);
+                            return ms >= startMs && ms <= endMs;
+                        });
+                        if (userFilter !== 'todos') {
+                            audLogs = audLogs.filter(l => (l.correo || l.usuario || l.nombre || '').toLowerCase().includes(userFilter.toLowerCase()));
+                        }
+                        if (roleFilter !== 'todos') {
+                            audLogs = audLogs.filter(l => (l.rol || '').toLowerCase() === roleFilter.toLowerCase());
+                        }
+                        if (actionFilter !== 'todas') {
+                            audLogs = audLogs.filter(l => (l.accion || '').toUpperCase().includes(actionFilter.toUpperCase()));
+                        }
+                        countText = `${audLogs.length} registros auditoría`;
+                    } else if (this.currentModule === 'cronos_sla') {
+                        let slaLogs = (window.CRONOS_SLA_EVENTS || []).filter(s => {
+                            const ms = parseDocTimestamp(s);
+                            return ms >= startMs && ms <= endMs;
+                        });
+                        if (userFilter !== 'todos') {
+                            slaLogs = slaLogs.filter(s => (s.correo || s.usuario || '').toLowerCase().includes(userFilter.toLowerCase()));
+                        }
+                        if (roleFilter !== 'todos') {
+                            slaLogs = slaLogs.filter(s => (s.rol || '').toLowerCase() === roleFilter.toLowerCase());
+                        }
+                        if (slaStatusFilter !== 'todos') {
+                            slaLogs = slaLogs.filter(s => (s.estadoSLA || '').toLowerCase().includes(slaStatusFilter.toLowerCase()));
+                        }
+                        countText = `${slaLogs.length} eventos SLA`;
+                    }
+
+                    previewBadge.innerHTML = `<i class="fa-solid fa-database text-emerald-600 mr-1"></i> Firestore / Caché: <strong>${countText}</strong>`;
+                } catch (e) {
+                    previewBadge.innerHTML = `<span class="text-slate-500">Listo para consultar Firestore</span>`;
+                }
+            },
+
+            async executeDownload() {
+                if (this.isProcessing) return;
+                if (!hasPermission('exportExcel')) {
+                    showToast('Acceso denegado: Tu perfil no cuenta con permisos de exportación.', 'error');
+                    return;
+                }
+
+                const btn = document.getElementById('btn-export-download');
+                const origText = btn ? btn.innerHTML : '';
+                this.isProcessing = true;
+
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Consultando Firestore histórico...`;
+                }
+
+                try {
+                    const cStart = document.getElementById('export-date-start')?.value;
+                    const cEnd = document.getElementById('export-date-end')?.value;
+                    const { startMs, endMs, label: periodLabel } = this.getPeriodDateRange(this.currentPeriod, cStart, cEnd);
+
+                    const userFilter = document.getElementById('export-filter-user')?.value || 'todos';
+                    const roleFilter = document.getElementById('export-filter-role')?.value || 'todos';
+                    const actionFilter = document.getElementById('export-filter-action')?.value || 'todas';
+                    const slaStatusFilter = document.getElementById('export-filter-sla-status')?.value || 'todos';
+                    const format = this.currentFormat || 'xlsx';
+
+                    if (btn) btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Procesando ${format.toUpperCase()}...`;
+
+                    if (this.currentModule === 'dashboard') {
+                        await this.exportDashboardHistorical({ startMs, endMs, periodLabel, userFilter, format });
+                    } else if (this.currentModule === 'auditoria') {
+                        await this.exportAuditoriaHistorical({ startMs, endMs, periodLabel, userFilter, roleFilter, actionFilter, format });
+                    } else if (this.currentModule === 'cronos_sla') {
+                        await this.exportSLAHistorical({ startMs, endMs, periodLabel, userFilter, roleFilter, slaStatusFilter, format });
+                    }
+
+                    showToast(`Exportación histórica generada con éxito (${format.toUpperCase()}).`, 'success');
+                    this.closeModal();
+                } catch (err) {
+                    console.error("FIRESTORE ERROR [ExportCenter]:", err);
+                    showToast(`Error al generar exportación: ${err.message || 'Error desconocido'}`, 'error');
+                } finally {
+                    this.isProcessing = false;
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = origText;
+                    }
+                }
+            },
+
+            // 1. DASHBOARD HISTÓRICO
+            async exportDashboardHistorical({ startMs, endMs, periodLabel, userFilter, format }) {
+                let auditLogs = await this.fetchFirestoreHistorical('auditoria', startMs, endMs);
+                let slaEvents = await this.fetchFirestoreHistorical('cronos_sla', startMs, endMs);
+
+                if (userFilter && userFilter !== 'todos') {
+                    const uLow = userFilter.toLowerCase().trim();
+                    auditLogs = auditLogs.filter(l => (l.correo || l.usuario || l.nombre || '').toLowerCase().includes(uLow));
+                    slaEvents = slaEvents.filter(s => (s.correo || s.usuario || '').toLowerCase().includes(uLow));
+                }
+
+                const activeUsersSet = new Set();
+                auditLogs.forEach(l => {
+                    const u = l.usuario || l.nombre || l.correo;
+                    if (u && u !== 'Sistema') activeUsersSet.add(u);
+                });
+                slaEvents.forEach(s => {
+                    const u = s.usuario || s.correo;
+                    if (u && u !== 'Sistema') activeUsersSet.add(u);
+                });
+
+                const loginLogs = auditLogs.filter(l => {
+                    const a = (l.accion || '').toUpperCase().trim();
+                    return a.includes('INICIO_SESION') || a.includes('LOGIN') || a.includes('INICIO DE SESI');
+                });
+                const totalSesiones = loginLogs.length;
+
+                let slaIni = 0, slaPau = 0, slaRst = 0, sla45 = 0, sla60 = 0, sla70 = 0;
+                let sumPauseSecs = 0, countPauseSecs = 0;
+                slaEvents.forEach(ev => {
+                    const acc = (ev.accion || '').toLowerCase().trim();
+                    const secs = typeof ev.tiempoSegundos === 'number' ? ev.tiempoSegundos : (parseInt(ev.tiempoSegundos) || 0);
+                    if (acc.includes('inici') || acc.includes('reanud')) slaIni++;
+                    else if (acc.includes('paus')) slaPau++;
+                    else if (acc.includes('reinici')) slaRst++;
+
+                    if (acc.includes('45s') || (secs >= 45 && secs < 60)) sla45++;
+                    if (acc.includes('60s') || (secs >= 60 && secs <= 70)) sla60++;
+                    if (acc.includes('70s') || secs > 70) sla70++;
+
+                    if (secs > 0) {
+                        sumPauseSecs += secs;
+                        countPauseSecs++;
+                    }
+                });
+                const slaPromedioStr = countPauseSecs > 0 ? Math.round(sumPauseSecs / countPauseSecs) + "s" : "0s";
+
+                const moduleCounts = {
+                    "Clave Secreta": 0,
+                    "Tipificaciones": 0,
+                    "Tickets Tecnológicos": 0,
+                    "Derivaciones Discord": 0,
+                    "Acuerdos de Voz": 0,
+                    "Dashboard": 0,
+                    "Auditoría": 0,
+                    "Analítica CRONOS SLA": 0,
+                    "Gestión de Usuarios": 0,
+                    "Otros": 0
+                };
+                auditLogs.forEach(l => {
+                    const m = (l.modulo || l.accion || '').toLowerCase();
+                    if (m.includes('clave') || m.includes('generator') || m.includes('secreta')) moduleCounts["Clave Secreta"]++;
+                    else if (m.includes('tipificaci')) moduleCounts["Tipificaciones"]++;
+                    else if (m.includes('ticket') || m.includes('tecnol')) moduleCounts["Tickets Tecnológicos"]++;
+                    else if (m.includes('derivaci') || m.includes('discord')) moduleCounts["Derivaciones Discord"]++;
+                    else if (m.includes('acuerdos') || m.includes('voz')) moduleCounts["Acuerdos de Voz"]++;
+                    else if (m.includes('dashboard')) moduleCounts["Dashboard"]++;
+                    else if (m.includes('auditor')) moduleCounts["Auditoría"]++;
+                    else if (m.includes('sla') || m.includes('analitica')) moduleCounts["Analítica CRONOS SLA"]++;
+                    else if (m.includes('usuario') || m.includes('gestion')) moduleCounts["Gestión de Usuarios"]++;
+                    else moduleCounts["Otros"]++;
+                });
+
+                const totalModAccess = Object.values(moduleCounts).reduce((a, b) => a + b, 0);
+
+                const userActivityMap = new Map();
+                (window.CRONOS_USERS_DB || []).forEach(u => {
+                    userActivityMap.set((u.correo || u.nombre).toLowerCase(), {
+                        nombre: u.nombre || u.usuario || "Usuario",
+                        correo: u.correo || "",
+                        rol: u.rol || "Asesor",
+                        sesiones: 0,
+                        accesos: 0,
+                        usoSLA: 0,
+                        tiempoAcumulado: u.tiempoAcumulado || "0m"
+                    });
+                });
+
+                auditLogs.forEach(l => {
+                    const key = (l.correo || l.usuario || l.nombre || '').toLowerCase();
+                    if (!key) return;
+                    if (!userActivityMap.has(key)) {
+                        userActivityMap.set(key, {
+                            nombre: l.usuario || l.nombre || "Usuario",
+                            correo: l.correo || "",
+                            rol: l.rol || "Asesor",
+                            sesiones: 0,
+                            accesos: 0,
+                            usoSLA: 0,
+                            tiempoAcumulado: "0m"
+                        });
+                    }
+                    const record = userActivityMap.get(key);
+                    const a = (l.accion || '').toUpperCase();
+                    if (a.includes('INICIO_SESION') || a.includes('LOGIN')) record.sesiones++;
+                    record.accesos++;
+                });
+
+                slaEvents.forEach(s => {
+                    const key = (s.correo || s.usuario || '').toLowerCase();
+                    if (!key) return;
+                    if (!userActivityMap.has(key)) {
+                        userActivityMap.set(key, {
+                            nombre: s.usuario || "Usuario",
+                            correo: s.correo || "",
+                            rol: s.rol || "Asesor",
+                            sesiones: 0,
+                            accesos: 0,
+                            usoSLA: 0,
+                            tiempoAcumulado: "0m"
+                        });
+                    }
+                    const record = userActivityMap.get(key);
+                    record.usoSLA++;
+                });
+
+                const rankingList = Array.from(userActivityMap.values())
+                    .filter(u => userFilter === 'todos' ? (u.sesiones > 0 || u.accesos > 0 || u.usoSLA > 0) : true)
+                    .sort((a, b) => ((b.sesiones + b.accesos + b.usoSLA) - (a.sesiones + a.accesos + a.usoSLA)));
+
+                const currentUser = window.CRONOS_CURRENT_USER || { nombre: "Administrador", rol: "Administrador" };
+                const totalInteracciones = auditLogs.length + slaEvents.length;
+
+                if (format === 'xlsx') {
+                    const wb = XLSX.utils.book_new();
+
+                    const resumenAOA = [
+                        ["CENTRO DE CONTROL CRONOS FID • WIN - REPORTE HISTÓRICO EJECUTIVO"],
+                        ["Fecha de Generación:", new Date().toLocaleString('es-PE'), "", "Generado por:", `${currentUser.nombre} (${currentUser.rol})`],
+                        ["Periodo Evaluado:", periodLabel, "", "Filtro Asesor / Usuario:", userFilter === 'todos' ? 'Todos los Usuarios' : userFilter],
+                        ["Política de Retención:", "Mínimo 180 días de histórico garantizado en Firestore", "", "Fuente Oficial:", "Firestore"],
+                        [],
+                        ["MÉTRICA / INDICADOR HISTÓRICO", "VALOR REGISTRADO", "DETALLE"],
+                        ["Usuarios Activos en Periodo", activeUsersSet.size, "Total colaboradores con actividad"],
+                        ["Sesiones Iniciadas", totalSesiones, "Inicios de sesión exitosos"],
+                        ["Total Interacciones", totalInteracciones, "Auditoría + Eventos CRONOS SLA"],
+                        ["Total Eventos SLA", slaEvents.length, "Registros de temporizador SLA"],
+                        ["Inicios de Temporizador SLA", slaIni, "Acciones de Inicio / Reanudación"],
+                        ["Pausas de Temporizador SLA", slaPau, "Detenciones temporales de cronómetro"],
+                        ["Reinicios de Temporizador SLA", slaRst, "Puestas a cero de cronómetro"],
+                        ["Alertas SLA Preventivo (45s)", sla45, "Umbral preventivo 45s"],
+                        ["Alertas Límite SLA (60s)", sla60, "Umbral límite 60s"],
+                        ["Alertas SLA Crítico (>70s)", sla70, "Superó el tiempo crítico permitido"],
+                        ["Tiempo Promedio Pausa SLA", slaPromedioStr, "Media de tiempos registrados"],
+                        ["Total Accesos a Módulos", totalModAccess, "Navegación operativa registrada"]
+                    ];
+                    const wsResumen = XLSX.utils.aoa_to_sheet(resumenAOA);
+                    wsResumen['!cols'] = [{ wch: 35 }, { wch: 25 }, { wch: 45 }];
+                    XLSX.utils.book_append_sheet(wb, wsResumen, "Resumen Ejecutivo");
+
+                    const rankingAOA = [
+                        ["POSICIÓN", "ASESOR / USUARIO", "CORREO INSTITUCIONAL", "ROL", "SESIONES", "ACCESOS MÓDULO", "USO SLA", "TOTAL INTERACCIONES", "TIEMPO ACUMULADO"]
+                    ];
+                    rankingList.forEach((u, i) => {
+                        rankingAOA.push([
+                            i + 1,
+                            u.nombre,
+                            u.correo,
+                            u.rol,
+                            u.sesiones,
+                            u.accesos,
+                            u.usoSLA,
+                            u.sesiones + u.accesos + u.usoSLA,
+                            u.tiempoAcumulado
+                        ]);
+                    });
+                    const wsRanking = XLSX.utils.aoa_to_sheet(rankingAOA);
+                    wsRanking['!cols'] = [{ wch: 10 }, { wch: 30 }, { wch: 30 }, { wch: 15 }, { wch: 12 }, { wch: 16 }, { wch: 12 }, { wch: 20 }, { wch: 18 }];
+                    XLSX.utils.book_append_sheet(wb, wsRanking, "Ranking Usuarios");
+
+                    const modulosAOA = [
+                        ["MÓDULO DE LA PLATAFORMA", "ACCESOS REGISTRADOS", "% DEL TOTAL OPERATIVO"]
+                    ];
+                    Object.entries(moduleCounts).forEach(([name, count]) => {
+                        const pct = totalModAccess > 0 ? ((count / totalModAccess) * 100).toFixed(1) + "%" : "0%";
+                        modulosAOA.push([name, count, pct]);
+                    });
+                    const wsModulos = XLSX.utils.aoa_to_sheet(modulosAOA);
+                    wsModulos['!cols'] = [{ wch: 30 }, { wch: 22 }, { wch: 25 }];
+                    XLSX.utils.book_append_sheet(wb, wsModulos, "Uso por Modulo");
+
+                    const actAOA = [
+                        ["N°", "FECHA", "HORA", "USUARIO", "CORREO", "ROL", "ACCIÓN", "MÓDULO", "DETALLE / RESULTADO", "TIMESTAMP ISO"]
+                    ];
+                    auditLogs.slice(0, 5000).forEach((l, i) => {
+                        actAOA.push([
+                            i + 1,
+                            l.fecha || "",
+                            l.hora || "",
+                            l.usuario || l.nombre || "",
+                            l.correo || "",
+                            l.rol || "",
+                            l.accion || "",
+                            l.modulo || "",
+                            l.detalle || l.resultado || "",
+                            l.fechaHora || ""
+                        ]);
+                    });
+                    const wsAct = XLSX.utils.aoa_to_sheet(actAOA);
+                    wsAct['!cols'] = [{ wch: 8 }, { wch: 12 }, { wch: 10 }, { wch: 25 }, { wch: 25 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 35 }, { wch: 25 }];
+                    XLSX.utils.book_append_sheet(wb, wsAct, "Actividades Periodo");
+
+                    const slaAOA = [
+                        ["N°", "FECHA", "HORA", "ASESOR", "CORREO", "ROL", "MÓDULO", "ACCIÓN", "TIEMPO EXACTO", "SEGUNDOS", "ESTADO SLA", "TIMESTAMP ISO"]
+                    ];
+                    slaEvents.slice(0, 5000).forEach((s, i) => {
+                        slaAOA.push([
+                            i + 1,
+                            s.fecha || "",
+                            s.hora || "",
+                            s.usuario || "",
+                            s.correo || "",
+                            s.rol || "",
+                            s.modulo || "CRONOS SLA",
+                            s.accion || "",
+                            s.tiempoExacto || "",
+                            s.tiempoSegundos || 0,
+                            s.estadoSLA || "",
+                            s.fechaHora || ""
+                        ]);
+                    });
+                    const wsSLA = XLSX.utils.aoa_to_sheet(slaAOA);
+                    wsSLA['!cols'] = [{ wch: 8 }, { wch: 12 }, { wch: 10 }, { wch: 25 }, { wch: 25 }, { wch: 15 }, { wch: 18 }, { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 16 }, { wch: 25 }];
+                    XLSX.utils.book_append_sheet(wb, wsSLA, "Eventos SLA Periodo");
+
+                    const fname = `CRONOS_FID_Dashboard_Historico_${Date.now()}.xlsx`;
+                    XLSX.writeFile(wb, fname);
+                } else {
+                    let csv = "REPORTE HISTÓRICO - CENTRO DE CONTROL CRONOS FID • WIN\n";
+                    csv += `Fecha de Generación:,"${new Date().toLocaleString('es-PE')}"\n`;
+                    csv += `Generado por:,"${currentUser.nombre} (${currentUser.rol})"\n`;
+                    csv += `Periodo Evaluado:,"${periodLabel}"\n`;
+                    csv += `Filtro Asesor:,"${userFilter === 'todos' ? 'Todos los Usuarios' : userFilter}"\n`;
+                    csv += `Política de Retención:,"Mínimo 180 días garantizados en Firestore"\n\n`;
+
+                    csv += "--- RESUMEN EJECUTIVO ---\n";
+                    csv += `Métrica,Valor\n`;
+                    csv += `"Usuarios Activos en Periodo",${activeUsersSet.size}\n`;
+                    csv += `"Sesiones Iniciadas",${totalSesiones}\n`;
+                    csv += `"Total Interacciones",${totalInteracciones}\n`;
+                    csv += `"Total Eventos SLA",${slaEvents.length}\n`;
+                    csv += `"Inicios SLA",${slaIni}\n`;
+                    csv += `"Pausas SLA",${slaPau}\n`;
+                    csv += `"Reinicios SLA",${slaRst}\n`;
+                    csv += `"Alertas Preventivas (45s)",${sla45}\n`;
+                    csv += `"Alertas Límite (60s)",${sla60}\n`;
+                    csv += `"Alertas Críticas (>70s)",${sla70}\n`;
+                    csv += `"Tiempo Promedio SLA",${slaPromedioStr}\n`;
+                    csv += `"Total Accesos a Módulos",${totalModAccess}\n\n`;
+
+                    csv += "--- RANKING DE USUARIOS ---\n";
+                    csv += "Posición,Asesor,Correo,Rol,Sesiones,Accesos Modulo,Uso SLA,Total Interacciones,Tiempo Acumulado\n";
+                    rankingList.forEach((u, i) => {
+                        csv += `${i + 1},"${u.nombre}","${u.correo}","${u.rol}",${u.sesiones},${u.accesos},${u.usoSLA},${u.sesiones + u.accesos + u.usoSLA},"${u.tiempoAcumulado}"\n`;
+                    });
+
+                    csv += "\n--- USO POR MÓDULO ---\n";
+                    csv += "Módulo,Accesos Registrados,% del Total\n";
+                    Object.entries(moduleCounts).forEach(([name, count]) => {
+                        const pct = totalModAccess > 0 ? ((count / totalModAccess) * 100).toFixed(1) + "%" : "0%";
+                        csv += `"${name}",${count},"${pct}"\n`;
+                    });
+
+                    csv += "\n--- ÚLTIMAS ACTIVIDADES REGISTRADAS ---\n";
+                    csv += "Fecha,Hora,Usuario,Correo,Rol,Acción,Módulo,Detalle\n";
+                    auditLogs.slice(0, 1000).forEach(l => {
+                        csv += `"${l.fecha || ''}","${l.hora || ''}","${l.usuario || l.nombre || ''}","${l.correo || ''}","${l.rol || ''}","${l.accion || ''}","${l.modulo || ''}","${(l.detalle || l.resultado || '').replace(/"/g, '""')}"\n`;
+                    });
+
+                    const fname = `CRONOS_FID_Dashboard_Historico_${Date.now()}.csv`;
+                    downloadCSV(fname, csv);
+                }
+
+                if (window.AuditManager && typeof window.AuditManager.logExport === 'function') {
+                    window.AuditManager.logExport("Dashboard", `Exportación Histórica (${format.toUpperCase()}) - ${periodLabel}`);
+                }
+            },
+
+            // 2. AUDITORÍA HISTÓRICA
+            async exportAuditoriaHistorical({ startMs, endMs, periodLabel, userFilter, roleFilter, actionFilter, format }) {
+                let logs = await this.fetchFirestoreHistorical('auditoria', startMs, endMs);
+
+                if (userFilter && userFilter !== 'todos') {
+                    const uLow = userFilter.toLowerCase().trim();
+                    logs = logs.filter(l => (l.correo || l.usuario || l.nombre || '').toLowerCase().includes(uLow));
+                }
+
+                if (roleFilter && roleFilter !== 'todos') {
+                    logs = logs.filter(l => (l.rol || '').toLowerCase() === roleFilter.toLowerCase().trim());
+                }
+
+                if (actionFilter && actionFilter !== 'todas') {
+                    logs = logs.filter(l => (l.accion || '').toUpperCase().includes(actionFilter.toUpperCase().trim()));
+                }
+
+                const currentUser = window.CRONOS_CURRENT_USER || { nombre: "Administrador", rol: "Administrador" };
+
+                if (format === 'xlsx') {
+                    const wb = XLSX.utils.book_new();
+
+                    const auditAOA = [
+                        ["BITÁCORA DE AUDITORÍA OPERATIVA HISTÓRICA - CRONOS FID • WIN"],
+                        ["Fecha de Generación:", new Date().toLocaleString('es-PE'), "", "Generado por:", `${currentUser.nombre} (${currentUser.rol})`],
+                        ["Periodo Evaluado:", periodLabel, "", "Total Registros:", logs.length],
+                        ["Filtros Aplicados:", `Usuario: ${userFilter} | Rol: ${roleFilter} | Acción: ${actionFilter}`],
+                        ["Retención Oficial:", "Mínimo 180 días de histórico garantizado en Firestore"],
+                        [],
+                        ["N°", "FECHA", "HORA", "USUARIO", "CORREO INSTITUCIONAL", "ROL", "ACCIÓN OPERATIVA", "MÓDULO", "DETALLE / RESULTADO", "TIMESTAMP ISO"]
+                    ];
+
+                    logs.forEach((l, i) => {
+                        auditAOA.push([
+                            i + 1,
+                            l.fecha || "",
+                            l.hora || "",
+                            l.usuario || l.nombre || "",
+                            l.correo || "",
+                            l.rol || "",
+                            l.accion || "",
+                            l.modulo || "",
+                            l.detalle || l.resultado || "Exitoso",
+                            l.fechaHora || ""
+                        ]);
+                    });
+
+                    const wsAudit = XLSX.utils.aoa_to_sheet(auditAOA);
+                    wsAudit['!cols'] = [{ wch: 8 }, { wch: 12 }, { wch: 10 }, { wch: 25 }, { wch: 28 }, { wch: 15 }, { wch: 22 }, { wch: 22 }, { wch: 40 }, { wch: 25 }];
+                    XLSX.utils.book_append_sheet(wb, wsAudit, "Auditoría Histórica");
+
+                    const actionStats = {};
+                    const roleStats = {};
+                    logs.forEach(l => {
+                        const a = l.accion || 'OTRO';
+                        actionStats[a] = (actionStats[a] || 0) + 1;
+                        const r = l.rol || 'No especificado';
+                        roleStats[r] = (roleStats[r] || 0) + 1;
+                    });
+
+                    const statsAOA = [
+                        ["RESUMEN ESTADÍSTICO DE AUDITORÍA"],
+                        ["Total de Registros Evaluados:", logs.length],
+                        [],
+                        ["ACCIÓN OPERATIVA", "CANTIDAD", "% DEL TOTAL"]
+                    ];
+                    Object.entries(actionStats).forEach(([acc, cnt]) => {
+                        statsAOA.push([acc, cnt, ((cnt / Math.max(logs.length, 1)) * 100).toFixed(1) + "%"]);
+                    });
+
+                    statsAOA.push([]);
+                    statsAOA.push(["ROL OPERATIVO", "CANTIDAD", "% DEL TOTAL"]);
+                    Object.entries(roleStats).forEach(([rol, cnt]) => {
+                        statsAOA.push([rol, cnt, ((cnt / Math.max(logs.length, 1)) * 100).toFixed(1) + "%"]);
+                    });
+
+                    const wsStats = XLSX.utils.aoa_to_sheet(statsAOA);
+                    wsStats['!cols'] = [{ wch: 30 }, { wch: 15 }, { wch: 15 }];
+                    XLSX.utils.book_append_sheet(wb, wsStats, "Resumen Auditoría");
+
+                    const fname = `CRONOS_FID_Auditoria_Historica_${Date.now()}.xlsx`;
+                    XLSX.writeFile(wb, fname);
+                } else {
+                    let csv = "BITÁCORA DE AUDITORÍA OPERATIVA HISTÓRICA - CRONOS FID • WIN\n";
+                    csv += `Fecha de Generación:,"${new Date().toLocaleString('es-PE')}"\n`;
+                    csv += `Generado por:,"${currentUser.nombre} (${currentUser.rol})"\n`;
+                    csv += `Periodo Evaluado:,"${periodLabel}"\n`;
+                    csv += `Filtros:,"Usuario: ${userFilter} | Rol: ${roleFilter} | Acción: ${actionFilter}"\n`;
+                    csv += `Total Registros:,${logs.length}\n`;
+                    csv += `Retención:,"Mínimo 180 días garantizados en Firestore"\n\n`;
+
+                    csv += "N°,Fecha,Hora,Usuario,Correo,Rol,Acción,Módulo,Resultado,FechaHora_ISO\n";
+                    logs.forEach((l, i) => {
+                        csv += `${i + 1},"${l.fecha || ''}","${l.hora || ''}","${l.usuario || l.nombre || ''}","${l.correo || ''}","${l.rol || ''}","${l.accion || ''}","${l.modulo || ''}","${(l.detalle || l.resultado || 'Exitoso').replace(/"/g, '""')}","${l.fechaHora || ''}"\n`;
+                    });
+
+                    const fname = `CRONOS_FID_Auditoria_Historica_${Date.now()}.csv`;
+                    downloadCSV(fname, csv);
+                }
+
+                if (window.AuditManager && typeof window.AuditManager.logExport === 'function') {
+                    window.AuditManager.logExport("Auditoría", `Exportación Histórica (${format.toUpperCase()}) - ${periodLabel} (${logs.length} registros)`);
+                }
+            },
+
+            // 3. ANALÍTICA CRONOS SLA HISTÓRICA
+            async exportSLAHistorical({ startMs, endMs, periodLabel, userFilter, roleFilter, slaStatusFilter, format }) {
+                let events = await this.fetchFirestoreHistorical('cronos_sla', startMs, endMs);
+
+                if (userFilter && userFilter !== 'todos') {
+                    const uLow = userFilter.toLowerCase().trim();
+                    events = events.filter(s => (s.correo || s.usuario || '').toLowerCase().includes(uLow));
+                }
+
+                if (roleFilter && roleFilter !== 'todos') {
+                    events = events.filter(s => (s.rol || '').toLowerCase() === roleFilter.toLowerCase().trim());
+                }
+
+                if (slaStatusFilter && slaStatusFilter !== 'todos') {
+                    const stLow = slaStatusFilter.toLowerCase().trim();
+                    events = events.filter(s => (s.estadoSLA || '').toLowerCase().includes(stLow));
+                }
+
+                const currentUser = window.CRONOS_CURRENT_USER || { nombre: "Administrador", rol: "Administrador" };
+
+                let sumSecs = 0, countSecs = 0;
+                let countNormal = 0, countPrev = 0, countLim = 0, countCrit = 0;
+                let cIni = 0, cPau = 0, cRst = 0;
+
+                events.forEach(s => {
+                    const acc = (s.accion || '').toLowerCase();
+                    const secs = typeof s.tiempoSegundos === 'number' ? s.tiempoSegundos : (parseInt(s.tiempoSegundos) || 0);
+                    const status = (s.estadoSLA || '').toLowerCase();
+
+                    if (acc.includes('inici') || acc.includes('reanud')) cIni++;
+                    else if (acc.includes('paus')) cPau++;
+                    else if (acc.includes('reinici')) cRst++;
+
+                    if (status.includes('normal') || (secs < 45 && !status.includes('prev') && !status.includes('cr') && !status.includes('lím'))) countNormal++;
+                    else if (status.includes('prev') || (secs >= 45 && secs < 60)) countPrev++;
+                    else if (status.includes('lím') || status.includes('lim') || (secs >= 60 && secs <= 70)) countLim++;
+                    else if (status.includes('cr') || secs > 70) countCrit++;
+
+                    if (secs > 0) {
+                        sumSecs += secs;
+                        countSecs++;
+                    }
+                });
+
+                const promSecs = countSecs > 0 ? Math.round(sumSecs / countSecs) : 0;
+                const promStr = (typeof formatSecondsToMMSS === 'function') ? formatSecondsToMMSS(promSecs) : `${promSecs}s`;
+
+                if (format === 'xlsx') {
+                    const wb = XLSX.utils.book_new();
+
+                    const slaAOA = [
+                        ["REGISTRO DE EVENTOS CRONOS SLA HISTÓRICO - CRONOS FID • WIN"],
+                        ["Fecha de Generación:", new Date().toLocaleString('es-PE'), "", "Generado por:", `${currentUser.nombre} (${currentUser.rol})`],
+                        ["Periodo Evaluado:", periodLabel, "", "Total Eventos:", events.length],
+                        ["Filtros Aplicados:", `Usuario: ${userFilter} | Rol: ${roleFilter} | Estado SLA: ${slaStatusFilter}`],
+                        ["Retención Oficial:", "Mínimo 180 días de histórico garantizado en Firestore"],
+                        [],
+                        ["N°", "FECHA", "HORA", "ASESOR / USUARIO", "CORREO INSTITUCIONAL", "ROL", "MÓDULO", "ACCIÓN", "TIEMPO EXACTO", "SEGUNDOS", "ESTADO SLA", "TIMESTAMP ISO"]
+                    ];
+
+                    events.forEach((s, i) => {
+                        slaAOA.push([
+                            i + 1,
+                            s.fecha || "",
+                            s.hora || "",
+                            s.usuario || "",
+                            s.correo || "",
+                            s.rol || "Asesor",
+                            s.modulo || "CRONOS SLA",
+                            s.accion || "",
+                            s.tiempoExacto || "",
+                            s.tiempoSegundos || 0,
+                            s.estadoSLA || "Normal",
+                            s.fechaHora || ""
+                        ]);
+                    });
+
+                    const wsSLA = XLSX.utils.aoa_to_sheet(slaAOA);
+                    wsSLA['!cols'] = [{ wch: 8 }, { wch: 12 }, { wch: 10 }, { wch: 25 }, { wch: 28 }, { wch: 15 }, { wch: 18 }, { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 16 }, { wch: 25 }];
+                    XLSX.utils.book_append_sheet(wb, wsSLA, "Eventos SLA");
+
+                    const resumenAOA = [
+                        ["ANALÍTICA Y RENDIMIENTO HISTÓRICO DE TIEMPOS CRONOS SLA"],
+                        ["Periodo Evaluado:", periodLabel],
+                        ["Total Eventos SLA Registrados:", events.length],
+                        ["Tiempo Promedio de Pausa / Espera:", `${promStr} (${promSecs} segundos)`],
+                        [],
+                        ["ESTADO / UMBRAL SLA", "CANTIDAD", "% DEL TOTAL", "CONDICIÓN DE TIEMPO"],
+                        ["Normal", countNormal, ((countNormal / Math.max(events.length, 1)) * 100).toFixed(1) + "%", "Menor a 45 segundos"],
+                        ["Preventivo", countPrev, ((countPrev / Math.max(events.length, 1)) * 100).toFixed(1) + "%", "Entre 45s y 59 segundos"],
+                        ["Límite SLA", countLim, ((countLim / Math.max(events.length, 1)) * 100).toFixed(1) + "%", "Entre 60s y 70 segundos"],
+                        ["SLA Crítico", countCrit, ((countCrit / Math.max(events.length, 1)) * 100).toFixed(1) + "%", "Mayor a 70 segundos"],
+                        [],
+                        ["TIPO DE ACCIÓN", "TOTAL REGISTRADO"],
+                        ["Inicios / Reanudaciones", cIni],
+                        ["Pausas Registradas", cPau],
+                        ["Reinicios de Cronómetro", cRst]
+                    ];
+
+                    const wsResumen = XLSX.utils.aoa_to_sheet(resumenAOA);
+                    wsResumen['!cols'] = [{ wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
+                    XLSX.utils.book_append_sheet(wb, wsResumen, "Analitica Tiempos SLA");
+
+                    const fname = `CRONOS_FID_SLA_Historico_${Date.now()}.xlsx`;
+                    XLSX.writeFile(wb, fname);
+                } else {
+                    let csv = "REGISTRO DE EVENTOS CRONOS SLA HISTÓRICO - CRONOS FID • WIN\n";
+                    csv += `Fecha de Generación:,"${new Date().toLocaleString('es-PE')}"\n`;
+                    csv += `Generado por:,"${currentUser.nombre} (${currentUser.rol})"\n`;
+                    csv += `Periodo Evaluado:,"${periodLabel}"\n`;
+                    csv += `Filtros:,"Usuario: ${userFilter} | Rol: ${roleFilter} | Estado SLA: ${slaStatusFilter}"\n`;
+                    csv += `Total Eventos:,${events.length}\n`;
+                    csv += `Retención:,"Mínimo 180 días garantizados en Firestore"\n\n`;
+
+                    csv += "--- RESUMEN ANALÍTICO ---\n";
+                    csv += `"Tiempo Promedio SLA","${promStr}"\n`;
+                    csv += `"Normal (<45s)",${countNormal}\n`;
+                    csv += `"Preventivo (45s-59s)",${countPrev}\n`;
+                    csv += `"Límite SLA (60s-70s)",${countLim}\n`;
+                    csv += `"SLA Crítico (>70s)",${countCrit}\n`;
+                    csv += `"Inicios",${cIni}\n`;
+                    csv += `"Pausas",${cPau}\n`;
+                    csv += `"Reinicios",${cRst}\n\n`;
+
+                    csv += "--- DETALLE DE EVENTOS ---\n";
+                    csv += "N°,Fecha,Hora,Asesor,Correo,Rol,Modulo,Acción,TiempoExacto,Segundos,EstadoSLA,FechaHora_ISO\n";
+                    events.forEach((s, i) => {
+                        csv += `${i + 1},"${s.fecha || ''}","${s.hora || ''}","${s.usuario || ''}","${s.correo || ''}","${s.rol || 'Asesor'}","${s.modulo || 'CRONOS SLA'}","${s.accion || ''}","${s.tiempoExacto || ''}",${s.tiempoSegundos || 0},"${s.estadoSLA || 'Normal'}","${s.fechaHora || ''}"\n`;
+                    });
+
+                    const fname = `CRONOS_FID_SLA_Historico_${Date.now()}.csv`;
+                    downloadCSV(fname, csv);
+                }
+
+                if (window.AuditManager && typeof window.AuditManager.logExport === 'function') {
+                    window.AuditManager.logExport("Analítica CRONOS SLA", `Exportación Histórica (${format.toUpperCase()}) - ${periodLabel} (${events.length} registros)`);
+                }
+            }
+        };
+
+        window.ExportCenterManager = ExportCenterManager;
+        window.openExportCenterModal = function(mod) { ExportCenterManager.openModal(mod); };
+        window.closeExportCenterModal = function() { ExportCenterManager.closeModal(); };
+        window.setExportModule = function(mod) { ExportCenterManager.setModule(mod); };
+        window.setExportPeriod = function(p) { ExportCenterManager.setPeriod(p); };
+        window.setExportFormat = function(f) { ExportCenterManager.setFormat(f); };
+        window.executeExportCenterDownload = function() { ExportCenterManager.executeDownload(); };
+        window.updateExportPreviewCount = function() { ExportCenterManager.updatePreviewCount(); };
+
         function exportDashboardReport() {
-            if (!hasPermission('exportExcel')) {
-                showToast('Acceso denegado: Tu perfil no cuenta con permisos de exportación.', 'error');
-                return;
-            }
-
-            const m = calculateRealDashboardMetrics();
-            let csv = "REPORTE GENERAL - CENTRO DE CONTROL CRONOS FID v3.9.9 • WIN SEP2026\n";
-            csv += "Fecha de Generación:," + new Date().toLocaleString('es-PE') + "\n";
-            csv += "Generado por:," + window.CRONOS_CURRENT_USER.nombre + " (" + window.CRONOS_CURRENT_USER.rol + ")\n\n";
-
-            csv += "--- RESUMEN EJECUTIVO ---\n";
-            csv += "Usuarios Activos Hoy:," + m.usuariosHoy + "\n";
-            csv += "Usuarios Activos 24h:," + m.usuarios24h + "\n";
-            csv += "Usuarios Activos 7d:," + m.usuarios7d + "\n";
-            csv += "Sesiones Hoy:," + m.sesionesHoy + "\n";
-            csv += "Sesiones Semana:," + m.sesionesSem + "\n";
-            csv += "Sesiones Mes:," + m.sesionesMes + "\n";
-            csv += "Total Sesiones:," + m.sesionesTotal + "\n";
-            csv += "Total Interacciones:," + m.totalInterac + "\n";
-            csv += "Clics:," + m.clics + "\n";
-            csv += "Navegación:," + m.nav + "\n";
-            csv += "Funciones:," + m.func + "\n";
-            csv += "Total Eventos SLA:," + m.totalSLA + "\n";
-            csv += "Inicios SLA:," + m.slaIni + "\n";
-            csv += "Pausas SLA:," + m.slaPau + "\n";
-            csv += "Reinicios SLA:," + m.slaRst + "\n";
-            csv += "Módulo Más Utilizado:," + m.topModuloNombre + " (" + m.topModuloCount + " accesos - " + m.topModuloPct + "%)\n\n";
-
-            csv += "--- ACTIVIDAD POR USUARIO ---\n";
-            csv += "Ranking,Usuario,Correo,Rol,Sesiones,Accesos,Uso SLA,Tiempo Acumulado\n";
-            const sortedUsers = [...window.CRONOS_USERS_DB].sort((a, b) => ((b.accesos || 0) + (b.usoSLA || 0)) - ((a.accesos || 0) + (a.usoSLA || 0)));
-            sortedUsers.forEach((u, i) => {
-                csv += `${i + 1},"${u.nombre}","${u.correo}","${u.rol}",${u.sesiones || 0},${u.accesos || 0},${u.usoSLA || 0},"${u.tiempoAcumulado || '0m'}"\n`;
-            });
-
-            csv += "\n--- USO POR MÓDULO ---\n";
-            csv += "Módulo,Tipo,Accesos Totales\n";
-            window.CRONOS_MODULES_DEF.forEach(mod => {
-                const count = window.CRONOS_MODULE_STATS[mod.key] || 0;
-                csv += `"${mod.name}","${mod.type}",${count}\n`;
-            });
-
-            downloadCSV("CRONOS_FID_Dashboard_Report_" + Date.now() + ".csv", csv);
-            if (window.AuditManager) {
-                AuditManager.logExport("Dashboard", "Descarga de reporte general completo");
-            } else {
-                logAuditEvent("EXPORTACION", "Dashboard", "Descarga de reporte general completo");
-            }
-            showToast('Reporte completo del Centro de Control exportado con éxito.', 'success');
+            openExportCenterModal('dashboard');
         }
 
         function exportAuditoriaReport() {
-            if (!hasPermission('exportExcel')) {
-                showToast('Acceso denegado: Tu perfil no cuenta con permisos de exportación.', 'error');
-                return;
-            }
-
-            let csv = "BITÁCORA DE AUDITORÍA OPERATIVA - CRONOS FID v3.9.9 • WIN SEP2026\n";
-            csv += "Fecha de Generación:," + new Date().toLocaleString('es-PE') + "\n";
-            csv += "Generado por:," + window.CRONOS_CURRENT_USER.nombre + "\n\n";
-            csv += "Fecha,Hora,Usuario,Correo,Rol,Acción,Módulo,Resultado\n";
-
-            window.CRONOS_ACCESS_LOGS.forEach(log => {
-                csv += `"${log.fecha}","${log.hora}","${log.usuario}","${log.correo}","${log.rol}","${log.accion}","${log.modulo}","${log.resultado || 'Exitoso'}"\n`;
-            });
-
-            downloadCSV("CRONOS_FID_Auditoria_" + Date.now() + ".csv", csv);
-            if (window.AuditManager) {
-                AuditManager.logExport("Auditoría", "Descarga de bitácora completa de auditoría");
-            } else {
-                logAuditEvent("EXPORTACION", "Auditoría", "Descarga de bitácora completa de auditoría");
-            }
-            showToast('Bitácora de auditoría exportada a Excel.', 'success');
+            openExportCenterModal('auditoria');
         }
 
         function exportSLAReport() {
-            if (!hasPermission('exportExcel')) {
-                showToast('Acceso denegado: Tu perfil no cuenta con permisos de exportación.', 'error');
-                return;
-            }
-
-            let csv = "REGISTRO DE EVENTOS CRONOS SLA - CRONOS FID v3.9.9 • WIN SEP2026\n";
-            csv += "Fecha de Generación:," + new Date().toLocaleString('es-PE') + "\n";
-            csv += "Generado por:," + window.CRONOS_CURRENT_USER.nombre + "\n\n";
-            csv += "Fecha,Hora,Usuario,Correo,Rol,Módulo,Acción,Tiempo Exacto,Estado SLA\n";
-
-            window.CRONOS_SLA_EVENTS.forEach(ev => {
-                csv += `"${ev.fecha}","${ev.hora}","${ev.usuario}","${ev.correo}","${ev.rol}","${ev.modulo}","${ev.accion}","${ev.tiempoExacto}","${ev.estadoSLA}"\n`;
-            });
-
-            downloadCSV("CRONOS_FID_SLA_Events_" + Date.now() + ".csv", csv);
-            if (window.AuditManager) {
-                AuditManager.logExport("Analítica CRONOS SLA", "Descarga de eventos SLA");
-            } else {
-                logAuditEvent("EXPORTACION", "Analítica CRONOS SLA", "Descarga de eventos SLA");
-            }
-            showToast('Datos de Analítica CRONOS SLA exportados a Excel.', 'success');
+            openExportCenterModal('cronos_sla');
         }
 
         function exportUsersReport() {
@@ -10237,22 +11110,61 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
                 return;
             }
 
-            let csv = "BASE DE USUARIOS Y ROLES - CRONOS FID v3.9.9 • WIN SEP2026\n";
-            csv += "Fecha de Generación:," + new Date().toLocaleString('es-PE') + "\n";
-            csv += "Generado por:," + window.CRONOS_CURRENT_USER.nombre + "\n\n";
-            csv += "UID,Nombre Completo,Correo Institucional,Usuario,Rol,Estado,Fecha Creación,Primer Acceso,Último Acceso,Sesiones,Accesos,Uso SLA,Tiempo Acumulado\n";
+            const currentUser = window.CRONOS_CURRENT_USER || { nombre: "Administrador", rol: "Administrador" };
+            const users = window.CRONOS_USERS_DB || [];
 
-            window.CRONOS_USERS_DB.forEach(u => {
-                csv += `"${u.uid}","${u.nombre}","${u.correo}","${u.usuario}","${u.rol}","${u.estado}","${u.fechaCreacion || ''}","${u.primerAcceso || ''}","${u.ultimoAcceso || ''}",${u.sesiones || 0},${u.accesos || 0},${u.usoSLA || 0},"${u.tiempoAcumulado || '0m'}"\n`;
-            });
+            if (typeof XLSX !== 'undefined' && XLSX.utils) {
+                const wb = XLSX.utils.book_new();
+                const usersAOA = [
+                    ["BASE DE USUARIOS Y ROLES - CRONOS FID • WIN"],
+                    ["Fecha de Generación:", new Date().toLocaleString('es-PE'), "", "Generado por:", `${currentUser.nombre} (${currentUser.rol})`],
+                    ["Total de Usuarios Registrados:", users.length],
+                    [],
+                    ["N°", "UID", "NOMBRE COMPLETO", "CORREO INSTITUCIONAL", "USUARIO", "ROL", "ESTADO", "FECHA CREACIÓN", "PRIMER ACCESO", "ÚLTIMO ACCESO", "SESIONES", "ACCESOS", "USO SLA", "TIEMPO ACUMULADO"]
+                ];
 
-            downloadCSV("CRONOS_FID_Usuarios_" + Date.now() + ".csv", csv);
+                users.forEach((u, i) => {
+                    usersAOA.push([
+                        i + 1,
+                        u.uid || "",
+                        u.nombre || "",
+                        u.correo || "",
+                        u.usuario || "",
+                        u.rol || "Asesor",
+                        u.estado || "Activo",
+                        u.fechaCreacion || "",
+                        u.primerAcceso || "",
+                        u.ultimoAcceso || "",
+                        u.sesiones || 0,
+                        u.accesos || 0,
+                        u.usoSLA || 0,
+                        u.tiempoAcumulado || "0m"
+                    ]);
+                });
+
+                const wsUsers = XLSX.utils.aoa_to_sheet(usersAOA);
+                wsUsers['!cols'] = [{ wch: 6 }, { wch: 25 }, { wch: 28 }, { wch: 28 }, { wch: 15 }, { wch: 15 }, { wch: 10 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 18 }];
+                XLSX.utils.book_append_sheet(wb, wsUsers, "Usuarios y Roles");
+                XLSX.writeFile(wb, `CRONOS_FID_Usuarios_${Date.now()}.xlsx`);
+            } else {
+                let csv = "BASE DE USUARIOS Y ROLES - CRONOS FID • WIN\n";
+                csv += "Fecha de Generación:," + new Date().toLocaleString('es-PE') + "\n";
+                csv += "Generado por:," + currentUser.nombre + "\n\n";
+                csv += "UID,Nombre Completo,Correo Institucional,Usuario,Rol,Estado,Fecha Creación,Primer Acceso,Último Acceso,Sesiones,Accesos,Uso SLA,Tiempo Acumulado\n";
+
+                users.forEach(u => {
+                    csv += `"${u.uid}","${u.nombre}","${u.correo}","${u.usuario}","${u.rol}","${u.estado}","${u.fechaCreacion || ''}","${u.primerAcceso || ''}","${u.ultimoAcceso || ''}",${u.sesiones || 0},${u.accesos || 0},${u.usoSLA || 0},"${u.tiempoAcumulado || '0m'}"\n`;
+                });
+
+                downloadCSV("CRONOS_FID_Usuarios_" + Date.now() + ".csv", csv);
+            }
+
             if (window.AuditManager) {
                 AuditManager.logExport("Gestión Usuarios", "Descarga de lista de usuarios");
             } else {
                 logAuditEvent("EXPORTACION", "Gestión Usuarios", "Descarga de lista de usuarios");
             }
-            showToast('Listado de usuarios exportado a Excel.', 'success');
+            showToast('Listado de usuarios exportado con éxito.', 'success');
         }
 
         // =========================================================================
@@ -11805,6 +12717,267 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- FASE 4.0: MODAL CENTRO AVANZADO DE EXPORTACIONES HISTÓRICAS (FIRESTORE)   -->
+    <!-- ========================================================================= -->
+    <div id="modal-centro-exportaciones"
+        class="hidden fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-md transition-all">
+        <div
+            class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-pop max-h-[92vh]">
+            
+            <!-- Header -->
+            <div
+                class="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white p-5 flex items-center justify-between border-b-4 border-emerald-500">
+                <div class="flex items-center gap-3.5">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center text-xl shadow-inner shrink-0">
+                        <i class="fa-solid fa-file-export"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-base font-black tracking-wide text-white">Centro Avanzado de Exportaciones</h3>
+                            <span
+                                class="bg-emerald-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider">Fase 4.0</span>
+                        </div>
+                        <p class="text-xs text-emerald-200/80 mt-0.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-database text-[10px]"></i> Histórico oficial Firestore • Retención mínima 180 días
+                        </p>
+                    </div>
+                </div>
+                <button onclick="closeExportCenterModal()"
+                    class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-5 sm:p-6 space-y-5 bg-slate-50 overflow-y-auto text-xs">
+                
+                <!-- 1. MÓDULOS SOPORTADOS (Tabs) -->
+                <div>
+                    <label class="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 block mb-2 flex items-center justify-between">
+                        <span>1. Módulo a Exportar</span>
+                        <span class="text-emerald-700 font-bold lowercase text-[10px]" id="export-modal-selected-module-title">Dashboard Ejecutivo</span>
+                    </label>
+                    <div class="flex items-center gap-2 p-1 bg-slate-200/70 rounded-2xl">
+                        <button type="button" id="export-tab-btn-dashboard" onclick="setExportModule('dashboard')"
+                            class="flex-1 py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all bg-emerald-600 text-white shadow-md cursor-pointer">
+                            <i class="fa-solid fa-gauge-high"></i>
+                            <span>Dashboard</span>
+                        </button>
+                        <button type="button" id="export-tab-btn-auditoria" onclick="setExportModule('auditoria')"
+                            class="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 cursor-pointer">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                            <span>Auditoría</span>
+                        </button>
+                        <button type="button" id="export-tab-btn-cronos_sla" onclick="setExportModule('cronos_sla')"
+                            class="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 cursor-pointer">
+                            <i class="fa-solid fa-stopwatch-20"></i>
+                            <span>Analítica CRONOS SLA</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. PERIODOS DE EXPORTACIÓN -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 block">
+                            2. Periodo Histórico
+                        </label>
+                        <span class="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200" id="export-period-summary-label">
+                            Últimos 30 días
+                        </span>
+                    </div>
+                    
+                    <!-- Pills Rápidos de Periodo -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+                        <button type="button" id="export-period-hoy" onclick="setExportPeriod('hoy')"
+                            class="px-2.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer text-center">
+                            <i class="fa-regular fa-calendar-day block text-sm mb-1 text-slate-500"></i> Hoy
+                        </button>
+                        <button type="button" id="export-period-semana" onclick="setExportPeriod('semana')"
+                            class="px-2.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer text-center">
+                            <i class="fa-solid fa-calendar-week block text-sm mb-1 text-slate-500"></i> Semana
+                        </button>
+                        <button type="button" id="export-period-mes" onclick="setExportPeriod('mes')"
+                            class="px-2.5 py-2 rounded-xl text-xs font-extrabold bg-emerald-600 text-white shadow-xs transition cursor-pointer text-center">
+                            <i class="fa-regular fa-calendar block text-sm mb-1 text-white"></i> Mes
+                        </button>
+                        <button type="button" id="export-period-3meses" onclick="setExportPeriod('3meses')"
+                            class="px-2.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer text-center">
+                            <i class="fa-solid fa-chart-line block text-sm mb-1 text-slate-500"></i> 3 Meses
+                        </button>
+                        <button type="button" id="export-period-6meses" onclick="setExportPeriod('6meses')"
+                            class="px-2.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer text-center relative">
+                            <span class="absolute -top-1.5 -right-1 bg-amber-500 text-slate-950 font-black text-[8px] px-1 rounded-full">180d</span>
+                            <i class="fa-solid fa-vault block text-sm mb-1 text-slate-500"></i> 6 Meses
+                        </button>
+                        <button type="button" id="export-period-personalizado" onclick="setExportPeriod('personalizado')"
+                            class="px-2.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer text-center">
+                            <i class="fa-solid fa-sliders block text-sm mb-1 text-slate-500"></i> Personalizado
+                        </button>
+                    </div>
+
+                    <!-- Contenedor Rango Personalizado -->
+                    <div id="export-custom-dates-container" class="hidden grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 block mb-1">Fecha Desde:</label>
+                            <input type="date" id="export-date-start" onchange="updateExportPreviewCount()"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-800 focus:outline-emerald-500">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 block mb-1">Fecha Hasta:</label>
+                            <input type="date" id="export-date-end" onchange="updateExportPreviewCount()"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-800 focus:outline-emerald-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. FILTROS AVANZADOS (Usuario, Rol, Acción / Estado SLA) -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                    <label class="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 block">
+                        3. Filtros Específicos
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        
+                        <!-- Filtro Usuario -->
+                        <div class="sm:col-span-2 lg:col-span-1">
+                            <label class="text-[10px] font-bold text-slate-500 block mb-1">
+                                <i class="fa-solid fa-user text-slate-400 mr-1"></i> Asesor / Usuario
+                            </label>
+                            <select id="export-filter-user" onchange="updateExportPreviewCount()"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-emerald-500">
+                                <option value="todos">Todos los Asesores y Usuarios</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtro Rol (Auditoría / SLA) -->
+                        <div id="export-filter-role-container" style="display: none;">
+                            <label class="text-[10px] font-bold text-slate-500 block mb-1">
+                                <i class="fa-solid fa-user-shield text-slate-400 mr-1"></i> Rol Operativo
+                            </label>
+                            <select id="export-filter-role" onchange="updateExportPreviewCount()"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-emerald-500">
+                                <option value="todos">Todos los Roles</option>
+                                <option value="Administrador">Administrador</option>
+                                <option value="Supervisor">Supervisor</option>
+                                <option value="Coordinador">Coordinador</option>
+                                <option value="Formador">Formador</option>
+                                <option value="Calidad">Calidad</option>
+                                <option value="Asesor">Asesor</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtro Acción (Auditoría) -->
+                        <div id="export-filter-action-container" style="display: none;">
+                            <label class="text-[10px] font-bold text-slate-500 block mb-1">
+                                <i class="fa-solid fa-bolt text-slate-400 mr-1"></i> Acción Operativa
+                            </label>
+                            <select id="export-filter-action" onchange="updateExportPreviewCount()"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-emerald-500">
+                                <option value="todas">Todas las Acciones</option>
+                                <option value="INICIO_SESION">Inicio de Sesión (Login)</option>
+                                <option value="CIERRE_SESION">Cierre de Sesión (Logout)</option>
+                                <option value="ACCESO_MODULO">Acceso a Módulo</option>
+                                <option value="COPIAR_CLAVE">Copiar Clave Secreta</option>
+                                <option value="USO_CRONOS_SLA">Uso CRONOS SLA</option>
+                                <option value="EXPORTACION">Exportaciones de Datos</option>
+                                <option value="GESTION">Gestión de Usuarios</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtro Estado SLA (CRONOS SLA) -->
+                        <div id="export-filter-sla-container" style="display: none;">
+                            <label class="text-[10px] font-bold text-slate-500 block mb-1">
+                                <i class="fa-solid fa-traffic-light text-slate-400 mr-1"></i> Estado SLA
+                            </label>
+                            <select id="export-filter-sla-status" onchange="updateExportPreviewCount()"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-emerald-500">
+                                <option value="todos">Todos los Estados SLA</option>
+                                <option value="Normal">Normal (&lt; 45s)</option>
+                                <option value="Preventivo">Preventivo (45s - 59s)</option>
+                                <option value="Límite SLA">Límite SLA (60s - 70s)</option>
+                                <option value="SLA Crítico">SLA Crítico (&gt; 70s)</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 4. FORMATO DE ARCHIVO -->
+                <div>
+                    <label class="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 block mb-2">
+                        4. Formato de Descarga
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div id="export-format-card-xlsx" onclick="setExportFormat('xlsx')"
+                            class="p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50/50 flex items-center gap-3.5 cursor-pointer transition shadow-xs">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg font-black shrink-0 shadow-sm">
+                                <i class="fa-solid fa-file-excel"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-1.5 font-black text-slate-900 text-xs">
+                                    <span>Microsoft Excel (.xlsx)</span>
+                                    <span class="bg-emerald-600 text-white text-[9px] px-1.5 py-0.2 rounded font-extrabold">Recomendado</span>
+                                </div>
+                                <div class="text-[11px] text-slate-500 mt-0.5">Libro multi-hoja completo con tablas de análisis y formatos.</div>
+                            </div>
+                        </div>
+                        <div id="export-format-card-csv" onclick="setExportFormat('csv')"
+                            class="p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center gap-3.5 cursor-pointer transition">
+                            <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg font-black shrink-0 shadow-sm">
+                                <i class="fa-solid fa-file-csv"></i>
+                            </div>
+                            <div>
+                                <div class="font-black text-slate-900 text-xs">Delimitado por Comas (.csv)</div>
+                                <div class="text-[11px] text-slate-500 mt-0.5">Estándar UTF-8 BOM, compatible con herramientas de BI.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. CARD INFORMATIVA DE RETENCIÓN Y PREVIEW -->
+                <div class="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-4 space-y-2">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-2 text-emerald-900 font-extrabold text-xs">
+                            <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                            <span>Garantía de Retención Histórica: 180 Días (6 Meses)</span>
+                        </div>
+                        <div id="export-preview-badge" class="text-[11px] font-bold text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-emerald-200 shadow-2xs">
+                            <i class="fa-solid fa-database text-emerald-600 mr-1"></i> Consultando registros...
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-emerald-800 leading-relaxed">
+                        Las consultas se dirigen a las colecciones oficiales de Firestore (<code>auditoria</code>, <code>cronos_sla</code>, <code>usuarios</code>), procesando la totalidad de registros históricos sin límites de visualización de pantalla.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="p-4 sm:p-5 bg-white border-t border-slate-200 flex items-center justify-between flex-wrap gap-3">
+                <button type="button" onclick="closeExportCenterModal()"
+                    class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition cursor-pointer">
+                    Cancelar
+                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="updateExportPreviewCount()"
+                        class="px-3.5 py-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-rotate text-slate-500"></i>
+                        <span>Verificar Registros</span>
+                    </button>
+                    <button type="button" id="btn-export-download" onclick="executeExportCenterDownload()"
+                        class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-extrabold text-xs shadow-md hover:shadow-emerald-600/30 transition flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-cloud-arrow-down"></i>
+                        <span>Generar y Descargar Reporte</span>
+                    </button>
+                </div>
+            </div>
+
         </div>
     </div>
 
