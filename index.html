@@ -2500,7 +2500,7 @@
                                         else if (typeof window.logSLAEvent === 'function') window.logSLAEvent('Alcanzó 60s', 60);
                                     } else if (cronosSeconds === 70 || cronosSeconds === 71) {
                                         if (window.SLAManager && typeof window.SLAManager.register70Seconds === 'function') window.SLAManager.register70Seconds();
-                                        else if (typeof window.logSLAEvent === 'function') window.logSLAEvent('Superó 70s', 71);
+                                        else if (typeof window.logSLAEvent === 'function') window.logSLAEvent('Superó 70s', 70);
                                     }
 
                                     // Alertas sonoras automáticas por rango
@@ -12865,7 +12865,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 return await this.saveSLAEvent('Alcanzó 60s', 60, 'Límite SLA');
             },
             async register70Seconds() {
-                return await this.saveSLAEvent('Superó 70s', 71, 'SLA Crítico');
+                return await this.saveSLAEvent('Superó 70s', 70, 'SLA Crítico');
             },
             getStats() {
                 const events = window.CRONOS_SLA_EVENTS || [];
