@@ -23,7 +23,7 @@
     <meta name="theme-color" content="#FF5E00">
     <meta name="author" content="Jhonny Eduar León Illescas - Fidelizaciones WIN">
     <meta name="copyright" content="CRONOS FID - WIN 2026">
-    <meta name="version" content="4.1.3">
+    <meta name="version" content="4.1.5">
 
     <!--
       CRONOS FID
@@ -729,7 +729,7 @@
 
             <!-- Footer Card -->
             <div class="text-center text-[10px] text-slate-400 font-medium">
-                CRONOS FID • Versión JELI v4.1.3 • WIN SEP2026
+                CRONOS FID • Versión JELI v4.1.5 • WIN OCT2026
             </div>
         </div>
     </div>
@@ -2498,7 +2498,7 @@
                                     } else if (cronosSeconds === 60) {
                                         if (window.SLAManager && typeof window.SLAManager.register60Seconds === 'function') window.SLAManager.register60Seconds();
                                         else if (typeof window.logSLAEvent === 'function') window.logSLAEvent('Alcanzó 60s', 60);
-                                    } else if (cronosSeconds === 71) {
+                                    } else if (cronosSeconds === 70 || cronosSeconds === 71) {
                                         if (window.SLAManager && typeof window.SLAManager.register70Seconds === 'function') window.SLAManager.register70Seconds();
                                         else if (typeof window.logSLAEvent === 'function') window.logSLAEvent('Superó 70s', 71);
                                     }
@@ -3794,6 +3794,11 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
+                            <button onclick="renderAuditoriaModule()"
+                                class="bg-slate-800 hover:bg-slate-900 border border-emerald-500/40 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm cursor-pointer active:scale-95">
+                                <i class="fa-solid fa-rotate-right text-xs"></i>
+                                <span>Actualizar Métricas</span>
+                            </button>
                             <button onclick="openExportCenterModal('auditoria')"
                                 class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm cursor-pointer active:scale-95">
                                 <i class="fa-regular fa-file-excel"></i>
@@ -3959,6 +3964,11 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
+                            <button onclick="renderSLAModule()"
+                                class="bg-slate-800 hover:bg-slate-900 border border-purple-500/40 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm cursor-pointer active:scale-95">
+                                <i class="fa-solid fa-rotate-right text-xs"></i>
+                                <span>Actualizar Métricas</span>
+                            </button>
                             <button onclick="openExportCenterModal('cronos_sla')"
                                 class="bg-purple-600 hover:bg-purple-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm cursor-pointer active:scale-95">
                                 <i class="fa-regular fa-file-excel"></i>
@@ -4436,7 +4446,7 @@
                 <span class="text-zinc-500">|</span>
                 <span>Plataforma de Fidelización Ágil de WIN 2026</span>
                 <span class="text-zinc-500">|</span>
-                <span class="text-zinc-400 font-semibold">CRONOS FID • Versión JELI v4.1.3 • WIN SEP2026</span>
+                <span class="text-zinc-400 font-semibold">CRONOS FID • Versión JELI v4.1.5 • WIN OCT2026</span>
             </div>
 
             <!-- Derecha: Logotipo Corporativo -->
@@ -12746,9 +12756,13 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
 
                     if (!window.CRONOS_ACCESS_LOGS) window.CRONOS_ACCESS_LOGS = [];
                     window.CRONOS_ACCESS_LOGS.unshift(logData);
-                    if (window.CRONOS_ACCESS_LOGS.length > 500) {
-                        window.CRONOS_ACCESS_LOGS = window.CRONOS_ACCESS_LOGS.slice(0, 500);
+                    if (window.CRONOS_ACCESS_LOGS.length > 1000) {
+                        window.CRONOS_ACCESS_LOGS = window.CRONOS_ACCESS_LOGS.slice(0, 1000);
                     }
+                    if (typeof renderAuditoriaStats === 'function') renderAuditoriaStats();
+                    if (typeof renderAuditoriaTable === 'function') renderAuditoriaTable();
+                    if (typeof renderAccessHistoryTable === 'function') renderAccessHistoryTable();
+                    if (typeof renderDashboard === 'function') renderDashboard();
                     return logData;
                 } catch (error) {
                     console.error("FIRESTORE ERROR [AuditManager]:", error);
@@ -13570,13 +13584,15 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             try {
                 const user = window.CRONOS_CURRENT_USER || { uid: "usr_win_001", nombre: "Usuario WIN", correo: "usuario@win.pe", rol: "Asesor" };
                 const now = new Date();
+                const nowMs = now.getTime();
+                const nowISO = now.toISOString();
                 const fechaStr = now.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
                 const horaStr = now.toLocaleTimeString('es-PE', { hour12: false });
                 const tiempoExacto = formatSecondsToMMSS(tiempoSegundos || 0);
                 const estadoSLA = estadoOverride || getSLAStateFromSeconds(tiempoSegundos || 0);
 
                 const slaEvent = {
-                    id: "sla-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
+                    id: "sla-" + nowMs + "-" + Math.floor(Math.random() * 1000),
                     fecha: fechaStr,
                     hora: horaStr,
                     usuario: user.nombre || "Usuario WIN",
@@ -13587,8 +13603,10 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     tiempoExacto: tiempoExacto,
                     tiempoSegundos: typeof tiempoSegundos === 'number' ? tiempoSegundos : (parseInt(tiempoSegundos) || 0),
                     estadoSLA: estadoSLA,
-                    timestamp: now.getTime(),
-                    fechaHora: now.toISOString()
+                    timestamp: nowMs,
+                    fechaHora: nowISO,
+                    createdAt: nowISO,
+                    registradoEn: nowISO
                 };
 
                 // Guardar en Firestore colección 'cronos_sla'
@@ -13611,8 +13629,9 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     window.UserManager.updateUser(usrInDb.uid, { usoSLA: usrInDb.usoSLA }).catch(e => console.error("FIRESTORE ERROR:", e));
                 }
 
+                renderSLAMetricsCards();
+                renderSLATable();
                 renderDashboard();
-                renderSLAModule();
             } catch (error) {
                 console.error("FIRESTORE ERROR [logSLAEvent]:", error);
             }
@@ -14057,6 +14076,85 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             renderDashboard();
         }
 
+        // Normalizador universal de documentos SLA (soporte total de fechas y esquemas históricos/nuevos)
+        function normalizeSLADoc(docOrData, docId = null) {
+            const d = (docOrData && typeof docOrData.data === 'function') ? docOrData.data() : (docOrData || {});
+            const id = (docOrData && docOrData.id) ? docOrData.id : (docId || d.id || ('sla-' + Math.random().toString(36).substr(2, 9)));
+
+            let timeMs = 0;
+            if (typeof d.timestamp === 'number' && d.timestamp > 0) {
+                timeMs = d.timestamp;
+            } else if (d.timestamp && typeof d.timestamp.toMillis === 'function') {
+                timeMs = d.timestamp.toMillis();
+            } else if (d.timestamp && d.timestamp.seconds) {
+                timeMs = d.timestamp.seconds * 1000;
+            } else if (d.fechaHora) {
+                const t = new Date(d.fechaHora).getTime();
+                if (!isNaN(t) && t > 0) timeMs = t;
+            } else if (d.createdAt) {
+                const t = typeof d.createdAt.toMillis === 'function' ? d.createdAt.toMillis() : new Date(d.createdAt).getTime();
+                if (!isNaN(t) && t > 0) timeMs = t;
+            } else if (d.registradoEn) {
+                const t = typeof d.registradoEn.toMillis === 'function' ? d.registradoEn.toMillis() : new Date(d.registradoEn).getTime();
+                if (!isNaN(t) && t > 0) timeMs = t;
+            }
+
+            if (timeMs === 0 && d.fecha) {
+                const parts = String(d.fecha).trim().split(/[\/\-\.]/);
+                if (parts.length === 3) {
+                    let day, month, year;
+                    if (parts[0].length === 4) {
+                        year = parseInt(parts[0], 10);
+                        month = parseInt(parts[1], 10) - 1;
+                        day = parseInt(parts[2], 10);
+                    } else {
+                        day = parseInt(parts[0], 10);
+                        month = parseInt(parts[1], 10) - 1;
+                        year = parseInt(parts[2], 10);
+                    }
+                    let hh = 0, mm = 0, ss = 0;
+                    if (d.hora) {
+                        const hParts = String(d.hora).trim().split(':');
+                        hh = parseInt(hParts[0], 10) || 0;
+                        mm = parseInt(hParts[1], 10) || 0;
+                        ss = parseInt(hParts[2], 10) || 0;
+                    }
+                    const dt = new Date(year, month, day, hh, mm, ss);
+                    if (!isNaN(dt.getTime())) timeMs = dt.getTime();
+                }
+            }
+
+            let fFecha = d.fecha || '';
+            let fHora = d.hora || '';
+            if ((!fFecha || !fHora) && timeMs > 0) {
+                const dt = new Date(timeMs);
+                if (!fFecha) fFecha = dt.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                if (!fHora) fHora = dt.toLocaleTimeString('es-PE', { hour12: false });
+            }
+
+            const fechaHoraISO = d.fechaHora || (timeMs > 0 ? new Date(timeMs).toISOString() : '');
+            const tiempoSecs = typeof d.tiempoSegundos === 'number' ? d.tiempoSegundos : (parseInt(d.tiempoSegundos) || 0);
+
+            return {
+                id: id,
+                fecha: fFecha || '—',
+                hora: fHora || '—',
+                fechaHora: fechaHoraISO,
+                createdAt: d.createdAt || fechaHoraISO,
+                registradoEn: d.registradoEn || fechaHoraISO,
+                usuario: d.usuario || d.nombre || d.user || 'Usuario WIN',
+                correo: d.correo || d.email || '—',
+                rol: d.rol || d.perfil || 'Asesor',
+                modulo: d.modulo || 'CRONOS SLA',
+                accion: d.accion || d.action || 'Iniciar',
+                tiempoExacto: d.tiempoExacto || formatSecondsToMMSS(tiempoSecs),
+                tiempoSegundos: tiempoSecs,
+                estadoSLA: d.estadoSLA || getSLAStateFromSeconds(tiempoSecs),
+                timestamp: timeMs
+            };
+        }
+        window.normalizeSLADoc = normalizeSLADoc;
+
         // =========================================================================
         // RENDERING DEL CENTRO DE CONTROL CRONOS FID (DASHBOARD)
         // =========================================================================
@@ -14067,17 +14165,21 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
 
                 console.log("[Dashboard] Solicitando datos iniciales a Firestore (cronos_sla, auditoria, usuarios)...");
                 const [slaSnap, audSnap, usrSnap] = await Promise.all([
-                    firestoreDb.collection('cronos_sla').limit(500).get().catch(e => { console.warn('Error get cronos_sla:', e); return null; }),
-                    firestoreDb.collection('auditoria').limit(500).get().catch(e => { console.warn('Error get auditoria:', e); return null; }),
+                    firestoreDb.collection('cronos_sla').orderBy('fechaHora', 'desc').limit(1000).get().catch(() =>
+                        firestoreDb.collection('cronos_sla').orderBy('timestamp', 'desc').limit(1000).get().catch(() =>
+                            firestoreDb.collection('cronos_sla').get().catch(e => { console.warn('Error get cronos_sla:', e); return null; })
+                        )
+                    ),
+                    firestoreDb.collection('auditoria').orderBy('fechaHora', 'desc').limit(1000).get().catch(() =>
+                        firestoreDb.collection('auditoria').limit(1000).get().catch(e => { console.warn('Error get auditoria:', e); return null; })
+                    ),
                     firestoreDb.collection('usuarios').get().catch(e => { console.warn('Error get usuarios:', e); return null; })
                 ]);
 
                 if (slaSnap && !slaSnap.empty) {
                     const events = [];
                     slaSnap.forEach(doc => {
-                        const d = doc.data();
-                        const timeMs = d.timestamp || (d.fechaHora ? new Date(d.fechaHora).getTime() : 0);
-                        events.push({ id: doc.id, ...d, timestamp: timeMs });
+                        events.push(normalizeSLADoc(doc));
                     });
                     events.sort((a, b) => b.timestamp - a.timestamp);
                     window.CRONOS_SLA_EVENTS = events;
@@ -14427,8 +14529,14 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             try {
                 if (window.db) {
                     const [audSnap, slaSnap, usrSnap] = await Promise.all([
-                        window.db.collection('auditoria').limit(500).get().catch(() => null),
-                        window.db.collection('cronos_sla').limit(500).get().catch(() => null),
+                        window.db.collection('auditoria').orderBy('fechaHora', 'desc').limit(1000).get().catch(() =>
+                            window.db.collection('auditoria').limit(1000).get().catch(() => null)
+                        ),
+                        window.db.collection('cronos_sla').orderBy('fechaHora', 'desc').limit(1000).get().catch(() =>
+                            window.db.collection('cronos_sla').orderBy('timestamp', 'desc').limit(1000).get().catch(() =>
+                                window.db.collection('cronos_sla').get().catch(() => null)
+                            )
+                        ),
                         window.db.collection('usuarios').get().catch(() => null)
                     ]);
                     if (audSnap && !audSnap.empty) {
@@ -14468,32 +14576,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     if (slaSnap && !slaSnap.empty) {
                         const events = [];
                         slaSnap.forEach(doc => {
-                            const d = doc.data();
-                            const timeMs = d.timestamp || (d.fechaHora ? new Date(d.fechaHora).getTime() : 0);
-                            let fFecha = d.fecha;
-                            let fHora = d.hora;
-                            if ((!fFecha || !fHora) && d.fechaHora) {
-                                try {
-                                    const dt = new Date(d.fechaHora);
-                                    if (!fFecha) fFecha = dt.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                                    if (!fHora) fHora = dt.toLocaleTimeString('es-PE', { hour12: false });
-                                } catch (e) { }
-                            }
-                            events.push({
-                                id: doc.id,
-                                fecha: fFecha || '—',
-                                hora: fHora || '—',
-                                fechaHora: d.fechaHora || '',
-                                usuario: d.usuario || d.nombre || 'Usuario WIN',
-                                correo: d.correo || d.email || '—',
-                                rol: d.rol || 'Asesor',
-                                modulo: d.modulo || 'CRONOS SLA',
-                                accion: d.accion || 'Iniciar',
-                                tiempoExacto: d.tiempoExacto || formatSecondsToMMSS(d.tiempoSegundos || 0),
-                                tiempoSegundos: typeof d.tiempoSegundos === 'number' ? d.tiempoSegundos : (parseInt(d.tiempoSegundos) || 0),
-                                estadoSLA: d.estadoSLA || getSLAStateFromSeconds(d.tiempoSegundos || 0),
-                                timestamp: timeMs
-                            });
+                            events.push(normalizeSLADoc(doc));
                         });
                         events.sort((a, b) => b.timestamp - a.timestamp);
                         window.CRONOS_SLA_EVENTS = events;
@@ -14510,6 +14593,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 console.warn('refreshDashboardMetrics error:', e);
             }
             renderDashboard();
+            console.log("Dashboard actualizado");
             showToast('Métricas del Centro de Control sincronizadas con datos reales desde Firestore.', 'info');
         }
 
@@ -14518,32 +14602,69 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         // =========================================================================
         async function renderAuditoriaModule() {
             const tbody = document.getElementById('auditoria-table-tbody');
-            if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400 font-medium"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Cargando registros desde Firestore...</td></tr>`;
+            if (tbody && (!window.CRONOS_ACCESS_LOGS || window.CRONOS_ACCESS_LOGS.length === 0)) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400 font-medium"><i class="fa-solid fa-spinner fa-spin mr-2 text-emerald-600"></i> Cargando registros desde Firestore...</td></tr>`;
             }
 
             try {
-                if (window.db) {
-                    const snapshot = await window.db.collection('auditoria').orderBy('fechaHora', 'desc').limit(500).get();
-                    const logs = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        // Mapeo retrocompatible
-                        data.usuario = data.nombre || data.usuario || 'Desconocido';
-                        data.resultado = data.detalle || data.resultado || 'Exitoso';
-                        logs.push(data);
-                    });
-                    window.CRONOS_ACCESS_LOGS = logs;
+                const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
+                if (firestoreDb) {
+                    let snapshot;
+                    try {
+                        snapshot = await firestoreDb.collection('auditoria').orderBy('fechaHora', 'desc').limit(1000).get();
+                    } catch (orderErr) {
+                        try {
+                            snapshot = await firestoreDb.collection('auditoria').orderBy('timestamp', 'desc').limit(1000).get();
+                        } catch (orderErr2) {
+                            snapshot = await firestoreDb.collection('auditoria').limit(1000).get();
+                        }
+                    }
+
+                    if (snapshot && !snapshot.empty) {
+                        const logs = [];
+                        snapshot.forEach(doc => {
+                            const d = doc.data();
+                            const timeMs = d.timestamp || (d.fechaHora ? new Date(d.fechaHora).getTime() : 0);
+                            let fFecha = d.fecha;
+                            let fHora = d.hora;
+                            if ((!fFecha || !fHora) && d.fechaHora) {
+                                try {
+                                    const dt = new Date(d.fechaHora);
+                                    if (!fFecha) fFecha = dt.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                                    if (!fHora) fHora = dt.toLocaleTimeString('es-PE', { hour12: false });
+                                } catch (e) { }
+                            }
+                            logs.push({
+                                id: doc.id,
+                                fecha: fFecha || '—',
+                                hora: fHora || '—',
+                                fechaHora: d.fechaHora || '',
+                                usuario: d.usuario || d.nombre || 'Desconocido',
+                                nombre: d.nombre || d.usuario || 'Desconocido',
+                                correo: d.correo || d.email || '—',
+                                rol: d.rol || d.perfil || 'Asesor',
+                                accion: d.accion || d.action || 'ACCESO_MODULO',
+                                modulo: d.modulo || d.module || 'General',
+                                detalle: d.detalle || d.resultado || d.detail || 'Operación exitosa',
+                                resultado: d.resultado || d.detalle || 'Exitoso',
+                                timestamp: timeMs
+                            });
+                        });
+                        logs.sort((a, b) => b.timestamp - a.timestamp);
+                        window.CRONOS_ACCESS_LOGS = logs;
+                        window.CRONOS_FIRESTORE_AUDIT_LOGS = logs;
+                    }
                 }
             } catch (error) {
                 console.error('[Auditoria] Error al obtener registros de Firestore:', error);
-                if (tbody) {
+                if (tbody && (!window.CRONOS_ACCESS_LOGS || window.CRONOS_ACCESS_LOGS.length === 0)) {
                     tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-red-500 font-medium">Error al cargar registros.</td></tr>`;
                 }
             }
 
             renderAuditoriaStats();
             renderAuditoriaTable();
+            console.log("Auditoría actualizada");
         }
 
         function renderAuditoriaStats() {
@@ -14626,24 +14747,72 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         // MÓDULO DE ANALÍTICA CRONOS SLA EN TIEMPO REAL
         // =========================================================================
         async function renderSLAModule() {
+            const tbody = document.getElementById('sla-events-tbody');
+            if (tbody && (!window.CRONOS_SLA_EVENTS || window.CRONOS_SLA_EVENTS.length === 0)) {
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 font-medium"><i class="fa-solid fa-spinner fa-spin mr-2 text-purple-600"></i> Consultando eventos CRONOS SLA en tiempo real desde Firestore...</td></tr>`;
+            }
+
             try {
-                if (window.db) {
-                    const snapshot = await window.db.collection('cronos_sla').orderBy('timestamp', 'desc').limit(500).get();
-                    if (!snapshot.empty) {
+                const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
+                if (firestoreDb) {
+                    let snapshot = null;
+                    let queryMethod = '';
+                    try {
+                        snapshot = await firestoreDb.collection('cronos_sla').orderBy('fechaHora', 'desc').limit(1000).get();
+                        queryMethod = "orderBy('fechaHora','desc').limit(1000)";
+                    } catch (e1) {
+                        try {
+                            snapshot = await firestoreDb.collection('cronos_sla').orderBy('timestamp', 'desc').limit(1000).get();
+                            queryMethod = "orderBy('timestamp','desc').limit(1000)";
+                        } catch (e2) {
+                            try {
+                                snapshot = await firestoreDb.collection('cronos_sla').get();
+                                queryMethod = "get() sin ordenamiento fijo (fallback total)";
+                            } catch (e3) {
+                                console.error('[SLAModule] Error al cargar cronos_sla desde Firestore:', e3);
+                            }
+                        }
+                    }
+
+                    if (snapshot && !snapshot.empty) {
                         const events = [];
                         snapshot.forEach(doc => {
-                            events.push(doc.data());
+                            events.push(normalizeSLADoc(doc));
                         });
+                        events.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                         window.CRONOS_SLA_EVENTS = events;
+
+                        const totalRegistros = snapshot.size;
+                        const registros = events;
+                        const ultimaFecha = events.length > 0 ? (events[0].fechaHora || events[0].fecha || (events[0].timestamp ? new Date(events[0].timestamp).toLocaleString('es-PE') : '—')) : 'Ninguna';
+                        const total = events.length;
+
+                        console.log("Total registros cronos_sla:", totalRegistros);
+                        console.log("Registros SLA encontrados:", registros);
+                        console.log("Última fecha encontrada:", ultimaFecha);
+                        console.log("Consulta Firestore SLA ejecutada");
+                        console.log("Total SLA cargados:", total);
+                        console.log(`[SLAModule] Consulta exitosa usando método: ${queryMethod}`);
+                    } else if (snapshot && snapshot.empty) {
+                        console.log("Total registros cronos_sla: 0");
+                        console.log("Registros SLA encontrados: []");
+                        console.log("Última fecha encontrada: Ninguna");
+                        console.log("Consulta Firestore SLA ejecutada");
+                        console.log("Total SLA cargados: 0");
                     }
                 }
             } catch (error) {
                 console.error('[SLAModule] Error al cargar cronos_sla desde Firestore:', error);
-                console.error(error);
             }
+
             renderSLAMetricsCards();
             renderSLATable();
             renderDashboardMetricsOnly();
+
+            if (typeof _slaUnsubscribe !== 'undefined' && !_slaUnsubscribe && typeof initRealtimeListeners === 'function') {
+                try { initRealtimeListeners(); } catch (e) { }
+            }
+            console.log("Analítica SLA actualizada");
         }
 
         function renderSLAMetricsCards() {
@@ -14694,10 +14863,10 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             filtered.forEach(ev => {
                 const style = getRoleBadgeStyle(ev.rol);
 
-                let stateBadge = 'bg-emerald-100 text-emerald-800';
+                let stateBadge = 'bg-emerald-100 text-emerald-800 font-semibold';
                 if (ev.estadoSLA === 'Preventivo') stateBadge = 'bg-amber-100 text-amber-800 font-bold';
                 else if (ev.estadoSLA === 'Límite SLA') stateBadge = 'bg-orange-100 text-orange-800 font-bold';
-                else if (ev.estadoSLA === 'SLA Excedido') stateBadge = 'bg-rose-100 text-rose-800 font-black animate-pulse';
+                else if (ev.estadoSLA === 'SLA Excedido' || ev.estadoSLA === 'SLA Crítico') stateBadge = 'bg-rose-100 text-rose-800 font-black animate-pulse';
 
                 html += `
                     <tr class="hover:bg-slate-50 transition-colors">
@@ -16590,59 +16759,63 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 const handleSlaDocs = (snapshot) => {
                     const events = [];
                     snapshot.forEach(doc => {
-                        const d = doc.data();
-                        const timeMs = d.timestamp || (d.fechaHora ? new Date(d.fechaHora).getTime() : 0);
-                        let fFecha = d.fecha;
-                        let fHora = d.hora;
-                        if ((!fFecha || !fHora) && d.fechaHora) {
-                            try {
-                                const dt = new Date(d.fechaHora);
-                                if (!fFecha) fFecha = dt.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                                if (!fHora) fHora = dt.toLocaleTimeString('es-PE', { hour12: false });
-                            } catch (e) { }
-                        }
-                        events.push({
-                            id: doc.id,
-                            fecha: fFecha || '—',
-                            hora: fHora || '—',
-                            fechaHora: d.fechaHora || '',
-                            usuario: d.usuario || d.nombre || 'Usuario WIN',
-                            correo: d.correo || d.email || '—',
-                            rol: d.rol || 'Asesor',
-                            modulo: d.modulo || 'CRONOS SLA',
-                            accion: d.accion || 'Iniciar',
-                            tiempoExacto: d.tiempoExacto || formatSecondsToMMSS(d.tiempoSegundos || 0),
-                            tiempoSegundos: typeof d.tiempoSegundos === 'number' ? d.tiempoSegundos : (parseInt(d.tiempoSegundos) || 0),
-                            estadoSLA: d.estadoSLA || getSLAStateFromSeconds(d.tiempoSegundos || 0),
-                            timestamp: timeMs
-                        });
+                        events.push(normalizeSLADoc(doc));
                     });
 
-                    events.sort((a, b) => b.timestamp - a.timestamp);
+                    events.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                     window.CRONOS_SLA_EVENTS = events;
 
+                    const totalRegistros = snapshot ? snapshot.size : 0;
+                    const registros = events;
+                    const ultimaFecha = events.length > 0 ? (events[0].fechaHora || events[0].fecha || (events[0].timestamp ? new Date(events[0].timestamp).toLocaleString('es-PE') : '—')) : 'Ninguna';
+                    const total = events.length;
+
+                    console.log("Total registros cronos_sla:", totalRegistros);
+                    console.log("Registros SLA encontrados:", registros);
+                    console.log("Última fecha encontrada:", ultimaFecha);
+                    console.log("Consulta Firestore SLA ejecutada");
+                    console.log("Total SLA cargados:", total);
+
+                    renderSLAMetricsCards();
+                    renderSLATable();
+                    renderDashboardMetricsOnly();
                     renderDashboard();
-                    renderSLAModule();
                 };
 
                 try {
                     _slaUnsubscribe = firestoreDb.collection('cronos_sla')
-                        .orderBy('timestamp', 'desc')
-                        .limit(500)
+                        .orderBy('fechaHora', 'desc')
+                        .limit(1000)
                         .onSnapshot(handleSlaDocs, (err) => {
-                            console.warn('[SLAModule Realtime] Fallback a onSnapshot sin orden:', err);
+                            console.warn('[SLAModule Realtime] Fallback a orderBy timestamp:', err);
                             _slaUnsubscribe = firestoreDb.collection('cronos_sla')
-                                .limit(500)
+                                .orderBy('timestamp', 'desc')
+                                .limit(1000)
                                 .onSnapshot(handleSlaDocs, (err2) => {
-                                    console.error("FIRESTORE ERROR [cronos_sla listener]:", err2);
+                                    console.warn('[SLAModule Realtime] Fallback a onSnapshot sin orden:', err2);
+                                    _slaUnsubscribe = firestoreDb.collection('cronos_sla')
+                                        .onSnapshot(handleSlaDocs, (err3) => {
+                                            console.error("FIRESTORE ERROR [cronos_sla listener]:", err3);
+                                        });
                                 });
                         });
                 } catch (e) {
-                    _slaUnsubscribe = firestoreDb.collection('cronos_sla')
-                        .limit(500)
-                        .onSnapshot(handleSlaDocs, (err2) => {
-                            console.error("FIRESTORE ERROR [cronos_sla listener fallback]:", err2);
-                        });
+                    try {
+                        _slaUnsubscribe = firestoreDb.collection('cronos_sla')
+                            .orderBy('timestamp', 'desc')
+                            .limit(1000)
+                            .onSnapshot(handleSlaDocs, (err2) => {
+                                _slaUnsubscribe = firestoreDb.collection('cronos_sla')
+                                    .onSnapshot(handleSlaDocs, (err3) => {
+                                        console.error("FIRESTORE ERROR [cronos_sla listener fallback]:", err3);
+                                    });
+                            });
+                    } catch (e2) {
+                        _slaUnsubscribe = firestoreDb.collection('cronos_sla')
+                            .onSnapshot(handleSlaDocs, (err3) => {
+                                console.error("FIRESTORE ERROR [cronos_sla listener fallback total]:", err3);
+                            });
+                    }
                 }
 
                 // 3. USUARIOS REALTIME LISTENER
