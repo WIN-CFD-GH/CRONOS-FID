@@ -589,9 +589,10 @@
             }
         }
 
-        /* Ocultacion automatica del sidebar administrativo para asesores */
+        /* Ocultacion automatica del sidebar administrativo para asesores y carga inicial */
         #sidebar-admin-modules.hidden,
-        .sidebar-admin-hidden {
+        .sidebar-admin-hidden,
+        .admin-protected-module {
             display: none !important;
         }
 
@@ -618,6 +619,31 @@
 
 <body
     class="bg-slate-100 min-h-screen font-sans flex flex-col antialiased selection:bg-win-orange selection:text-white">
+
+    <!-- ================================================================= -->
+    <!-- PANTALLA DE CARGA INICIAL Y VALIDACIÓN DE PERFILES               -->
+    <!-- ================================================================= -->
+    <div id="auth-loading-screen"
+        class="fixed inset-0 z-[200] bg-gradient-to-br from-slate-950 via-slate-900 to-[#1e1e24] flex flex-col items-center justify-center p-4 min-h-screen text-white">
+        <div class="relative flex flex-col items-center gap-5 animate-pop text-center max-w-sm">
+            <div class="absolute w-72 h-72 bg-win-orange/15 rounded-full blur-3xl pointer-events-none -top-10 -left-10">
+            </div>
+            <div
+                class="absolute w-72 h-72 bg-purple-600/15 rounded-full blur-3xl pointer-events-none -bottom-10 -right-10">
+            </div>
+            <img src="./cronos_fid_final.png" onerror="if(window.CRONOS_LOGO_ORANGE) this.src=window.CRONOS_LOGO_ORANGE"
+                alt="CRONOS FID" class="w-56 max-w-[240px] h-auto object-contain drop-shadow-md relative z-10" />
+            <div
+                class="flex items-center gap-3 bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/10 shadow-lg relative z-10">
+                <i class="fa-solid fa-circle-notch fa-spin text-win-orange text-base"></i>
+                <span id="auth-loading-msg" class="text-xs sm:text-sm font-bold tracking-wide text-slate-200">Validando
+                    permisos...</span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-medium tracking-tight relative z-10">
+                CRONOS FID • Versión JELI v4.1.5 • WIN OCT2026
+            </p>
+        </div>
+    </div>
 
     <!-- ================================================================= -->
     <!-- PANTALLA DE INICIO DE SESIÓN - FASE PREPARATORIA FIREBASE AUTH -->
@@ -1217,25 +1243,25 @@
                                 <i class="fa-solid fa-user-gear text-slate-400 w-4 text-center"></i>
                                 <span>Mi Perfil</span>
                             </button>
-                            <button type="button" id="menu-opt-users"
+                            <button type="button" id="menu-opt-users" style="display: none !important;"
                                 onclick="openAdminUsersModal(); toggleUserDropdown(event);"
                                 class="w-full text-left px-4 py-2 hover:bg-purple-50 hover:text-purple-700 flex items-center gap-2.5 transition cursor-pointer">
                                 <i class="fa-solid fa-users-gear text-slate-400 w-4 text-center"></i>
                                 <span>Gestion de Usuarios</span>
                             </button>
-                            <button type="button" id="menu-opt-history"
+                            <button type="button" id="menu-opt-history" style="display: none !important;"
                                 onclick="openAccessHistoryModal(); toggleUserDropdown(event);"
                                 class="w-full text-left px-4 py-2 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2.5 transition cursor-pointer">
                                 <i class="fa-solid fa-clock-rotate-left text-slate-400 w-4 text-center"></i>
                                 <span>Historial de Accesos</span>
                             </button>
-                            <button type="button" id="menu-opt-exports"
+                            <button type="button" id="menu-opt-exports" style="display: none !important;"
                                 onclick="openExportCenterModal(); toggleUserDropdown(event);"
                                 class="w-full text-left px-4 py-2 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2.5 transition cursor-pointer">
                                 <i class="fa-solid fa-file-export text-slate-400 w-4 text-center"></i>
                                 <span>Centro de Exportaciones</span>
                             </button>
-                            <button type="button" id="menu-opt-settings"
+                            <button type="button" id="menu-opt-settings" style="display: none !important;"
                                 onclick="showToast('Configuracion del sistema preparada para Firebase', 'info'); toggleUserDropdown(event);"
                                 class="w-full text-left px-4 py-2 hover:bg-slate-50 text-slate-600 flex items-center gap-2.5 transition cursor-pointer">
                                 <i class="fa-solid fa-gear text-slate-400 w-4 text-center"></i>
@@ -1545,7 +1571,8 @@
                                             <option value="VISITA TÉCNICA">🔧 VISITA TÉCNICA</option>
                                             <option value="SVA">📦 SVA</option>
                                             <option value="CRM EXP.">🎯 CRM EXP.</option>
-                                            <option value="PROGRAMACIÓN Y VALIDACIONES">📅 PROGRAMACIÓN Y VALIDACIONES</option>
+                                            <option value="PROGRAMACIÓN Y VALIDACIONES">📅 PROGRAMACIÓN Y VALIDACIONES
+                                            </option>
                                         </select>
                                     </div>
 
@@ -1615,10 +1642,12 @@
                                             id="dir-form-area-badge">
                                             Fidelizaciones
                                         </span>
-                                        <span id="dir-form-prio-badge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
+                                        <span id="dir-form-prio-badge"
+                                            class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
                                             🟢 Informativo
                                         </span>
-                                        <div id="dir-form-extra-badges" class="flex items-center gap-1.5 flex-wrap"></div>
+                                        <div id="dir-form-extra-badges" class="flex items-center gap-1.5 flex-wrap">
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1662,51 +1691,70 @@
                                     </div>
 
                                     <!-- Advertencia Especial (si aplica al escenario) -->
-                                    <div id="dir-form-advertencia-box" class="bg-amber-50/95 border-2 border-amber-400 rounded-xl p-3 flex items-start gap-2.5 shadow-sm hidden">
-                                        <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg shrink-0 mt-0.5"></i>
+                                    <div id="dir-form-advertencia-box"
+                                        class="bg-amber-50/95 border-2 border-amber-400 rounded-xl p-3 flex items-start gap-2.5 shadow-sm hidden">
+                                        <i
+                                            class="fa-solid fa-triangle-exclamation text-amber-600 text-lg shrink-0 mt-0.5"></i>
                                         <div>
-                                            <span class="text-[11px] font-black uppercase tracking-wider text-amber-950 block">⚠ IMPORTANTE</span>
-                                            <span id="dir-form-advertencia-text" class="text-xs font-bold text-amber-900 leading-snug block mt-0.5">Este correo debe registrarse adicionalmente en las observaciones de la baja.</span>
+                                            <span
+                                                class="text-[11px] font-black uppercase tracking-wider text-amber-950 block">⚠
+                                                IMPORTANTE</span>
+                                            <span id="dir-form-advertencia-text"
+                                                class="text-xs font-bold text-amber-900 leading-snug block mt-0.5">Este
+                                                correo debe registrarse adicionalmente en las observaciones de la
+                                                baja.</span>
                                         </div>
                                     </div>
 
                                     <!-- Botón de acción especial (ej. formulario externo) -->
                                     <div id="dir-form-action-btn-container" class="hidden"></div>
                                     <!-- Recordatorio especial (si aplica) -->
-                                    <div id="dir-form-recordatorio-box" class="hidden p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs font-bold text-blue-900 flex items-center gap-2 shadow-2xs"></div>
+                                    <div id="dir-form-recordatorio-box"
+                                        class="hidden p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs font-bold text-blue-900 flex items-center gap-2 shadow-2xs">
+                                    </div>
 
                                     <!-- Documentos Requeridos & Checklist (Solo visible en escenarios que requieren documentación) -->
                                     <div id="dir-docs-wrapper" class="hidden">
-                                        <div class="border border-indigo-200 bg-gradient-to-br from-indigo-50/90 via-blue-50/80 to-sky-50/70 rounded-xl p-3 shadow-2xs">
+                                        <div
+                                            class="border border-indigo-200 bg-gradient-to-br from-indigo-50/90 via-blue-50/80 to-sky-50/70 rounded-xl p-3 shadow-2xs">
                                             <div class="flex items-center justify-between gap-2">
                                                 <button type="button" onclick="toggleDirectorioDocsPanel()"
                                                     class="text-xs font-black text-indigo-900 uppercase tracking-wider flex items-center gap-2 hover:text-indigo-700 transition cursor-pointer select-none">
-                                                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-indigo-600 text-white shadow-xs">
+                                                    <span
+                                                        class="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-indigo-600 text-white shadow-xs">
                                                         <i class="fa-solid fa-paperclip text-xs"></i>
                                                     </span>
                                                     <span>📎 DOCUMENTOS REQUERIDOS</span>
-                                                    <span id="dir-docs-badge-count" class="text-[10px] font-extrabold bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded-full">0/0</span>
+                                                    <span id="dir-docs-badge-count"
+                                                        class="text-[10px] font-extrabold bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded-full">0/0</span>
                                                 </button>
                                                 <button type="button" onclick="toggleDirectorioDocsPanel()"
                                                     class="text-xs text-indigo-700 font-bold hover:underline flex items-center gap-1 cursor-pointer">
                                                     <span id="dir-docs-toggle-text">Ocultar</span>
-                                                    <i id="dir-docs-arrow-icon" class="fa-solid fa-chevron-down text-[10px] rotate-180 transition-transform duration-200"></i>
+                                                    <i id="dir-docs-arrow-icon"
+                                                        class="fa-solid fa-chevron-down text-[10px] rotate-180 transition-transform duration-200"></i>
                                                 </button>
                                             </div>
 
-                                            <div id="dir-docs-collapsible" class="mt-2.5 pt-2.5 border-t border-indigo-200 space-y-2.5">
+                                            <div id="dir-docs-collapsible"
+                                                class="mt-2.5 pt-2.5 border-t border-indigo-200 space-y-2.5">
                                                 <!-- Descarga de Formato Oficial -->
-                                                <div id="dir-docs-download-box" class="bg-white border border-blue-200 rounded-xl p-2.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-2xs">
+                                                <div id="dir-docs-download-box"
+                                                    class="bg-white border border-blue-200 rounded-xl p-2.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-2xs">
                                                     <div class="flex items-center gap-2 min-w-0">
-                                                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                                                        <div
+                                                            class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
                                                             <i class="fa-solid fa-file-word text-base"></i>
                                                         </div>
                                                         <div class="min-w-0">
-                                                            <p class="text-[11px] font-bold text-slate-800 truncate" id="dir-docs-filename">Formato Oficial</p>
-                                                            <p class="text-[10px] text-slate-500">Documento Word (.docx) oficial para el trámite</p>
+                                                            <p class="text-[11px] font-bold text-slate-800 truncate"
+                                                                id="dir-docs-filename">Formato Oficial</p>
+                                                            <p class="text-[10px] text-slate-500">Documento Word (.docx)
+                                                                oficial para el trámite</p>
                                                         </div>
                                                     </div>
-                                                    <a id="dir-docs-download-link" href="#" target="_blank" rel="noopener noreferrer"
+                                                    <a id="dir-docs-download-link" href="#" target="_blank"
+                                                        rel="noopener noreferrer"
                                                         class="shrink-0 inline-flex items-center gap-1.5 bg-[#1E6091] hover:bg-[#164970] active:scale-95 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-2xs transition cursor-pointer">
                                                         <i class="fa-solid fa-cloud-arrow-down"></i>
                                                         <span>Descargar Formato</span>
@@ -1716,14 +1764,18 @@
                                                 <!-- Checklist interactivo -->
                                                 <div>
                                                     <div class="flex items-center justify-between mb-1">
-                                                        <span class="text-[10px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1">
-                                                            <i class="fa-solid fa-list-check text-indigo-600"></i> Checklist de Validación:
+                                                        <span
+                                                            class="text-[10px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1">
+                                                            <i class="fa-solid fa-list-check text-indigo-600"></i>
+                                                            Checklist de Validación:
                                                         </span>
-                                                        <button type="button" onclick="resetDirectorioChecklist()" class="text-[10px] text-indigo-600 hover:underline font-bold cursor-pointer">
+                                                        <button type="button" onclick="resetDirectorioChecklist()"
+                                                            class="text-[10px] text-indigo-600 hover:underline font-bold cursor-pointer">
                                                             Desmarcar todo
                                                         </button>
                                                     </div>
-                                                    <div id="dir-docs-checklist-items" class="space-y-1.5 max-h-[220px] overflow-y-auto custom-scrollbar pr-1">
+                                                    <div id="dir-docs-checklist-items"
+                                                        class="space-y-1.5 max-h-[220px] overflow-y-auto custom-scrollbar pr-1">
                                                         <!-- Inyectado dinámicamente -->
                                                     </div>
                                                 </div>
@@ -4305,7 +4357,8 @@
             <!-- ========================================================================= -->
             <!-- COLUMNA LATERAL FIJA: MÓDULOS ADMIN                                       -->
             <!-- ========================================================================= -->
-            <aside id="sidebar-admin-modules" class="w-full lg:w-64 xl:w-72 shrink-0">
+            <aside id="sidebar-admin-modules" class="w-full lg:w-64 xl:w-72 shrink-0 hidden"
+                style="display: none !important;">
                 <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 sticky top-24 space-y-3">
 
                     <!-- Encabezado de la Tarjeta Lateral -->
@@ -4328,7 +4381,7 @@
                     <!-- Lista de Botones Administrativos -->
                     <div class="space-y-2">
                         <!-- Botón: Dashboard -->
-                        <button id="tab-dashboard" onclick="switchTab('dashboard')"
+                        <button id="tab-dashboard" onclick="switchTab('dashboard')" style="display: none !important;"
                             class="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition-all border border-slate-200/80 group cursor-pointer text-left">
                             <div class="flex items-center gap-2.5">
                                 <div
@@ -4347,7 +4400,7 @@
                         </button>
 
                         <!-- Botón: Auditoría -->
-                        <button id="tab-auditoria" onclick="switchTab('auditoria')"
+                        <button id="tab-auditoria" onclick="switchTab('auditoria')" style="display: none !important;"
                             class="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition-all border border-slate-200/80 group cursor-pointer text-left">
                             <div class="flex items-center gap-2.5">
                                 <div
@@ -4367,6 +4420,7 @@
 
                         <!-- Botón: Analítica CRONOS SLA -->
                         <button id="tab-analitica-sla" onclick="switchTab('analitica-sla')"
+                            style="display: none !important;"
                             class="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition-all border border-slate-200/80 group cursor-pointer text-left">
                             <div class="flex items-center gap-2.5">
                                 <div
@@ -4386,6 +4440,7 @@
 
                         <!-- Botón: Gestión de Usuarios -->
                         <button id="tab-gestion-usuarios" onclick="switchTab('gestion-usuarios')"
+                            style="display: none !important;"
                             class="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition-all border border-slate-200/80 group cursor-pointer text-left">
                             <div class="flex items-center gap-2.5">
                                 <div
@@ -4408,6 +4463,7 @@
 
                         <!-- Botón: Centro de Exportaciones (Fase 4.0) -->
                         <button id="sidebar-btn-exports" onclick="openExportCenterModal()"
+                            style="display: none !important;"
                             class="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-xs transition-all border border-slate-200/80 hover:border-emerald-300 group cursor-pointer text-left">
                             <div class="flex items-center gap-2.5">
                                 <div
@@ -4979,6 +5035,10 @@
 
         // --- LÓGICA DE CONTROL DE PESTAÑAS ---
         function switchTab(target) {
+            const isAsesor = window.CRONOS_CURRENT_USER ? String(window.CRONOS_CURRENT_USER.rol || '').toLowerCase().includes('asesor') : true;
+            if (isAsesor && ['dashboard', 'auditoria', 'analitica-sla', 'gestion-usuarios'].includes(target)) {
+                target = 'generator';
+            }
             const header = document.getElementById('main-header');
             const headerLogo = document.getElementById('main-header-logo');
             const headerTitle = document.getElementById('header-title');
@@ -7954,11 +8014,11 @@ Discernir si es:
                     { id: "cliente", label: "Cliente", placeholder: "Ej. Juan Pérez López" },
                     { id: "documento", label: "DNI/CE/RUC", placeholder: "Ej. 12345678" },
                     { id: "telefono", label: "Teléfono Contacto", placeholder: "Ej. 987654321" },
-                    { 
-                        id: "tipoGarantia", 
-                        label: "Tipo de Garantía", 
-                        tipo: "select", 
-                        opciones: ["Dentro de garantía", "Fuera de garantía"] 
+                    {
+                        id: "tipoGarantia",
+                        label: "Tipo de Garantía",
+                        tipo: "select",
+                        opciones: ["Dentro de garantía", "Fuera de garantía"]
                     },
                     { id: "motivo", label: "Motivo", placeholder: "Ej. Cableado expuesto / daño en moldura" }
                 ],
@@ -8004,11 +8064,11 @@ Quedo atento a sus comentarios.`
                     { id: "cliente", label: "Cliente", placeholder: "Ej. Juan Pérez López" },
                     { id: "documento", label: "DNI/CE/RUC", placeholder: "Ej. 12345678" },
                     { id: "telefono", label: "Teléfono de contacto", placeholder: "Ej. 987654321" },
-                    { 
-                        id: "tipoGarantia", 
-                        label: "Tipo de garantía", 
-                        tipo: "select", 
-                        opciones: ["Dentro de garantía", "Fuera de garantía"] 
+                    {
+                        id: "tipoGarantia",
+                        label: "Tipo de garantía",
+                        tipo: "select",
+                        opciones: ["Dentro de garantía", "Fuera de garantía"]
                     },
                     { id: "motivo", label: "Motivo", placeholder: "Ej. Cliente desiste de la baja y solicita continuar con el servicio" }
                 ],
@@ -8189,11 +8249,11 @@ Quedo atento a sus comentarios.`
                     { id: "cliente", label: "Cliente", placeholder: "Ej. Juan Pérez López" },
                     { id: "documento", label: "DNI/CE/RUC", placeholder: "Ej. 12345678" },
                     { id: "telefono", label: "Teléfono de contacto", placeholder: "Ej. 987654321" },
-                    { 
-                        id: "tipoEquipo", 
-                        label: "Tipo de Equipo", 
-                        tipo: "select", 
-                        opciones: ["MESH", "WINBOX", "FONOWIN"] 
+                    {
+                        id: "tipoEquipo",
+                        label: "Tipo de Equipo",
+                        tipo: "select",
+                        opciones: ["MESH", "WINBOX", "FONOWIN"]
                     },
                     { id: "fechaHora", label: "Fecha - Hora de entrega", placeholder: "Ej. 28/09/2026 de 10:00 a 13:00" },
                     { id: "direccion", label: "Dirección", placeholder: "Ej. Jr. Huancavelica 567 Breña" }
@@ -8251,11 +8311,11 @@ ya que el equipo se encuentra en garantía o presenta error de fábrica.`,
                     { id: "cliente", label: "Cliente", placeholder: "Ej. Juan Pérez López" },
                     { id: "documento", label: "DNI/CE/RUC", placeholder: "Ej. 12345678" },
                     { id: "telefono", label: "Teléfono de contacto", placeholder: "Ej. 987654321" },
-                    { 
-                        id: "tipoEquipo", 
-                        label: "Tipo de Equipo", 
-                        tipo: "select", 
-                        opciones: ["MESH", "WINBOX", "FONOWIN"] 
+                    {
+                        id: "tipoEquipo",
+                        label: "Tipo de Equipo",
+                        tipo: "select",
+                        opciones: ["MESH", "WINBOX", "FONOWIN"]
                     },
                     { id: "fechaHora", label: "Fecha - Hora de entrega", placeholder: "Ej. 29/09/2026 de 14:00 a 18:00" },
                     { id: "direccion", label: "Dirección", placeholder: "Ej. Av. Arequipa 1234 Dpto 502" }
@@ -8314,11 +8374,11 @@ Se valida además en Histórico de llamadas el registro de activación.`,
                     { id: "cliente", label: "Cliente", placeholder: "Ej. Juan Pérez López" },
                     { id: "documento", label: "DNI/CE/RUC", placeholder: "Ej. 12345678" },
                     { id: "telefono", label: "Teléfono de contacto", placeholder: "Ej. 987654321" },
-                    { 
-                        id: "sva", 
-                        label: "SVA", 
-                        tipo: "select", 
-                        opciones: ["MESH", "WINBOX", "FONOWIN", "WINTV", "DGO"] 
+                    {
+                        id: "sva",
+                        label: "SVA",
+                        tipo: "select",
+                        opciones: ["MESH", "WINBOX", "FONOWIN", "WINTV", "DGO"]
                     },
                     { id: "fecha", label: "Fecha de activación solicitada", placeholder: "Ej. 25/09/2026" },
                     { id: "direccion", label: "Dirección", placeholder: "Ej. Calle Los Pinos 789 Miraflores" }
@@ -8376,11 +8436,11 @@ pero se verifica que hasta el momento se le sigue realizando el cobro en los rec
                     { id: "cliente", label: "Cliente", placeholder: "Ej. Juan Pérez López" },
                     { id: "documento", label: "DNI/CE/RUC", placeholder: "Ej. 12345678" },
                     { id: "telefono", label: "Teléfono de contacto", placeholder: "Ej. 987654321" },
-                    { 
-                        id: "sva", 
-                        label: "SVA", 
-                        tipo: "select", 
-                        opciones: ["MESH", "WINBOX", "FONOWIN"] 
+                    {
+                        id: "sva",
+                        label: "SVA",
+                        tipo: "select",
+                        opciones: ["MESH", "WINBOX", "FONOWIN"]
                     },
                     { id: "fechaBaja", label: "Fecha de baja", placeholder: "Ej. 20/09/2026" },
                     { id: "direccion", label: "Dirección", placeholder: "Ej. Av. Javier Prado 456 San Borja" }
@@ -11232,8 +11292,8 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             const correo = document.getElementById('dir-sim-correo')?.textContent.trim() || '';
             const elCCBox = document.getElementById('dir-sim-cc-box');
             const elCC = document.getElementById('dir-sim-cc');
-            const correoCC = (elCCBox && !elCCBox.classList.contains('hidden') && elCC) 
-                ? elCC.textContent.trim() 
+            const correoCC = (elCCBox && !elCCBox.classList.contains('hidden') && elCC)
+                ? elCC.textContent.trim()
                 : (activeDirectorioEscenario.correoCC ? activeDirectorioEscenario.correoCC.trim() : '');
             const asunto = document.getElementById('dir-sim-asunto')?.textContent.trim() || '';
             const cuerpo = document.getElementById('dir-sim-cuerpo')?.textContent.trim() || '';
@@ -12435,9 +12495,12 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
 
                     const userData = userDoc.data() || {};
                     // Registro obligatorio tras consultar Firestore
+                    console.log("Perfil Firestore cargado");
                     console.log("Documento Firestore:", userData);
 
-                    const role = userData.rol || "Asesor";
+                    const rol = userData.rol || "Asesor";
+                    const role = rol;
+                    console.log("Rol obtenido:", rol);
                     const estadoRaw = (userData.estado || 'Activo').toString().trim();
                     const isActivo = estadoRaw.toLowerCase() === 'activo';
 
@@ -12689,7 +12752,38 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 StorageManager.remove('cronos_user_fecha_acceso');
                 StorageManager.remove(StorageManager.KEYS.USER);
                 StorageManager.remove(StorageManager.KEYS.SESSION);
+
+                try {
+                    localStorage.removeItem('cronos_is_logged_in');
+                    localStorage.removeItem('usuarioActivo');
+                    localStorage.removeItem('rolActivo');
+                    localStorage.removeItem('correoActivo');
+                    localStorage.removeItem('fechaAcceso');
+                    localStorage.removeItem('cronos_user_rol');
+                    localStorage.removeItem('cronos_user_nombre');
+                    localStorage.removeItem('cronos_user_correo');
+                    localStorage.removeItem('cronos_user_cargo');
+                    localStorage.removeItem('cronos_user_avatar');
+                    localStorage.removeItem('cronos_user_fecha_acceso');
+                    localStorage.removeItem('cronos_user');
+                    localStorage.removeItem('cronos_session');
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('currentRole');
+                    localStorage.removeItem('sessionData');
+                    localStorage.removeItem('cronos_auth_token');
+                    sessionStorage.removeItem('cronos_session_started');
+                    sessionStorage.removeItem('usuarioActivo');
+                    sessionStorage.removeItem('rolActivo');
+                    sessionStorage.removeItem('correoActivo');
+                    sessionStorage.removeItem('currentUser');
+                    sessionStorage.removeItem('sessionData');
+                    sessionStorage.clear();
+                } catch (eStorage) { }
+
                 window.CRONOS_CURRENT_USER = null;
+                window.currentUser = null;
+                window.currentRole = null;
+                window.sessionData = null;
             },
             getSessionDuration() {
                 const diffMs = Date.now() - this.sessionStartTime;
@@ -12899,6 +12993,105 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
          * AuthManager: Integración real con Firebase Authentication (Email/Password,
          * Persistencia reactiva, Restablecimiento de contraseña y Mapeo de Roles).
          */
+        /**
+         * Funciones de consulta y carga de perfiles y permisos
+         */
+        async function loadUserProfile(userOrEmail) {
+            if (!userOrEmail) return null;
+            if (typeof userOrEmail === 'string') {
+                return await UserManager.getUserByEmail(userOrEmail);
+            }
+            return await UserManager.mapFirebaseUser(userOrEmail);
+        }
+        window.loadUserProfile = loadUserProfile;
+
+        function loadSession() {
+            loadSessionFromLocalStorage();
+        }
+        window.loadSession = loadSession;
+
+        function loadPermissions(role) {
+            const r = role || (window.CRONOS_CURRENT_USER ? window.CRONOS_CURRENT_USER.rol : 'Asesor');
+            return RoleManager.getRolePermissions(r);
+        }
+        window.loadPermissions = loadPermissions;
+
+        /**
+         * Flujo unificado y seguro de renderizado de perfil y permisos.
+         * Previene completamente el renderizado de módulos administrativos antes de conocer el rol real.
+         */
+        async function loadUserProfileAndRender(fbUser) {
+            if (!fbUser) {
+                SessionManager.clearSession();
+                window.CRONOS_CURRENT_USER = null;
+                hideAppAndShowLogin();
+                return null;
+            }
+
+            const email = (fbUser.email || '').trim().toLowerCase();
+            console.log("Usuario autenticado:", email);
+            showLoadingScreen("Cargando perfil...");
+
+            const mapped = await UserManager.mapFirebaseUser(fbUser);
+            if (mapped && mapped.error) {
+                showToast(mapped.message, 'error');
+                try { if (typeof firebase !== 'undefined' && firebase.auth) await firebase.auth().signOut(); } catch (e) { }
+                SessionManager.clearSession();
+                window.CRONOS_CURRENT_USER = null;
+                hideAppAndShowLogin();
+                return null;
+            }
+
+            window.CRONOS_CURRENT_USER = mapped;
+            SessionManager.saveSession(mapped);
+
+            if (typeof updateHeaderUserUI === 'function') {
+                updateHeaderUserUI(mapped);
+            }
+
+            // Aplicar permisos estrictamente antes de cualquier renderizado
+            applyRolePermissions(mapped.rol);
+
+            // Determinar si el usuario tiene privilegios ejecutivos
+            const canAdmin = RoleManager.canAccessDashboard && RoleManager.canAccessDashboard();
+
+            if (canAdmin) {
+                renderDashboard();
+                renderAuditoriaModule();
+                renderSLAModule();
+                renderUserManagementModule();
+                renderAccessHistoryTable();
+                switchTab('dashboard');
+            } else {
+                switchTab('generator');
+            }
+
+            console.log("Interfaz renderizada");
+
+            // Ahora que la interfaz está configurada con el perfil correcto, se muestra
+            showApp();
+
+            try {
+                window.CRONOS_USERS_DB = await UserManager.getAllUsersAsync();
+            } catch (eUsers) { }
+
+            if (window.AuditManager) {
+                try { await AuditManager.logLogin(mapped); } catch (eAudit) { }
+            }
+            sessionStorage.setItem('cronos_session_started', 'true');
+
+            if (canAdmin) {
+                try { initRealtimeListeners(); } catch (e) { }
+                try { loadDashboardFirestoreData(); } catch (e) { }
+                if (typeof initAuditoriaRealtimeListener === 'function') {
+                    try { initAuditoriaRealtimeListener(); } catch (e) { }
+                }
+            }
+
+            return mapped;
+        }
+        window.loadUserProfileAndRender = loadUserProfileAndRender;
+
         const AuthManager = {
             isAuthenticating: false,
             async login(email, password, remember = true) {
@@ -12911,7 +13104,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 const cleanEmail = (email || '').trim().toLowerCase();
                 const cleanPass = password || '';
 
-                // 1. Registro obligatorio antes de iniciar sesión
                 console.log("Email ingresado:", cleanEmail);
 
                 const btnLogin = document.getElementById('btn-login');
@@ -12934,31 +13126,9 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
 
                         if (currentUser && currentUser.email && currentUser.email.trim().toLowerCase() === cleanEmail) {
                             console.log("Firebase Login Exitoso:", currentUser.email);
-                            mappedUser = await UserManager.mapFirebaseUser(currentUser);
-                            if (mappedUser && mappedUser.error) {
-                                showToast(mappedUser.message, 'error');
-                                await auth.signOut();
-                                return null;
-                            }
-                            window.CRONOS_CURRENT_USER = mappedUser;
-                            SessionManager.saveSession(mappedUser);
-                            console.log("Usuario de Sesión:", mappedUser.nombre || mappedUser.correo);
-                            console.log("Rol de Sesión:", mappedUser.rol);
-
-                            if (typeof updateHeaderUserUI === 'function') {
-                                updateHeaderUserUI(mappedUser);
-                            } else {
-                                console.warn('updateHeaderUserUI no existe');
-                            }
-                            applyRolePermissions(mappedUser.rol);
-                            console.log("Usuario mostrado:", mappedUser.nombre || mappedUser.correo);
-
-                            showApp();
-                            if (RoleManager.canAccessDashboard && RoleManager.canAccessDashboard()) {
-                                switchTab('dashboard');
-                            } else {
-                                switchTab('generator');
-                            }
+                            mappedUser = await loadUserProfileAndRender(currentUser);
+                            if (!mappedUser || mappedUser.error) return null;
+                            showToast(`Bienvenido(a) a CRONOS FID, ${mappedUser.nombre} (${mappedUser.rol})`, 'success');
                             return mappedUser;
                         }
 
@@ -12973,50 +13143,12 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                         const userCredential = await auth.signInWithEmailAndPassword(cleanEmail, cleanPass);
                         const user = userCredential.user;
 
-                        // 2. Registro obligatorio después de signInWithEmailAndPassword()
                         console.log("Firebase Login Exitoso:", user?.email);
 
-                        // 3. Mapear desde Firestore (imprime Documento Firestore)
-                        mappedUser = await UserManager.mapFirebaseUser(user);
-
-                        if (mappedUser && mappedUser.error) {
-                            throw new Error('CUSTOM:' + mappedUser.message);
-                        }
-
-                        // 4. Registro obligatorio después de cargar sesión
-                        window.CRONOS_CURRENT_USER = mappedUser;
-                        SessionManager.saveSession(mappedUser);
-                        console.log("Usuario de Sesión:", mappedUser.nombre || mappedUser.correo);
-                        console.log("Rol de Sesión:", mappedUser.rol);
-
-                        // 5. Registro obligatorio después de cargar cabecera
-                        if (typeof updateHeaderUserUI === 'function') {
-                            updateHeaderUserUI(mappedUser);
-                        } else {
-                            console.warn('updateHeaderUserUI no existe');
-                        }
-                        applyRolePermissions(mappedUser.rol);
-                        console.log("Usuario mostrado:", mappedUser.nombre || mappedUser.correo);
-
-                        showApp();
-                        if (RoleManager.canAccessDashboard && RoleManager.canAccessDashboard()) {
-                            switchTab('dashboard');
-                        } else {
-                            switchTab('generator');
-                        }
-
-                        try {
-                            window.CRONOS_USERS_DB = await UserManager.getAllUsersAsync();
-                        } catch (eUsers) {
-                            console.warn('getAllUsersAsync warn:', eUsers);
-                        }
-
-                        if (window.AuditManager) {
-                            try {
-                                await AuditManager.logLogin(mappedUser);
-                            } catch (eAudit) {
-                                console.warn('logLogin warn:', eAudit);
-                            }
+                        // Carga de perfil y renderizado seguro
+                        mappedUser = await loadUserProfileAndRender(user);
+                        if (!mappedUser || mappedUser.error) {
+                            throw new Error(mappedUser ? mappedUser.message : 'Error al cargar perfil.');
                         }
 
                         showToast(`Bienvenido(a) a CRONOS FID, ${mappedUser.nombre} (${mappedUser.rol})`, 'success');
@@ -13028,81 +13160,10 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 } catch (fbAuthErr) {
                     console.error('[DEBUG_FIREBASE] Excepción en Firebase Auth:', fbAuthErr);
                     const errCode = fbAuthErr.code || (fbAuthErr.name ? fbAuthErr.name : 'auth/unknown-error');
-                    const errMsg = fbAuthErr.message || 'Error desconocido';
-
-                    console.error("error.code:", errCode);
-                    console.error("error.message:", errMsg);
-
+                    let errMsg = fbAuthErr.message || 'Error desconocido';
                     if (errMsg.startsWith('CUSTOM:')) {
-                        showToast(errMsg.replace('CUSTOM:', ''), 'error');
-                    } else if (errCode === 'auth/too-many-requests') {
-                        showToast("Se detectaron múltiples intentos de acceso. Firebase ha bloqueado temporalmente nuevos intentos desde este dispositivo. Intenta nuevamente más tarde o utiliza la opción Restablecer Contraseña.", 'error');
-                    } else if (errCode === 'auth/wrong-password') {
-                        showToast("Contraseña incorrecta.", 'error');
-                    } else if (errCode === 'auth/user-not-found') {
-                        showToast("El usuario no existe en Firebase Authentication.", 'error');
-                    } else if (errCode === 'auth/invalid-login-credentials' || errCode === 'auth/invalid-credential') {
-                        showToast("Correo o contraseña incorrectos.", 'error');
-                    } else if (errCode === 'auth/network-request-failed') {
-                        showToast("Error de conexión. Verifica tu acceso a Internet.", 'error');
-                    } else if (errCode === 'auth/invalid-email') {
-                        showToast("El formato del correo electrónico es inválido.", 'error');
-                    } else if (errCode === 'auth/user-disabled') {
-                        showToast("La cuenta de usuario ha sido inhabilitada.", 'error');
-                    } else {
-                        showToast(`[${errCode}] ${errMsg}`, 'error');
+                        errMsg = errMsg.replace('CUSTOM:', '');
                     }
-                    return null;
-                } finally {
-                    this.isAuthenticating = false;
-                    if (btnLogin) {
-                        btnLogin.disabled = false;
-                        btnLogin.innerHTML = `<span>INICIAR SESIÓN</span><i class="fa-solid fa-arrow-right text-xs"></i>`;
-                    }
-                }
-            },
-            async logout() {
-                const userLoggingOut = window.CRONOS_CURRENT_USER;
-                if (window.AuditManager && userLoggingOut) {
-                    try {
-                        await AuditManager.logLogout(userLoggingOut);
-                    } catch (e) {
-                        console.error("FIRESTORE ERROR:", e);
-                    }
-                }
-                try {
-                    if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
-                        await firebase.auth().signOut();
-                    }
-                } catch (e) {
-                    console.warn('[Firebase Auth] Error al cerrar sesión:', e);
-                }
-                executeLogout();
-            },
-            async resetPassword(email) {
-                const cleanEmail = (email || '').trim().toLowerCase();
-                if (!cleanEmail) {
-                    showToast('Ingrese un correo electrónico.', 'error');
-                    return false;
-                }
-                try {
-                    if (typeof firebase !== 'undefined' && firebase.auth) {
-                        await firebase.auth().sendPasswordResetEmail(cleanEmail);
-
-                        if (window.AuditManager) {
-                            try { AuditManager.logPasswordReset(cleanEmail); } catch (e) { }
-                        }
-                        showToast('Se ha enviado un correo para restablecer la contraseña.', 'success');
-                        return true;
-                    } else {
-                        showToast('Error de conexión a los servicios de autenticación.', 'error');
-                        return false;
-                    }
-                } catch (fbResetErr) {
-                    console.error('[DEBUG_FIREBASE] Excepción en sendPasswordResetEmail:', fbResetErr);
-                    const errCode = fbResetErr.code || (fbResetErr.name ? fbResetErr.name : 'auth/unknown-error');
-                    const errMsg = fbResetErr.message || 'Error desconocido';
-
                     console.error("error.code:", errCode);
                     console.error("error.message:", errMsg);
 
@@ -13117,7 +13178,14 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     } else {
                         showToast(`[${errCode}] ${errMsg}`, 'error');
                     }
+                    hideLoadingScreen();
                     return false;
+                } finally {
+                    this.isAuthenticating = false;
+                    if (btnLogin) {
+                        btnLogin.disabled = false;
+                        btnLogin.innerHTML = `<span>INICIAR SESIÓN</span><i class="fa-solid fa-arrow-right text-xs"></i>`;
+                    }
                 }
             },
             checkSession() {
@@ -13135,56 +13203,8 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                             console.log('AuthStateChanged');
                             console.log('[DEBUG_FIREBASE] onAuthStateChanged disparado. Usuario:', fbUser ? fbUser.email : 'Nulo (Desconectado)');
                             if (fbUser) {
-                                // 2. Registro obligatorio después de Firebase Login
                                 console.log("Firebase Login Exitoso:", fbUser.email);
-                                const mapped = await UserManager.mapFirebaseUser(fbUser);
-
-                                if (mapped && mapped.error) {
-                                    showToast(mapped.message, 'error');
-                                    try { await firebase.auth().signOut(); } catch (e) { }
-                                    return;
-                                }
-
-                                // 4. Registro obligatorio después de cargar sesión
-                                window.CRONOS_CURRENT_USER = mapped;
-                                SessionManager.saveSession(mapped);
-                                console.log("Usuario de Sesión:", mapped.nombre || mapped.correo);
-                                console.log("Rol de Sesión:", mapped.rol);
-
-                                // 5. Registro obligatorio después de cargar cabecera
-                                if (typeof updateHeaderUserUI === 'function') {
-                                    updateHeaderUserUI(mapped);
-                                } else {
-                                    console.warn('updateHeaderUserUI no existe');
-                                }
-                                applyRolePermissions(mapped.rol);
-                                console.log("Usuario mostrado:", mapped.nombre || mapped.correo);
-
-                                showApp();
-                                if (RoleManager.canAccessDashboard && RoleManager.canAccessDashboard()) {
-                                    switchTab('dashboard');
-                                } else {
-                                    switchTab('generator');
-                                }
-
-                                try {
-                                    window.CRONOS_USERS_DB = await UserManager.getAllUsersAsync();
-                                } catch (eUsers) {
-                                    console.warn('getAllUsersAsync warn:', eUsers);
-                                }
-
-                                if (window.AuditManager) {
-                                    try {
-                                        await AuditManager.logLogin(mapped);
-                                    } catch (eAudit) {
-                                        console.warn('logLogin warn:', eAudit);
-                                    }
-                                }
-                                sessionStorage.setItem('cronos_session_started', 'true');
-
-                                if (typeof initAuditoriaRealtimeListener === 'function') {
-                                    try { initAuditoriaRealtimeListener(); } catch (eAud) { }
-                                }
+                                await loadUserProfileAndRender(fbUser);
                             } else {
                                 console.log('[DEBUG_FIREBASE] Usuario nulo. Ejecutando limpieza y volviendo a login.');
                                 SessionManager.clearSession();
@@ -13203,13 +13223,20 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                         });
                     } else {
                         console.warn('[DEBUG_FIREBASE] No se pudo registrar onAuthStateChanged, firebase.auth no disponible.');
+                        hideAppAndShowLogin();
                     }
                 } catch (err) {
                     console.error('[DEBUG_FIREBASE] Error crítico en observer:', err);
+                    hideAppAndShowLogin();
                 }
             },
             isAuthenticated() {
                 return Boolean(UserManager.getCurrentUser() && localStorage.getItem('cronos_is_logged_in') === 'true');
+            },
+            async logout() {
+                if (typeof executeLogout === 'function') {
+                    return await executeLogout();
+                }
             }
         };
 
@@ -14073,7 +14100,11 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 }
             }
 
-            renderDashboard();
+            console.log("Permisos aplicados");
+
+            if (!isAsesor && (permissions.dashboard || isAdminOrSup)) {
+                renderDashboard();
+            }
         }
 
         // Normalizador universal de documentos SLA (soporte total de fechas y esquemas históricos/nuevos)
@@ -16467,7 +16498,26 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         // =========================================================================
         // AUTENTICACIÓN, LOGIN, LOGOUT Y MODO LOCAL DE CONTINGENCIA
         // =========================================================================
+        function hideLoadingScreen() {
+            const loadingScreen = document.getElementById('auth-loading-screen');
+            if (loadingScreen) {
+                loadingScreen.classList.add('hidden');
+                loadingScreen.style.display = 'none';
+            }
+        }
+
+        function showLoadingScreen(msg = 'Validando permisos...') {
+            const loadingScreen = document.getElementById('auth-loading-screen');
+            const msgEl = document.getElementById('auth-loading-msg');
+            if (msgEl) msgEl.textContent = msg;
+            if (loadingScreen) {
+                loadingScreen.classList.remove('hidden');
+                loadingScreen.style.display = 'flex';
+            }
+        }
+
         function showApp() {
+            hideLoadingScreen();
             const loginScreen = document.getElementById('login-screen-container') || document.getElementById('login-screen-overlay');
             if (loginScreen) {
                 loginScreen.classList.add('hidden');
@@ -16476,6 +16526,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         }
 
         function hideAppAndShowLogin() {
+            hideLoadingScreen();
             const loginScreen = document.getElementById('login-screen-container') || document.getElementById('login-screen-overlay');
             if (loginScreen) {
                 loginScreen.classList.remove('hidden');
@@ -16577,33 +16628,165 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             showToast(`Bienvenido(a) a CRONOS FID, ${user.nombre} (${user.rol})`, 'success');
         }
 
-        function handleLogout() {
-            AuthManager.logout();
+        let _isExecutingLogout = false;
+        async function executeLogout() {
+            if (_isExecutingLogout) return;
+            _isExecutingLogout = true;
+
+            console.log("Botón logout pulsado");
+
+            try {
+                // 1. Guardar referencia del usuario para la bitácora de auditoría
+                const userLoggingOut = window.CRONOS_CURRENT_USER || (window.UserManager && typeof window.UserManager.getCurrentUser === 'function' ? window.UserManager.getCurrentUser() : null);
+
+                // 2. Registro en Auditoría antes de desautenticar
+                console.log("Registrando cierre de sesión");
+                if (window.AuditManager && typeof window.AuditManager.logLogout === 'function') {
+                    try {
+                        await window.AuditManager.logLogout(userLoggingOut);
+                    } catch (eAudit) {
+                        console.warn('[Logout] Error registrando auditoría de cierre de sesión:', eAudit);
+                    }
+                }
+
+                // 3. Desuscribir listeners en tiempo real de Firestore
+                if (typeof _auditoriaUnsubscribe === 'function') {
+                    try { _auditoriaUnsubscribe(); } catch (e) { }
+                    _auditoriaUnsubscribe = null;
+                }
+                if (typeof _slaUnsubscribe === 'function') {
+                    try { _slaUnsubscribe(); } catch (e) { }
+                    _slaUnsubscribe = null;
+                }
+                if (typeof _usuariosUnsubscribe === 'function') {
+                    try { _usuariosUnsubscribe(); } catch (e) { }
+                    _usuariosUnsubscribe = null;
+                }
+
+                // 4. Firebase signOut
+                if (typeof firebase !== 'undefined' && firebase.auth) {
+                    try {
+                        await firebase.auth().signOut();
+                    } catch (eSignOut) {
+                        console.warn('[Logout] Error en firebase.auth().signOut():', eSignOut);
+                    }
+                }
+                console.log("Firebase signOut ejecutado");
+
+                // 5. Eliminación de sesión local (SessionManager, localStorage, sessionStorage, tokens y variables)
+                if (window.SessionManager && typeof window.SessionManager.clearSession === 'function') {
+                    window.SessionManager.clearSession();
+                }
+                window.CRONOS_CURRENT_USER = null;
+                window.currentUser = null;
+                window.currentRole = null;
+                window.sessionData = null;
+
+                try {
+                    localStorage.removeItem('cronos_is_logged_in');
+                    localStorage.removeItem('usuarioActivo');
+                    localStorage.removeItem('rolActivo');
+                    localStorage.removeItem('correoActivo');
+                    localStorage.removeItem('fechaAcceso');
+                    localStorage.removeItem('cronos_user_rol');
+                    localStorage.removeItem('cronos_user_nombre');
+                    localStorage.removeItem('cronos_user_correo');
+                    localStorage.removeItem('cronos_user_cargo');
+                    localStorage.removeItem('cronos_user_avatar');
+                    localStorage.removeItem('cronos_user_fecha_acceso');
+                    localStorage.removeItem('cronos_user');
+                    localStorage.removeItem('cronos_session');
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('currentRole');
+                    localStorage.removeItem('sessionData');
+                    localStorage.removeItem('cronos_auth_token');
+                    sessionStorage.removeItem('cronos_session_started');
+                    sessionStorage.removeItem('usuarioActivo');
+                    sessionStorage.removeItem('rolActivo');
+                    sessionStorage.removeItem('correoActivo');
+                    sessionStorage.removeItem('currentUser');
+                    sessionStorage.removeItem('sessionData');
+                    sessionStorage.clear();
+                } catch (eStorage) { }
+
+                console.log("Sesión local eliminada");
+
+                // 6. Ocultar interfaz administrativa y limpiar vistas
+                const sidebarAdmin = document.getElementById('sidebar-admin-modules');
+                if (sidebarAdmin) {
+                    sidebarAdmin.style.display = 'none';
+                    sidebarAdmin.classList.add('hidden', 'sidebar-admin-hidden');
+                }
+
+                const adminProtected = document.querySelectorAll('.admin-protected-module');
+                adminProtected.forEach(el => {
+                    el.style.display = 'none';
+                });
+
+                // Cerrar dropdown si estaba abierto
+                const dropdown = document.getElementById('user-dropdown-menu');
+                if (dropdown) dropdown.classList.add('hidden');
+                const chevron = document.getElementById('user-menu-chevron');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+
+                // Resetear formulario de login
+                const loginForm = document.getElementById('form-login');
+                if (loginForm) loginForm.reset();
+
+                const btnLogin = document.getElementById('btn-login');
+                if (btnLogin) {
+                    btnLogin.disabled = false;
+                    btnLogin.innerHTML = `<span>INICIAR SESIÓN</span><i class="fa-solid fa-arrow-right text-xs"></i>`;
+                }
+
+                // 7. Redirección a login
+                hideAppAndShowLogin();
+                console.log("Redirección a login completada");
+
+                // 8. Mensaje informativo requerido
+                showToast('Sesión cerrada correctamente.', 'info');
+
+            } catch (err) {
+                console.error('[Logout] Error durante el cierre de sesión:', err);
+                hideAppAndShowLogin();
+            } finally {
+                _isExecutingLogout = false;
+            }
         }
 
-        function executeLogout() {
-            sessionStorage.removeItem('cronos_session_started');
-            if (typeof _auditoriaUnsubscribe === 'function') {
-                try { _auditoriaUnsubscribe(); } catch (e) { }
-                _auditoriaUnsubscribe = null;
-            }
-            if (typeof _slaUnsubscribe === 'function') {
-                try { _slaUnsubscribe(); } catch (e) { }
-                _slaUnsubscribe = null;
-            }
-            if (typeof _usuariosUnsubscribe === 'function') {
-                try { _usuariosUnsubscribe(); } catch (e) { }
-                _usuariosUnsubscribe = null;
-            }
-            AuditManager.logLogout(window.CRONOS_CURRENT_USER);
-            SessionManager.clearSession();
+        function handleLogout() {
+            executeLogout();
+        }
 
-            // Cerrar dropdown si estaba abierto
-            const dropdown = document.getElementById('user-dropdown-menu');
-            if (dropdown) dropdown.classList.add('hidden');
+        function performLogout() {
+            executeLogout();
+        }
 
-            hideAppAndShowLogin();
-            showToast('Has cerrado sesión correctamente.', 'info');
+        function closeSession() {
+            executeLogout();
+        }
+
+        function logout() {
+            executeLogout();
+        }
+
+        window.handleLogout = handleLogout;
+        window.performLogout = performLogout;
+        window.closeSession = closeSession;
+        window.logout = logout;
+        window.executeLogout = executeLogout;
+
+        function setupLogoutListeners() {
+            const btnLogout = document.getElementById('menu-opt-logout');
+            if (btnLogout) {
+                btnLogout.removeEventListener('click', handleLogoutClick);
+                btnLogout.addEventListener('click', handleLogoutClick);
+            }
+        }
+
+        function handleLogoutClick(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            executeLogout();
         }
 
         function toggleUserDropdown(event) {
@@ -17270,6 +17453,10 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         window.updateHeader = updateTopHeader;
 
         function switchTab(target) {
+            const isAsesor = window.CRONOS_CURRENT_USER ? String(window.CRONOS_CURRENT_USER.rol || '').toLowerCase().includes('asesor') : true;
+            if (isAsesor && ['dashboard', 'auditoria', 'analitica-sla', 'gestion-usuarios'].includes(target)) {
+                target = 'generator';
+            }
             const tabGen = document.getElementById('tab-generator');
             const tabTip = document.getElementById('tab-tipificaciones');
             const tabTic = document.getElementById('tab-tickets');
@@ -17377,24 +17564,17 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
 
         function initAuthLayer() {
             loadSessionFromLocalStorage();
-            if (window.CRONOS_CURRENT_USER) {
-                applyRolePermissions(window.CRONOS_CURRENT_USER.rol);
-            }
-            try { initRealtimeListeners(); } catch (eListeners) { console.warn('Error iniciando realtime listeners:', eListeners); }
-            try { loadDashboardFirestoreData(); } catch (eDash) { console.warn('Error loadDashboardFirestoreData:', eDash); }
+            // Iniciar en estado de validación con overlay de carga
+            showLoadingScreen('Validando permisos...');
 
-            // Si ya hay sesión guardada en localStorage, mostrar app directamente
-            if (localStorage.getItem('cronos_is_logged_in') === 'true' || localStorage.getItem('usuarioActivo')) {
-                showApp();
-            } else {
-                hideAppAndShowLogin();
-            }
-
-            renderDashboard();
-            renderAuditoriaModule();
-            renderSLAModule();
-            renderUserManagementModule();
-            renderAccessHistoryTable();
+            // Fallback de seguridad: si Firebase no responde en 6 segundos, mostrar login
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('auth-loading-screen');
+                if (!window.CRONOS_CURRENT_USER && loadingScreen && !loadingScreen.classList.contains('hidden') && loadingScreen.style.display !== 'none') {
+                    console.warn('[AuthLayer] Tiempo de espera de autenticacion agotado. Mostrando login.');
+                    hideAppAndShowLogin();
+                }
+            }, 6000);
         }
 
         // Cerrar menú desplegable al hacer clic fuera
@@ -17425,6 +17605,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             try { initDependentDropdowns(); } catch (e) { console.error('Error initDependentDropdowns:', e); }
             try { initTicketsModule(); } catch (e) { console.error('Error initTicketsModule:', e); }
             try { initDirectorioModule(); } catch (e) { console.error('Error initDirectorioModule:', e); }
+            try { setupLogoutListeners(); } catch (e) { console.error('Error setupLogoutListeners:', e); }
         };
 
     </script>
