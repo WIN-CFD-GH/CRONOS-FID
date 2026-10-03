@@ -23,7 +23,7 @@
     <meta name="theme-color" content="#FF5E00">
     <meta name="author" content="Jhonny Eduar León Illescas - Fidelizaciones WIN">
     <meta name="copyright" content="CRONOS FID - WIN 2026">
-    <meta name="version" content="4.1.6">
+    <meta name="version" content="4.1.5">
 
     <!--
       CRONOS FID
@@ -640,7 +640,7 @@
                     permisos...</span>
             </div>
             <p class="text-[11px] text-slate-400 font-medium tracking-tight relative z-10">
-                CRONOS FID • Versión JELI v4.1.6 • WIN OCT2026
+                CRONOS FID • Versión JELI v4.1.5 • WIN OCT2026
             </p>
         </div>
     </div>
@@ -755,7 +755,7 @@
 
             <!-- Footer Card -->
             <div class="text-center text-[10px] text-slate-400 font-medium">
-                CRONOS FID • Versión JELI v4.1.6 • WIN OCT2026
+                CRONOS FID • Versión JELI v4.1.5 • WIN OCT2026
             </div>
         </div>
     </div>
@@ -3386,19 +3386,9 @@
                                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                                         Monitoreo en Tiempo Real
                                     </span>
-                                    <span
-                                        class="bg-orange-500/20 text-orange-300 border border-orange-500/40 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
-                                        <i class="fa-solid fa-user-check text-win-orange"></i>
-                                        Monitoreando Asesores
-                                    </span>
-                                    <span
-                                        class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
-                                        <i class="fa-solid fa-cubes text-indigo-300"></i>
-                                        <span id="dash-header-modulos-count">7 Módulos Monitoreados</span>
-                                    </span>
                                 </div>
                                 <p class="text-xs md:text-sm text-slate-300 mt-1 max-w-2xl">
-                                    Monitoreo operativo de 7 módulos y actividad exclusiva del rol Asesor (excluye perfiles administrativos).
+                                    Monitoreo de usuarios, módulos, auditoría y actividad operativa.
                                 </p>
                             </div>
                         </div>
@@ -3552,19 +3542,20 @@
                                 </div>
                             </div>
                             <div class="mt-2">
-                                <div id="dash-card-last-user" class="text-xs font-bold text-slate-800 truncate">—</div>
+                                <div id="dash-card-last-user" class="text-xs font-bold text-slate-800 truncate">Jhonny
+                                    León</div>
                                 <div class="flex items-baseline gap-1 mt-0.5">
                                     <span id="dash-card-last-time"
-                                        class="text-sm font-black text-purple-600">—</span>
+                                        class="text-sm font-black text-purple-600">12:15:00</span>
                                     <span id="dash-card-last-date"
-                                        class="text-[10px] text-slate-500 font-semibold">—</span>
+                                        class="text-[10px] text-slate-500 font-semibold">Hoy</span>
                                 </div>
                             </div>
                             <div
                                 class="mt-2 text-[10px] text-slate-500 flex items-center justify-between border-t border-slate-100 pt-2">
                                 <span>Rol:</span>
                                 <span id="dash-card-last-rol"
-                                    class="font-extrabold text-emerald-700 bg-emerald-50 px-1 rounded">Asesor</span>
+                                    class="font-extrabold text-indigo-700 bg-indigo-50 px-1 rounded">Administrador</span>
                             </div>
                         </div>
 
@@ -3583,19 +3574,16 @@
                                             <i class="fa-solid fa-chart-simple text-win-orange"></i>
                                             Uso por Módulo
                                         </h3>
-                                        <p class="text-xs text-slate-500 mt-0.5">Cantidad de accesos registrados en los 7 módulos operativos monitoreados</p>
+                                        <p class="text-xs text-slate-500 mt-0.5">Cantidad de accesos registrados en cada
+                                            sección de la aplicación</p>
                                     </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-[10px] font-extrabold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
-                                            Módulos Monitoreados: <span id="dash-modulos-count-badge" class="text-indigo-600 font-black">7 módulos</span>
-                                        </span>
-                                        <span class="text-[10px] font-extrabold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">Total
-                                            Accesos: <span id="dash-modulos-total-badge"
-                                                class="text-win-orange">0</span></span>
-                                    </div>
+                                    <span
+                                        class="text-[10px] font-extrabold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">Total
+                                        Accesos: <span id="dash-modulos-total-badge"
+                                            class="text-win-orange">1,420</span></span>
                                 </div>
 
-                                <!-- Lista de Barras de Módulos (7 Módulos Operativos) -->
+                                <!-- Lista de Barras de Módulos (10 Variables) -->
                                 <div id="dash-modulos-barras-container" class="space-y-3">
                                     <!-- Inyectado dinámicamente por JS -->
                                 </div>
@@ -3603,11 +3591,11 @@
 
                             <div
                                 class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                                <span class="flex items-center gap-1.5 text-win-orange font-bold">
-                                    <span class="w-2.5 h-2.5 rounded bg-win-orange"></span> 7 Módulos Operativos Monitoreados
+                                <span class="flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded bg-win-orange"></span> Módulo Operativo
                                 </span>
-                                <span class="flex items-center gap-1.5 text-emerald-600 font-semibold">
-                                    <i class="fa-solid fa-user-check"></i> Exclusivo Actividad Asesores
+                                <span class="flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded bg-indigo-600"></span> Módulo Ejecutivo/Admin
                                 </span>
                                 <span class="text-[11px] text-slate-400 font-medium">Actualizado en tiempo real</span>
                             </div>
@@ -3850,14 +3838,10 @@
                                     <span
                                         class="bg-emerald-500/30 text-emerald-200 border border-emerald-400/30 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Métricas
                                         Reales</span>
-                                    <span
-                                        class="bg-orange-500/20 text-orange-300 border border-orange-500/40 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
-                                        <i class="fa-solid fa-user-check text-win-orange"></i>
-                                        Monitoreando Asesores
-                                    </span>
                                 </div>
                                 <p class="text-xs md:text-sm text-emerald-200 mt-1 max-w-2xl">
-                                    Auditoría y bitácora operativa de asesores (información histórica protegida, métricas operativas exclusivas del rol Asesor).
+                                    Registro continuo y real de inicios de sesión, cambios de rol, ingresos a módulos,
+                                    uso de CRONOS SLA, permisos y exportaciones.
                                 </p>
                             </div>
                         </div>
@@ -3917,7 +3901,7 @@
                                 </div>
                             </div>
                             <div class="mt-2 flex items-baseline gap-2">
-                                <span id="aud-card-modulos-count" class="text-2xl font-black text-slate-800">7</span>
+                                <span id="aud-card-modulos-count" class="text-2xl font-black text-slate-800">9</span>
                                 <span
                                     class="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Módulos</span>
                             </div>
@@ -3958,16 +3942,6 @@
                                         placeholder="Buscar en auditoría..."
                                         class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-800 font-medium outline-none focus:border-emerald-500 transition-all">
                                 </div>
-                                <select id="aud-filter-rol" onchange="renderAuditoriaTable()"
-                                    class="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 font-bold outline-none focus:border-emerald-500 transition-all cursor-pointer">
-                                    <option value="TODOS">Todos los Registros Históricos</option>
-                                    <option value="Asesor" selected>Solo Asesores (Operativo)</option>
-                                    <option value="Administrador">Administrador</option>
-                                    <option value="Formador">Formador</option>
-                                    <option value="Coordinador">Coordinador</option>
-                                    <option value="Supervisor">Supervisor</option>
-                                    <option value="Calidad">Calidad</option>
-                                </select>
                                 <select id="aud-filter-action" onchange="renderAuditoriaTable()"
                                     class="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 font-bold outline-none focus:border-emerald-500 transition-all cursor-pointer">
                                     <option value="TODOS">Todas las Acciones</option>
@@ -3975,7 +3949,7 @@
                                     <option value="CIERRE_SESION">CIERRE_SESION / Cierre de sesión</option>
                                     <option value="ACCESO_MODULO">ACCESO_MODULO / Ingreso a módulo</option>
                                     <option value="EXPORTACION">EXPORTACION / Exportación Excel</option>
-                                    <option value="Uso CRONOS SLA">USO_CRONOS_SLA / Eventos SLA</option>
+                                    <option value="Uso CRONOS SLA">Uso CRONOS SLA</option>
                                     <option value="CAMBIO_ROL">Cambio de rol / Edición</option>
                                     <option value="Configuración de permisos">Configuración de permisos</option>
                                     <option value="Gestión de usuarios">Gestión de usuarios</option>
@@ -3985,11 +3959,9 @@
                                     <option value="TODOS">Todos los Módulos</option>
                                     <option value="Clave Secreta">Clave Secreta</option>
                                     <option value="Tipificaciones">Tipificaciones</option>
-                                    <option value="Tickets/Tecnológico">Tickets (Tecnológico)</option>
-                                    <option value="Derivaciones/Discord">Derivaciones (Discord)</option>
-                                    <option value="Acuerdos de Voz">Acuerdos de Voz (Grabación)</option>
-                                    <option value="Directorio">Directorio (Escalamiento)</option>
-                                    <option value="CRONOS SLA">CRONOS SLA</option>
+                                    <option value="Tickets/Tecnológico">Tickets/Tecnológico</option>
+                                    <option value="Derivaciones/Discord">Derivaciones/Discord</option>
+                                    <option value="Acuerdos de Voz">Acuerdos de Voz</option>
                                     <option value="Dashboard">Dashboard</option>
                                     <option value="Auditoría">Auditoría</option>
                                     <option value="Analítica CRONOS SLA">Analítica CRONOS SLA</option>
@@ -4036,15 +4008,10 @@
                                     <span
                                         class="bg-purple-500/30 text-purple-200 border border-purple-400/30 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Gestión
                                         de Tiempos Real</span>
-                                    <span
-                                        class="bg-orange-500/20 text-orange-300 border border-orange-500/40 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
-                                        <i class="fa-solid fa-user-check text-win-orange"></i>
-                                        Monitoreando Asesores
-                                    </span>
                                 </div>
                                 <p class="text-xs md:text-sm text-purple-200 mt-1 max-w-2xl">
-                                    Medición continua de tiempos de espera en línea de asesores, pausas, reinicios y
-                                    umbrales de alerta SLA (45s, 60s, &gt;70s). Excluye perfiles administrativos.
+                                    Medición continua de tiempos de espera en línea, pausas en mute, reinicios y
+                                    umbrales de alerta SLA (45s, 60s, &gt;70s).
                                 </p>
                             </div>
                         </div>
@@ -4535,7 +4502,7 @@
                 <span class="text-zinc-500">|</span>
                 <span>Plataforma de Fidelización Ágil de WIN 2026</span>
                 <span class="text-zinc-500">|</span>
-                <span class="text-zinc-400 font-semibold">CRONOS FID • Versión JELI v4.1.6 • WIN OCT2026</span>
+                <span class="text-zinc-400 font-semibold">CRONOS FID • Versión JELI v4.1.5 • WIN OCT2026</span>
             </div>
 
             <!-- Derecha: Logotipo Corporativo -->
@@ -6538,11 +6505,6 @@ Por favor, proporciona esta clave al asesor que te está atendiendo para que pod
 
         // Botón histórico
         elSysBtnHistory.addEventListener('click', () => {
-            if (window.APP_MODE === 'PRODUCCION') {
-                console.warn('[SEGURIDAD PRODUCCIÓN] Función de prueba bloqueada en modo PRODUCCIÓN.');
-                showToast('Función de prueba desactivada en modo Producción.', 'info');
-                return;
-            }
             elSysDocSearch.value = '45893214';
             elClientName.value = 'María Alejandra del Solar';
             elSysContactPhone.value = '990342115';
@@ -12234,15 +12196,17 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             ASESOR: "Asesor"
         };
 
-        // 2. Lista de Módulos Operativos Monitoreados (7 Módulos Oficiales)
+        // 2. Lista de Modulos Consolidados del Sistema (9 Variables)
         window.CRONOS_MODULES_LIST = [
             { key: 'generator', name: 'Clave Secreta', icon: 'fa-key', type: 'Operativo', defaultAccess: 0, calc: (m) => m.generator || 0 },
-            { key: 'tipificaciones', name: 'Tipificaciones', icon: 'fa-list-check', type: 'Operativo', defaultAccess: 0, calc: (m) => m.tipificaciones || 0 },
-            { key: 'tickets', name: 'Tickets (Tecnológico)', icon: 'fa-headset', type: 'Operativo', defaultAccess: 0, calc: (m) => (m.tickets || 0) + (m.tickets_tec || 0) },
-            { key: 'derivaciones', name: 'Derivaciones (Discord)', icon: 'fa-paper-plane', type: 'Operativo', defaultAccess: 0, calc: (m) => (m.derivaciones || 0) + (m.derivaciones_discord || 0) },
-            { key: 'acuerdos_voz', name: 'Acuerdos de Voz (Grabación)', icon: 'fa-microphone', type: 'Operativo', defaultAccess: 0, calc: (m) => m.acuerdos_voz || 0 },
-            { key: 'directorio', name: 'Directorio (Escalamiento)', icon: 'fa-address-book', type: 'Operativo', defaultAccess: 0, calc: (m) => m.directorio || 0 },
-            { key: 'cronos_sla', name: 'CRONOS SLA', icon: 'fa-stopwatch', type: 'Operativo', defaultAccess: 0, calc: (m) => m.cronos_sla || 0 }
+            { key: 'tipificaciones', name: 'Tipificaciones', icon: 'fa-list-ul', type: 'Operativo', defaultAccess: 0, calc: (m) => m.tipificaciones || 0 },
+            { key: 'tickets_tecnologico', name: 'Tickets / Tecnológico', icon: 'fa-ticket', type: 'Operativo', defaultAccess: 0, calc: (m) => (m.tickets || 0) + (m.tickets_tec || 0) },
+            { key: 'derivaciones_discord', name: 'Derivaciones / Discord', icon: 'fa-share', type: 'Operativo', defaultAccess: 0, calc: (m) => (m.derivaciones || 0) + (m.derivaciones_discord || 0) },
+            { key: 'acuerdos_voz', name: 'Acuerdos de Voz', icon: 'fa-microphone-lines', type: 'Operativo', defaultAccess: 0, calc: (m) => m.acuerdos_voz || 0 },
+            { key: 'dashboard', name: 'Dashboard', icon: 'fa-gauge-high', type: 'Ejecutivo', defaultAccess: 0, calc: (m) => m.dashboard || 0 },
+            { key: 'auditoria', name: 'Auditoría', icon: 'fa-clipboard-check', type: 'Ejecutivo', defaultAccess: 0, calc: (m) => m.auditoria || 0 },
+            { key: 'analitica_sla', name: 'Analítica CRONOS SLA', icon: 'fa-stopwatch-20', type: 'Ejecutivo', defaultAccess: 0, calc: (m) => m.analitica_sla || 0 },
+            { key: 'gestion_usuarios', name: 'Gestión Usuarios', icon: 'fa-users-gear', type: 'Administrativo', defaultAccess: 0, calc: (m) => m.gestion_usuarios || 0 }
         ];
 
         // 3. Matriz de Permisos por Rol (Valores por Defecto)
@@ -12379,48 +12343,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         // FASE 3 - INTEGRACIÓN REAL FIREBASE AUTHENTICATION & SERVICIOS
         // =========================================================================
 
-        // =========================================================================
-        // MODO PRODUCCIÓN Y PROTECCIÓN INMUTABLE DE DATOS REALES (FIRESTORE)
-        // =========================================================================
-        const APP_MODE = "PRODUCCION";
-        window.APP_MODE = APP_MODE;
-
-        // Desactivación automática e incondicional de cualquier función demo/mock/seed/prueba
-        function deactivateDemoAndMockRoutines() {
-            const forbiddenRoutines = [
-                'crearDatosDemo', 'cargarDatosDemo', 'seedData', 'seedDatabase',
-                'insertarDatosPrueba', 'cargarMetricasIniciales', 'restoreDefaults',
-                'mockData', 'fakeData', 'initMockData', 'resetMetrics',
-                'poblarDatosPrueba', 'insertDemoData', 'loadMockMetrics'
-            ];
-
-            forbiddenRoutines.forEach(name => {
-                window[name] = function () {
-                    console.warn(`[SEGURIDAD PRODUCCIÓN] Función bloqueada: "${name}()". La plataforma opera exclusivamente con datos reales de Firestore.`);
-                    return false;
-                };
-            });
-
-            if (window.MOCK_DATA) delete window.MOCK_DATA;
-            if (window.DEMO_DATA) delete window.DEMO_DATA;
-            window.CRONOS_DEMO_DISABLED = true;
-        }
-        deactivateDemoAndMockRoutines();
-
-        // Validación interna de estado de producción e indicador de Firestore
-        function logProductionStatus() {
-            const totalUsuarios = (window.CRONOS_USERS_DB || []).length;
-            const totalAuditoria = (window.CRONOS_ACCESS_LOGS || []).length;
-            const totalSLA = (window.CRONOS_SLA_EVENTS || []).length;
-
-            console.log("Modo Producción");
-            console.log("Firestore conectado");
-            console.log("Usuarios:", totalUsuarios);
-            console.log("Auditoría:", totalAuditoria);
-            console.log("SLA:", totalSLA);
-        }
-        window.logProductionStatus = logProductionStatus;
-
         window.firebaseConfig = {
             apiKey: "AIzaSyCbysDLkwagHY8UMIYlIcTxwpp4BMVTExA",
             authDomain: "cronos-fid-ba4f6.firebaseapp.com",
@@ -12445,8 +12367,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
 
             if (typeof firebase !== 'undefined') {
                 window.db = firebase.firestore();
-                console.log('%c[CRONOS FID - Firestore]%c Inicializado correctamente en MODO PRODUCCIÓN.', 'color:#FF5E00;font-weight:bold;', 'color:#10b981;');
-                deactivateDemoAndMockRoutines();
+                console.log('%c[CRONOS FID - Firestore]%c Inicializado correctamente.', 'color:#FF5E00;font-weight:bold;', 'color:#10b981;');
             }
         } catch (fbInitErr) {
             console.warn('[CRONOS FID] Inicialización local de Firebase falló:', fbInitErr);
@@ -12908,14 +12829,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             async logEvent(accion, modulo, detalle) {
                 try {
                     const user = window.CRONOS_CURRENT_USER || { nombre: "Sistema", correo: "sistema@win.pe", rol: "Sistema" };
-
-                    // REGLA: Si la acción es operacional (ACCESO_MODULO, USO_CRONOS_SLA, eventos SLA) y el usuario NO es Asesor, NO registrar
-                    const accionUpper = (accion || '').toUpperCase().trim();
-                    const isOperationalEvent = accionUpper === 'ACCESO_MODULO' || accionUpper === 'USO_CRONOS_SLA' || accionUpper.includes('ACCESO') || accionUpper.includes('SLA');
-                    if (isOperationalEvent && !isRoleAsesor(user)) {
-                        return null;
-                    }
-
                     const now = new Date();
 
                     const logData = {
@@ -12970,26 +12883,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 return await this.logEvent("CIERRE_SESION", "Autenticación", `Sesión finalizada por ${nombre}`);
             },
             async logModuleAccess(module, user) {
-                const u = user || window.CRONOS_CURRENT_USER;
-                // REGLA: Perfiles administrativos nunca generan ACCESO_MODULO
-                if (!u || !isRoleAsesor(u)) {
-                    return null;
-                }
-                // Modulos que NO deben generar metricas: Dashboard, Auditoria, Analitica SLA, Gestion Usuarios, Exportaciones, etc.
-                const validOperationalModules = [
-                    'clave secreta', 'generator',
-                    'tipificaciones',
-                    'tickets', 'tickets (tecnológico)', 'tickets/tecnológico',
-                    'derivaciones', 'derivaciones (discord)', 'derivaciones/discord',
-                    'acuerdos de voz', 'acuerdos de voz (grabación)', 'acuerdos_voz', 'acuerdos-voz',
-                    'directorio', 'directorio (escalamiento)',
-                    'cronos sla', 'cronos_sla', 'cronos-sla'
-                ];
-                const modLower = (module || '').toLowerCase().trim();
-                const isValid = validOperationalModules.some(v => modLower.includes(v) || v.includes(modLower));
-                if (!isValid) {
-                    return null;
-                }
                 return await this.logEvent("ACCESO_MODULO", module, `Usuario accedió al módulo ${module}`);
             },
             async logExport(module = "Auditoría", detalle = "Descarga de bitácora") {
@@ -13367,11 +13260,13 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         window.CRONOS_MODULES_DEF = [
             { key: 'generator', name: 'Clave Secreta', icon: 'fa-key', type: 'Operativo' },
             { key: 'tipificaciones', name: 'Tipificaciones', icon: 'fa-list-check', type: 'Operativo' },
-            { key: 'tickets', name: 'Tickets (Tecnológico)', icon: 'fa-headset', type: 'Operativo' },
-            { key: 'derivaciones', name: 'Derivaciones (Discord)', icon: 'fa-paper-plane', type: 'Operativo' },
-            { key: 'acuerdos_voz', name: 'Acuerdos de Voz (Grabación)', icon: 'fa-microphone', type: 'Operativo' },
-            { key: 'directorio', name: 'Directorio (Escalamiento)', icon: 'fa-address-book', type: 'Operativo' },
-            { key: 'cronos_sla', name: 'CRONOS SLA', icon: 'fa-stopwatch', type: 'Operativo' }
+            { key: 'tickets', name: 'Tickets/Tecnológico', icon: 'fa-headset', type: 'Operativo' },
+            { key: 'derivaciones', name: 'Derivaciones/Discord', icon: 'fa-paper-plane', type: 'Operativo' },
+            { key: 'acuerdos_voz', name: 'Acuerdos de Voz', icon: 'fa-microphone', type: 'Operativo' },
+            { key: 'dashboard', name: 'Dashboard', icon: 'fa-gauge-high', type: 'Ejecutivo' },
+            { key: 'auditoria', name: 'Auditoría', icon: 'fa-clipboard-check', type: 'Ejecutivo' },
+            { key: 'analitica_sla', name: 'Analítica CRONOS SLA', icon: 'fa-stopwatch-20', type: 'Ejecutivo' },
+            { key: 'gestion_usuarios', name: 'Gestión Usuarios', icon: 'fa-users-gear', type: 'Ejecutivo' }
         ];
 
         // =========================================================================
@@ -13388,56 +13283,11 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             tickets: 0,
             derivaciones: 0,
             acuerdos_voz: 0,
-            directorio: 0,
-            cronos_sla: 0
+            dashboard: 0,
+            auditoria: 0,
+            analitica_sla: 0,
+            gestion_usuarios: 0
         };
-
-        // =========================================================================
-        // REGLA FUNDAMENTAL: CONTROL Y MONITOREO EXCLUSIVO DE ASESORES
-        // Solamente el ROL ASESOR debe generar metricas operativas, analitica,
-        // ranking y eventos SLA. Roles administrativos nunca contaminan estadisticas.
-        // =========================================================================
-        function isRoleAsesor(userOrRol) {
-            if (!userOrRol) return false;
-            let r = '';
-            let email = '';
-            let name = '';
-            if (typeof userOrRol === 'string') {
-                const str = userOrRol.toLowerCase().trim();
-                if (str.includes('@')) {
-                    email = str;
-                } else {
-                    r = str;
-                }
-            } else {
-                r = (userOrRol.rol || '').toLowerCase().trim();
-                email = (userOrRol.correo || userOrRol.email || '').toLowerCase().trim();
-                name = (userOrRol.usuario || userOrRol.nombre || '').toLowerCase().trim();
-                if (!r) {
-                    if (window.CRONOS_USERS_DB && window.CRONOS_USERS_DB.length > 0) {
-                        const found = window.CRONOS_USERS_DB.find(u => 
-                            (email && (u.correo || '').toLowerCase().trim() === email) ||
-                            (name && (u.nombre || '').toLowerCase().trim() === name)
-                        );
-                        if (found && found.rol) r = String(found.rol).toLowerCase().trim();
-                    }
-                }
-            }
-
-            // Exclusión explícita de cuentas administrativas y roles de gestión
-            if (email === 'jleoni@win.pe' || r.includes('admin') || r.includes('supervisor') || r.includes('coordinador') || r.includes('formador') || r.includes('calidad') || r === 'sistema') {
-                return false;
-            }
-
-            // Inclusión de asesores
-            if (email === 'ajibaja@win.pe' || email === 'bsilva@win.pe') {
-                return true;
-            }
-
-            if (!r) return false;
-            return r.includes('asesor');
-        }
-        window.isRoleAsesor = isRoleAsesor;
 
         window.CRONOS_METRICS = {
             clicsTotal: 0,
@@ -13726,45 +13576,24 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         // TRACKING DE INTERACCIONES Y ACCESOS EN TIEMPO REAL
         // =========================================================================
         document.addEventListener('click', function (e) {
-            // REGLA PRINCIPAL: SOLAMENTE EL ROL ASESOR genera metricas operativas
-            if (!window.CRONOS_CURRENT_USER || !isRoleAsesor(window.CRONOS_CURRENT_USER)) return;
-
             if (window.CRONOS_METRICS) {
                 window.CRONOS_METRICS.clicsTotal = (window.CRONOS_METRICS.clicsTotal || 0) + 1;
                 const elClics = document.getElementById('dash-card-clics');
                 const elTotal = document.getElementById('dash-card-interac-total');
                 if (elClics) elClics.textContent = window.CRONOS_METRICS.clicsTotal.toLocaleString();
                 if (elTotal) {
-                    const asesorLogsCount = (window.CRONOS_ACCESS_LOGS ? window.CRONOS_ACCESS_LOGS.filter(l => isRoleAsesor(l)).length : 0);
-                    const asesorSLACount = (window.CRONOS_SLA_EVENTS ? window.CRONOS_SLA_EVENTS.filter(l => isRoleAsesor(l)).length : 0);
-                    const totalInt = asesorLogsCount + asesorSLACount + window.CRONOS_METRICS.clicsTotal;
+                    const totalInt = (window.CRONOS_ACCESS_LOGS ? window.CRONOS_ACCESS_LOGS.length : 0) + (window.CRONOS_SLA_EVENTS ? window.CRONOS_SLA_EVENTS.length : 0) + window.CRONOS_METRICS.clicsTotal;
                     elTotal.textContent = totalInt.toLocaleString();
                 }
             }
         });
 
         function trackModuleAccess(moduleKey) {
-            const user = window.CRONOS_CURRENT_USER;
-            // REGLA: SOLAMENTE EL ROL ASESOR genera metricas operativas
-            if (!user || !isRoleAsesor(user)) {
-                return;
-            }
+            const modName = getModuleNameByKey(moduleKey);
+            const user = window.CRONOS_CURRENT_USER || { uid: "usr_win_001", nombre: "Usuario WIN", correo: "usuario@win.pe", rol: "Asesor" };
 
-            // Normalizar a uno de los 7 modulos operativos
-            let normKey = moduleKey;
-            if (moduleKey === 'acuerdos-voz') normKey = 'acuerdos_voz';
-            else if (moduleKey === 'cronos-sla') normKey = 'cronos_sla';
-
-            const validKeys = ['generator', 'tipificaciones', 'tickets', 'derivaciones', 'acuerdos_voz', 'directorio', 'cronos_sla'];
-            if (!validKeys.includes(normKey)) {
-                // Modulos administrativos (dashboard, auditoria, analitica_sla, gestion_usuarios, etc.) NO generan metricas
-                return;
-            }
-
-            const modName = getModuleNameByKey(normKey);
-
-            if (window.CRONOS_MODULE_STATS && window.CRONOS_MODULE_STATS[normKey] !== undefined) {
-                window.CRONOS_MODULE_STATS[normKey]++;
+            if (window.CRONOS_MODULE_STATS && window.CRONOS_MODULE_STATS[moduleKey] !== undefined) {
+                window.CRONOS_MODULE_STATS[moduleKey]++;
             }
 
             if (window.CRONOS_METRICS) window.CRONOS_METRICS.navTotal = (window.CRONOS_METRICS.navTotal || 0) + 1;
@@ -13780,18 +13609,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
 
         async function logSLAEvent(accion, tiempoSegundos, estadoOverride) {
             try {
-                const user = window.CRONOS_CURRENT_USER;
-                // REGLA PRINCIPAL: SOLAMENTE EL ROL ASESOR debe generar metricas operativas y eventos SLA
-                if (!user || !isRoleAsesor(user)) {
-                    console.log(`[CRONOS SLA] Evento ignorado para perfil administrativo (${user ? (user.correo || user.rol) : 'Sin sesion'}): ${accion}`);
-                    return;
-                }
-
-                // Incremento de actividad operativa del modulo CRONOS SLA
-                if (window.CRONOS_MODULE_STATS && window.CRONOS_MODULE_STATS.cronos_sla !== undefined) {
-                    window.CRONOS_MODULE_STATS.cronos_sla++;
-                }
-
+                const user = window.CRONOS_CURRENT_USER || { uid: "usr_win_001", nombre: "Usuario WIN", correo: "usuario@win.pe", rol: "Asesor" };
                 const now = new Date();
                 const nowMs = now.getTime();
                 const nowISO = now.toISOString();
@@ -13818,11 +13636,11 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     registradoEn: nowISO
                 };
 
-                // Guardar en Firestore coleccion 'cronos_sla' (Solo asesores)
+                // Guardar en Firestore colección 'cronos_sla'
                 const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
                 if (firestoreDb) {
                     await firestoreDb.collection('cronos_sla').add(slaEvent);
-                    console.log("[Firestore] Evento de Asesor registrado en 'cronos_sla':", slaEvent);
+                    console.log("[Firestore] Evento registrado en 'cronos_sla':", slaEvent);
                 }
 
                 if (!window.CRONOS_SLA_EVENTS) window.CRONOS_SLA_EVENTS = [];
@@ -13849,16 +13667,13 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         window.logAuditEvent = logAuditEvent;
 
         function trackFunctionUsage(nombreFuncion, modulo) {
-            // REGLA: SOLAMENTE EL ROL ASESOR genera metricas operativas
-            if (!window.CRONOS_CURRENT_USER || !isRoleAsesor(window.CRONOS_CURRENT_USER)) return;
             if (window.CRONOS_METRICS) window.CRONOS_METRICS.funcTotal = (window.CRONOS_METRICS.funcTotal || 0) + 1;
             logAuditEvent(nombreFuncion, modulo || "Herramientas", "Ejecutado con éxito");
             renderDashboardMetricsOnly();
         }
 
         function trackActiveUserTime(secondsToAdd) {
-            // REGLA: SOLAMENTE EL ROL ASESOR acumula tiempo de sesión operativa
-            if (!window.CRONOS_CURRENT_USER || !isRoleAsesor(window.CRONOS_CURRENT_USER)) return;
+            if (!window.CRONOS_CURRENT_USER) return;
             const usr = (window.CRONOS_USERS_DB || []).find(u => u.uid === window.CRONOS_CURRENT_USER.uid || (u.correo && window.CRONOS_CURRENT_USER.correo && u.correo.toLowerCase() === window.CRONOS_CURRENT_USER.correo.toLowerCase()));
             if (usr) {
                 usr.tiempoAcumuladoSeconds = (usr.tiempoAcumuladoSeconds || 0) + secondsToAdd;
@@ -13872,6 +13687,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             }
         }
 
+        // =========================================================================
         // MOTOR DE CÁLCULO DE MÉTRICAS REALES DEL DASHBOARD (100% FIRESTORE)
         // =========================================================================
         function calculateRealDashboardMetrics() {
@@ -13880,12 +13696,8 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             const todayStr = today.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
             const todayISO = today.toISOString().split('T')[0];
 
-            const rawAuditLogs = window.CRONOS_ACCESS_LOGS || [];
-            const rawSlaEvents = window.CRONOS_SLA_EVENTS || [];
-
-            // REGLA PRINCIPAL: SOLAMENTE EL ROL ASESOR genera metricas operativas
-            const auditLogs = rawAuditLogs.filter(l => isRoleAsesor(l));
-            const slaEvents = rawSlaEvents.filter(e => isRoleAsesor(e));
+            const auditLogs = window.CRONOS_ACCESS_LOGS || [];
+            const slaEvents = window.CRONOS_SLA_EVENTS || [];
 
             function getLogMs(item) {
                 if (typeof item.timestamp === 'number' && item.timestamp > 0) return item.timestamp;
@@ -13906,7 +13718,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 return false;
             }
 
-            // 1. USUARIOS ACTIVOS (Exclusivamente Asesores)
+            // 1. USUARIOS ACTIVOS (desde auditoria, cronos_sla y sesión actual)
             const activeTodaySet = new Set();
             const active24hSet = new Set();
             const active7dSet = new Set();
@@ -13931,18 +13743,20 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 if (diffMs <= 7 * 24 * 3600 * 1000) active7dSet.add(u);
             });
 
-            if (activeTodaySet.size === 0 && window.CRONOS_CURRENT_USER && isRoleAsesor(window.CRONOS_CURRENT_USER)) {
-                activeTodaySet.add(window.CRONOS_CURRENT_USER.nombre || window.CRONOS_CURRENT_USER.correo || "Asesor");
-            }
-            if (active24hSet.size === 0 && window.CRONOS_CURRENT_USER && isRoleAsesor(window.CRONOS_CURRENT_USER)) {
-                active24hSet.add(window.CRONOS_CURRENT_USER.nombre || window.CRONOS_CURRENT_USER.correo || "Asesor");
+            if (window.CRONOS_CURRENT_USER) {
+                const curName = window.CRONOS_CURRENT_USER.nombre || window.CRONOS_CURRENT_USER.correo;
+                if (curName) {
+                    activeTodaySet.add(curName);
+                    active24hSet.add(curName);
+                    active7dSet.add(curName);
+                }
             }
 
-            // 2. SESIONES INICIADAS (Exclusivamente Asesores)
+            // 2. SESIONES INICIADAS (desde auditoria, eventos INICIO_SESION)
             let sesHoy = 0, sesSem = 0, sesMes = 0, sesTotal = 0;
             auditLogs.forEach(log => {
                 const accionNorm = (log.accion || '').toUpperCase().trim();
-                const isLogin = accionNorm === 'INICIO_SESION' || accionNorm === 'INICIO DE SESIÓN' || accionNorm === 'INICIO DE SESION' || accionNorm === 'LOGIN' || accionNorm.includes('INICIO');
+                const isLogin = accionNorm === 'INICIO_SESION' || accionNorm === 'INICIO DE SESIÓN' || accionNorm === 'LOGIN' || accionNorm.includes('INICIO');
                 if (isLogin) {
                     sesTotal++;
                     const ms = getLogMs(log);
@@ -13952,14 +13766,14 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     if (diffMs <= 30 * 24 * 3600 * 1000) sesMes++;
                 }
             });
-            if (sesTotal === 0 && window.CRONOS_CURRENT_USER && isRoleAsesor(window.CRONOS_CURRENT_USER)) {
+            if (sesTotal === 0 && window.CRONOS_CURRENT_USER) {
                 sesHoy = 1;
                 sesSem = 1;
                 sesMes = 1;
                 sesTotal = 1;
             }
 
-            // 3. EVENTOS CRONOS SLA (Exclusivamente Asesores)
+            // 3. EVENTOS CRONOS SLA (desde Firestore coleccion cronos_sla)
             let slaIni = 0, slaPau = 0, slaRst = 0;
             let sla45 = 0, sla60 = 0, sla70 = 0;
             let sumPauseSecs = 0, countPauseSecs = 0;
@@ -13995,15 +13809,17 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             const totalSLA = slaEvents.length;
             const slaPromedioStr = countPauseSecs > 0 ? Math.round(sumPauseSecs / countPauseSecs) + "s" : "0s";
 
-            // 4. USO POR MODULO (UNICAMENTE LOS 7 MODULOS OPERATIVOS)
+            // 4. USO POR MÓDULO (desde Firestore auditoria eventos ACCESO_MODULO)
             const moduleStats = {
                 generator: 0,
                 tipificaciones: 0,
                 tickets: 0,
                 derivaciones: 0,
                 acuerdos_voz: 0,
-                directorio: 0,
-                cronos_sla: 0
+                dashboard: 0,
+                auditoria: 0,
+                analitica_sla: 0,
+                gestion_usuarios: 0
             };
 
             function mapModuleToKey(modName) {
@@ -14014,15 +13830,17 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 if (norm.includes('ticket') || norm.includes('tecnol')) return 'tickets';
                 if (norm.includes('derivaci') || norm.includes('discord')) return 'derivaciones';
                 if (norm.includes('acuerdos') || norm.includes('voz')) return 'acuerdos_voz';
-                if (norm.includes('directorio') || norm.includes('escalamiento')) return 'directorio';
-                if (norm.includes('cronos sla') || (norm.includes('sla') && !norm.includes('analitica'))) return 'cronos_sla';
+                if (norm.includes('dashboard')) return 'dashboard';
+                if (norm.includes('auditor')) return 'auditoria';
+                if (norm.includes('sla') || norm.includes('analitica')) return 'analitica_sla';
+                if (norm.includes('usuario') || norm.includes('gestion')) return 'gestion_usuarios';
                 return null;
             }
 
             let navCount = 0;
             auditLogs.forEach(log => {
                 const accionNorm = (log.accion || '').toUpperCase().trim();
-                const isModAccess = accionNorm === 'ACCESO_MODULO' || accionNorm === 'USO_CRONOS_SLA' || accionNorm.includes('ACCESO');
+                const isModAccess = accionNorm === 'ACCESO_MODULO' || accionNorm.includes('ACCESO');
                 const key = mapModuleToKey(log.modulo) || mapModuleToKey(log.accion);
                 if (key && moduleStats[key] !== undefined) {
                     moduleStats[key]++;
@@ -14031,12 +13849,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     navCount++;
                 }
             });
-
-            // Asegurar conteo de CRONOS SLA con los eventos reales de asesores
-            if (slaEvents.length > 0 && moduleStats.cronos_sla === 0) {
-                moduleStats.cronos_sla = slaEvents.length;
-                navCount += slaEvents.length;
-            }
 
             window.CRONOS_MODULE_STATS = moduleStats;
 
@@ -14049,21 +13861,21 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             const totalModAccess = modEntries.reduce((sum, curr) => sum + curr[1], 0);
             const top1Pct = totalModAccess > 0 ? Math.round((top1Count / totalModAccess) * 100) : 0;
 
-            // 5. INTERACCIONES TOTALES (Exclusivamente de Asesores)
-            const funcCount = auditLogs.filter(l => (l.accion || '').toUpperCase() !== 'ACCESO_MODULO' && (l.accion || '').toUpperCase() !== 'INICIO_SESION' && (l.accion || '').toUpperCase() !== 'USO_CRONOS_SLA').length + slaEvents.length;
-            const clicsCount = (window.CRONOS_METRICS && typeof window.CRONOS_METRICS.clicsTotal === 'number') ? window.CRONOS_METRICS.clicsTotal : (auditLogs.length + slaEvents.length);
-            const totalInterac = auditLogs.length + slaEvents.length + (window.CRONOS_METRICS && window.CRONOS_METRICS.clicsTotal ? window.CRONOS_METRICS.clicsTotal : 0);
+            // 5. INTERACCIONES TOTALES (desde auditoria + cronos_sla + clics)
+            const funcCount = auditLogs.filter(l => (l.accion || '').toUpperCase() !== 'ACCESO_MODULO' && (l.accion || '').toUpperCase() !== 'INICIO_SESION').length + slaEvents.length;
+            const clicsCount = (window.CRONOS_METRICS && window.CRONOS_METRICS.clicsTotal) ? window.CRONOS_METRICS.clicsTotal : Math.max(auditLogs.length + slaEvents.length, 1);
+            const totalInterac = auditLogs.length + slaEvents.length + (window.CRONOS_METRICS ? (window.CRONOS_METRICS.clicsTotal || 0) : 0);
 
-            // 6. ULTIMO ACCESO REGISTRADO (Exclusivamente de Asesor)
+            // 6. ÚLTIMO ACCESO REGISTRADO (desde auditoria evento INICIO_SESION más reciente)
             const loginLogs = auditLogs.filter(l => {
                 const a = (l.accion || '').toUpperCase().trim();
-                return a === 'INICIO_SESION' || a === 'INICIO DE SESIÓN' || a === 'INICIO DE SESION' || a === 'LOGIN' || a.includes('INICIO');
+                return a === 'INICIO_SESION' || a === 'INICIO DE SESIÓN' || a === 'LOGIN' || a.includes('INICIO');
             });
-            const lastLogin = loginLogs[0] || auditLogs[0] || (window.CRONOS_CURRENT_USER && isRoleAsesor(window.CRONOS_CURRENT_USER) ? {
-                usuario: window.CRONOS_CURRENT_USER.nombre || "Asesor",
+            const lastLogin = loginLogs[0] || auditLogs[0] || (window.CRONOS_CURRENT_USER ? {
+                usuario: window.CRONOS_CURRENT_USER.nombre || "Usuario WIN",
                 fecha: todayStr,
                 hora: new Date().toLocaleTimeString('es-PE', { hour12: false }),
-                rol: "Asesor"
+                rol: window.CRONOS_CURRENT_USER.rol || "Asesor"
             } : {
                 usuario: "—",
                 fecha: "—",
@@ -14096,28 +13908,300 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 topModuloPct: top1Pct,
                 segundoModuloNombre: top2Key ? getModuleNameByKey(top2Key) : "Sin datos",
                 segundoModuloCount: top2Count,
-                lastUser: lastLogin.usuario || lastLogin.nombre || "Sin actividad reciente",
-                lastDate: (lastLogin.fecha === todayStr || (lastLogin.fechaHora && lastLogin.fechaHora.startsWith(todayISO))) ? "Hoy" : (lastLogin.fecha || "—"),
+                lastUser: lastLogin.usuario || lastLogin.nombre || "Usuario WIN",
+                lastDate: (lastLogin.fecha === todayStr || (lastLogin.fechaHora && lastLogin.fechaHora.startsWith(todayISO))) ? "Hoy" : (lastLogin.fecha || "Hoy"),
                 lastTime: lastLogin.hora || "—",
                 lastRol: lastLogin.rol || "Asesor"
             };
         }
 
+        // =========================================================================
+        // ESTILOS Y ASIGNACIÓN DE BADGES POR ROL
+        // =========================================================================
+        function getRoleBadgeStyle(rol) {
+            switch (rol) {
+                case "Administrador":
+                    return {
+                        badgeClass: "bg-indigo-600 text-white shadow-sm shadow-indigo-600/30",
+                        borderClass: "border-indigo-500",
+                        textClass: "text-indigo-700",
+                        headerClass: "bg-indigo-700 text-white font-black text-[9px] px-2 py-0.5 rounded-full uppercase tracking-wider",
+                        abbr: "Admin"
+                    };
+                case "Formador":
+                    return {
+                        badgeClass: "bg-amber-600 text-white shadow-sm shadow-amber-600/30",
+                        borderClass: "border-amber-500",
+                        textClass: "text-amber-700",
+                        headerClass: "bg-amber-600 text-white font-black text-[9px] px-2 py-0.5 rounded-full uppercase tracking-wider",
+                        abbr: "Formador"
+                    };
+                case "Coordinador":
+                    return {
+                        badgeClass: "bg-blue-600 text-white shadow-sm shadow-blue-600/30",
+                        borderClass: "border-blue-500",
+                        textClass: "text-blue-700",
+                        headerClass: "bg-blue-600 text-white font-black text-[9px] px-2 py-0.5 rounded-full uppercase tracking-wider",
+                        abbr: "Coord"
+                    };
+                case "Supervisor":
+                    return {
+                        badgeClass: "bg-emerald-600 text-white shadow-sm shadow-emerald-600/30",
+                        borderClass: "border-emerald-500",
+                        textClass: "text-emerald-700",
+                        headerClass: "bg-emerald-600 text-white font-black text-[9px] px-2 py-0.5 rounded-full uppercase tracking-wider",
+                        abbr: "Superv"
+                    };
+                case "Calidad":
+                    return {
+                        badgeClass: "bg-purple-600 text-white shadow-sm shadow-purple-600/30",
+                        borderClass: "border-purple-500",
+                        textClass: "text-purple-700",
+                        headerClass: "bg-purple-600 text-white font-black text-[9px] px-2 py-0.5 rounded-full uppercase tracking-wider",
+                        abbr: "Calidad"
+                    };
+                case "Asesor":
+                default:
+                    return {
+                        badgeClass: "bg-slate-700 text-white shadow-sm",
+                        borderClass: "border-slate-500",
+                        textClass: "text-slate-700",
+                        headerClass: "bg-slate-700 text-white font-black text-[9px] px-2 py-0.5 rounded-full uppercase tracking-wider",
+                        abbr: "Asesor"
+                    };
+            }
+        }
+
+        // =========================================================================
+        // SINCRONIZACIÓN VISUAL Y DINÁMICA DEL USUARIO AUTENTICADO
+        // =========================================================================
+        function updateHeaderUserUI(user) {
+            try {
+                if (!user) user = window.CRONOS_CURRENT_USER || (window.CRONOS_USERS_DB && window.CRONOS_USERS_DB[0]);
+                if (!user) return;
+                const rol = user.rol || "Asesor";
+                const style = typeof getRoleBadgeStyle === 'function' ? getRoleBadgeStyle(rol) : { badgeClass: 'bg-slate-700 text-white shadow-sm', textClass: 'text-slate-700', abbr: 'Asesor' };
+
+                // Indicador Permanente en Cabecera
+                const elHeaderNombre = document.getElementById('header-user-nombre');
+                const elHeaderCorreo = document.getElementById('header-user-correo');
+                const elHeaderRol = document.getElementById('header-user-rol');
+
+                if (elHeaderNombre) elHeaderNombre.textContent = user.nombre || "Usuario WIN";
+                if (elHeaderCorreo) elHeaderCorreo.textContent = user.correo || "usuario@win.pe";
+                if (elHeaderRol) {
+                    elHeaderRol.textContent = rol.toUpperCase();
+                    elHeaderRol.className = `text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow-sm inline-block ${style.badgeClass}`;
+                }
+
+                // Botón Avatar de Cabecera
+                const elMenuAvatar = document.getElementById('user-menu-avatar');
+                const elMenuName = document.getElementById('user-menu-name');
+                const elMenuRole = document.getElementById('user-menu-role');
+
+                const initials = user.avatar || (user.nombre ? user.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'US');
+                if (elMenuAvatar) elMenuAvatar.textContent = initials;
+                if (elMenuName) elMenuName.textContent = user.nombre || "Usuario WIN";
+                if (elMenuRole) {
+                    elMenuRole.textContent = style.abbr || rol;
+                    elMenuRole.className = `inline-block text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded shadow-sm ${style.badgeClass}`;
+                }
+
+                // Tarjeta Dropdown de Usuario
+                const elDropAvatar = document.getElementById('user-dropdown-avatar');
+                const elDropName = document.getElementById('user-dropdown-name');
+                const elDropEmail = document.getElementById('user-dropdown-email');
+                const elDropRole = document.getElementById('user-dropdown-role');
+
+                if (elDropAvatar) elDropAvatar.textContent = initials;
+                if (elDropName) elDropName.textContent = user.nombre || "Usuario WIN";
+                if (elDropEmail) elDropEmail.textContent = user.correo || "usuario@win.pe";
+                if (elDropRole) {
+                    elDropRole.textContent = rol.toUpperCase();
+                    elDropRole.className = `text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${style.badgeClass}`;
+                }
+            } catch (err) {
+                console.warn('[updateHeaderUserUI] Error al actualizar UI de cabecera:', err);
+            }
+        }
+        window.updateHeaderUserUI = updateHeaderUserUI;
+
+        // =========================================================================
+        // CONTROL DINÁMICO DE ROLES Y PERMISOS
+        // =========================================================================
+        function hasPermission(permissionKey) {
+            if (!window.CRONOS_CURRENT_USER || !window.CRONOS_PERMISSIONS) return false;
+            const userRole = window.CRONOS_CURRENT_USER.rol;
+            const rolePerms = window.CRONOS_PERMISSIONS[userRole];
+            if (!rolePerms) return false;
+            if (rolePerms.accesoTotal) return true;
+            return !!rolePerms[permissionKey];
+        }
+
+        function applyRolePermissions(role) {
+            const userRole = role || (window.CRONOS_CURRENT_USER ? window.CRONOS_CURRENT_USER.rol : 'Asesor');
+            const permissions = (window.CRONOS_PERMISSIONS && window.CRONOS_PERMISSIONS[userRole]) || {};
+
+            const tabGen = document.getElementById('tab-generator');
+            const tabTip = document.getElementById('tab-tipificaciones');
+            const tabTic = document.getElementById('tab-tickets');
+            const tabDer = document.getElementById('tab-derivaciones');
+            const tabAcu = document.getElementById('tab-acuerdos-voz');
+
+            if (tabGen) tabGen.style.display = permissions.claveSecreta !== false ? '' : 'none';
+            if (tabTip) tabTip.style.display = permissions.tipificaciones !== false ? '' : 'none';
+            if (tabTic) tabTic.style.display = permissions.ticketsTecnologicos !== false ? '' : 'none';
+            if (tabDer) tabDer.style.display = permissions.derivacionesDiscord !== false ? '' : 'none';
+            if (tabAcu) tabAcu.style.display = permissions.acuerdosVoz !== false ? '' : 'none';
+
+            const tabDash = document.getElementById('tab-dashboard');
+            const tabAud = document.getElementById('tab-auditoria');
+            const tabSLA = document.getElementById('tab-analitica-sla');
+            const tabUsr = document.getElementById('tab-gestion-usuarios');
+
+            const isAsesor = String(userRole).toLowerCase().includes('asesor');
+            const isAdminOrSup = String(userRole).toLowerCase().includes('admin') || String(userRole).toLowerCase().includes('superv');
+
+            if (tabDash) tabDash.style.display = (!isAsesor && (permissions.dashboard || isAdminOrSup)) ? '' : 'none';
+            if (tabAud) tabAud.style.display = (!isAsesor && (permissions.auditoria || isAdminOrSup)) ? '' : 'none';
+            if (tabSLA) tabSLA.style.display = (!isAsesor && (permissions.analitica_sla || isAdminOrSup)) ? '' : 'none';
+            if (tabUsr) tabUsr.style.display = (!isAsesor && (permissions.gestion_usuarios || permissions.gestionUsuarios || isAdminOrSup)) ? '' : 'none';
+
+            const hasAnyAdmin = !isAsesor && (permissions.dashboard || permissions.auditoria || permissions.analitica_sla || permissions.gestion_usuarios || permissions.gestionUsuarios || permissions.exportExcel || isAdminOrSup);
+            const sidebarAdmin = document.getElementById('sidebar-admin-modules') || document.getElementById('sidebar-admin-section');
+            if (sidebarAdmin) {
+                if (hasAnyAdmin) {
+                    sidebarAdmin.style.display = '';
+                    sidebarAdmin.classList.remove('hidden', 'sidebar-admin-hidden');
+                } else {
+                    sidebarAdmin.style.display = 'none';
+                    sidebarAdmin.classList.add('hidden', 'sidebar-admin-hidden');
+                }
+            }
+
+            const menuSettings = document.getElementById('menu-opt-settings');
+            const menuUsers = document.getElementById('menu-opt-users');
+            const menuHistory = document.getElementById('menu-opt-history');
+            if (menuSettings) menuSettings.style.display = (!isAsesor && (permissions.configuracion || isAdminOrSup)) ? '' : 'none';
+            if (menuUsers) menuUsers.style.display = (!isAsesor && (permissions.gestion_usuarios || isAdminOrSup)) ? '' : 'none';
+            if (menuHistory) menuHistory.style.display = (permissions.historialAccesos !== false && permissions.auditoria !== false && !isAsesor) ? '' : 'none';
+
+            const menuExports = document.getElementById('menu-opt-exports');
+            if (menuExports) menuExports.style.display = (!isAsesor && (permissions.exportExcel || isAdminOrSup)) ? '' : 'none';
+
+            const sidebarExports = document.getElementById('sidebar-btn-exports');
+            if (sidebarExports) sidebarExports.style.display = (!isAsesor && (permissions.exportExcel || isAdminOrSup)) ? '' : 'none';
+
+            if (window.CRONOS_CURRENT_USER) {
+                if (typeof updateHeaderUserUI === 'function') {
+                    updateHeaderUserUI(window.CRONOS_CURRENT_USER);
+                } else {
+                    console.warn('updateHeaderUserUI no existe');
+                }
+            }
+
+            console.log("Permisos aplicados");
+
+            if (!isAsesor && (permissions.dashboard || isAdminOrSup)) {
+                renderDashboard();
+            }
+        }
+
+        // Normalizador universal de documentos SLA (soporte total de fechas y esquemas históricos/nuevos)
+        function normalizeSLADoc(docOrData, docId = null) {
+            const d = (docOrData && typeof docOrData.data === 'function') ? docOrData.data() : (docOrData || {});
+            const id = (docOrData && docOrData.id) ? docOrData.id : (docId || d.id || ('sla-' + Math.random().toString(36).substr(2, 9)));
+
+            let timeMs = 0;
+            if (typeof d.timestamp === 'number' && d.timestamp > 0) {
+                timeMs = d.timestamp;
+            } else if (d.timestamp && typeof d.timestamp.toMillis === 'function') {
+                timeMs = d.timestamp.toMillis();
+            } else if (d.timestamp && d.timestamp.seconds) {
+                timeMs = d.timestamp.seconds * 1000;
+            } else if (d.fechaHora) {
+                const t = new Date(d.fechaHora).getTime();
+                if (!isNaN(t) && t > 0) timeMs = t;
+            } else if (d.createdAt) {
+                const t = typeof d.createdAt.toMillis === 'function' ? d.createdAt.toMillis() : new Date(d.createdAt).getTime();
+                if (!isNaN(t) && t > 0) timeMs = t;
+            } else if (d.registradoEn) {
+                const t = typeof d.registradoEn.toMillis === 'function' ? d.registradoEn.toMillis() : new Date(d.registradoEn).getTime();
+                if (!isNaN(t) && t > 0) timeMs = t;
+            }
+
+            if (timeMs === 0 && d.fecha) {
+                const parts = String(d.fecha).trim().split(/[\/\-\.]/);
+                if (parts.length === 3) {
+                    let day, month, year;
+                    if (parts[0].length === 4) {
+                        year = parseInt(parts[0], 10);
+                        month = parseInt(parts[1], 10) - 1;
+                        day = parseInt(parts[2], 10);
+                    } else {
+                        day = parseInt(parts[0], 10);
+                        month = parseInt(parts[1], 10) - 1;
+                        year = parseInt(parts[2], 10);
+                    }
+                    let hh = 0, mm = 0, ss = 0;
+                    if (d.hora) {
+                        const hParts = String(d.hora).trim().split(':');
+                        hh = parseInt(hParts[0], 10) || 0;
+                        mm = parseInt(hParts[1], 10) || 0;
+                        ss = parseInt(hParts[2], 10) || 0;
+                    }
+                    const dt = new Date(year, month, day, hh, mm, ss);
+                    if (!isNaN(dt.getTime())) timeMs = dt.getTime();
+                }
+            }
+
+            let fFecha = d.fecha || '';
+            let fHora = d.hora || '';
+            if ((!fFecha || !fHora) && timeMs > 0) {
+                const dt = new Date(timeMs);
+                if (!fFecha) fFecha = dt.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                if (!fHora) fHora = dt.toLocaleTimeString('es-PE', { hour12: false });
+            }
+
+            const fechaHoraISO = d.fechaHora || (timeMs > 0 ? new Date(timeMs).toISOString() : '');
+            const tiempoSecs = typeof d.tiempoSegundos === 'number' ? d.tiempoSegundos : (parseInt(d.tiempoSegundos) || 0);
+
+            return {
+                id: id,
+                fecha: fFecha || '—',
+                hora: fHora || '—',
+                fechaHora: fechaHoraISO,
+                createdAt: d.createdAt || fechaHoraISO,
+                registradoEn: d.registradoEn || fechaHoraISO,
+                usuario: d.usuario || d.nombre || d.user || 'Usuario WIN',
+                correo: d.correo || d.email || '—',
+                rol: d.rol || d.perfil || 'Asesor',
+                modulo: d.modulo || 'CRONOS SLA',
+                accion: d.accion || d.action || 'Iniciar',
+                tiempoExacto: d.tiempoExacto || formatSecondsToMMSS(tiempoSecs),
+                tiempoSegundos: tiempoSecs,
+                estadoSLA: d.estadoSLA || getSLAStateFromSeconds(tiempoSecs),
+                timestamp: timeMs
+            };
+        }
+        window.normalizeSLADoc = normalizeSLADoc;
+
+        // =========================================================================
+        // RENDERING DEL CENTRO DE CONTROL CRONOS FID (DASHBOARD)
+        // =========================================================================
         async function loadDashboardFirestoreData() {
             try {
                 const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
-                if (!firestoreDb) {
-                    renderDashboard();
-                    return;
-                }
+                if (!firestoreDb) return;
 
-                console.log("[Dashboard] Consultando Firestore para métricas reales...");
-
+                console.log("[Dashboard] Solicitando datos iniciales a Firestore (cronos_sla, auditoria, usuarios)...");
                 const [slaSnap, audSnap, usrSnap] = await Promise.all([
-                    firestoreDb.collection('cronos_sla').orderBy('timestamp', 'desc').limit(1000).get().catch(err =>
-                        firestoreDb.collection('cronos_sla').limit(1000).get().catch(e => { console.warn('Error get cronos_sla:', e); return null; })
+                    firestoreDb.collection('cronos_sla').orderBy('fechaHora', 'desc').limit(1000).get().catch(() =>
+                        firestoreDb.collection('cronos_sla').orderBy('timestamp', 'desc').limit(1000).get().catch(() =>
+                            firestoreDb.collection('cronos_sla').get().catch(e => { console.warn('Error get cronos_sla:', e); return null; })
+                        )
                     ),
-                    firestoreDb.collection('auditoria').orderBy('timestamp', 'desc').limit(1000).get().catch(err =>
+                    firestoreDb.collection('auditoria').orderBy('fechaHora', 'desc').limit(1000).get().catch(() =>
                         firestoreDb.collection('auditoria').limit(1000).get().catch(e => { console.warn('Error get auditoria:', e); return null; })
                     ),
                     firestoreDb.collection('usuarios').get().catch(e => { console.warn('Error get usuarios:', e); return null; })
@@ -14154,20 +14238,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     window.CRONOS_USERS_DB = users;
                 }
 
-
-                // Indicador interno de Validación en Modo Producción con Firestore conectado
-                if (typeof logProductionStatus === 'function') {
-                    logProductionStatus();
-                } else {
-                    const totalUsuarios = (window.CRONOS_USERS_DB || []).length;
-                    const totalAuditoria = (window.CRONOS_ACCESS_LOGS || []).length;
-                    const totalSLA = (window.CRONOS_SLA_EVENTS || []).length;
-                    console.log("Modo Producción");
-                    console.log("Firestore conectado");
-                    console.log("Usuarios:", totalUsuarios);
-                    console.log("Auditoría:", totalAuditoria);
-                    console.log("SLA:", totalSLA);
-                }
                 renderDashboard();
             } catch (err) {
                 console.error("[Dashboard] Error cargando datos iniciales:", err);
@@ -14182,14 +14252,21 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         }
 
         function renderDashboardMetricsOnly() {
+            const slaData = window.CRONOS_SLA_EVENTS || [];
+            const auditData = window.CRONOS_ACCESS_LOGS || [];
             const metrics = calculateRealDashboardMetrics();
+
+            console.log("Dashboard SLA Data:", slaData);
+            console.log("Dashboard Audit Data:", auditData);
+            console.log("Dashboard Metrics:", metrics);
+
             const m = metrics;
 
             // Tarjeta 1: Usuarios Activos
             const elUsrHoy = document.getElementById('dash-card-usuarios-hoy');
             const elUsr24h = document.getElementById('dash-card-usuarios-24h');
             if (elUsrHoy) elUsrHoy.textContent = m.usuariosHoy;
-            if (elUsr24h) elUsr24h.textContent = m.usuarios24h + (m.usuarios24h === 1 ? ' asesor' : ' asesores');
+            if (elUsr24h) elUsr24h.textContent = m.usuarios24h + (m.usuarios24h === 1 ? ' usuario' : ' usuarios');
 
             // Tarjeta 2: Sesiones Iniciadas
             const elSesHoy = document.getElementById('dash-card-sesiones-hoy');
@@ -14217,7 +14294,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             if (elSlaPau) elSlaPau.textContent = m.slaPau;
             if (elSlaRst) elSlaRst.textContent = m.slaRst;
 
-            // Tarjeta 5: Modulo Mas Utilizado
+            // Tarjeta 5: Módulo Más Utilizado
             const elTopModNombre = document.getElementById('dash-card-top-modulo-nombre');
             const elTopModCount = document.getElementById('dash-card-top-modulo-count');
             const el2doMod = document.getElementById('dash-card-2do-modulo');
@@ -14225,7 +14302,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             if (elTopModCount) elTopModCount.textContent = m.topModuloCount.toLocaleString();
             if (el2doMod) el2ModFormatted(el2doMod, m.segundoModuloNombre, m.segundoModuloCount);
 
-            // Tarjeta 6: Ultimo Acceso Registrado
+            // Tarjeta 6: Último Acceso Registrado
             const elLastUser = document.getElementById('dash-card-last-user');
             const elLastTime = document.getElementById('dash-card-last-time');
             const elLastDate = document.getElementById('dash-card-last-date');
@@ -14239,7 +14316,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 elLastRol.className = `font-extrabold px-1 rounded ${style.textClass} bg-slate-100`;
             }
 
-            // Seccion SLA del Dashboard
+            // Sección SLA del Dashboard
             const elSlaTotIni = document.getElementById('dash-sla-total-inicios');
             const elSlaTotPau = document.getElementById('dash-sla-total-pausas');
             const elSlaTotRst = document.getElementById('dash-sla-total-reinicios');
@@ -14276,12 +14353,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             if (!container) return;
 
             calculateRealDashboardMetrics();
-
-            // Sincronizar badge y encabezado con los 7 módulos operativos
-            const elModBadge = document.getElementById('dash-modulos-count-badge');
-            if (elModBadge) elModBadge.textContent = `${window.CRONOS_MODULES_DEF.length} módulos`;
-            const elHeaderCount = document.getElementById('dash-header-modulos-count');
-            if (elHeaderCount) elHeaderCount.textContent = `${window.CRONOS_MODULES_DEF.length} Módulos Monitoreados`;
 
             const moduleData = window.CRONOS_MODULES_DEF.map(mod => {
                 const count = window.CRONOS_MODULE_STATS[mod.key] || 0;
@@ -14337,17 +14408,15 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
 
             const userMap = new Map();
 
-            // REGLA: RANKING DE USUARIOS - Generar ranking UNICAMENTE con usuarios cuyo rol = Asesor
             (window.CRONOS_USERS_DB || []).forEach(u => {
-                if (!isRoleAsesor(u)) return;
                 const id = (u.correo || u.nombre || u.uid || '').toLowerCase().trim();
                 if (!id) return;
                 userMap.set(id, {
                     uid: u.uid || id,
-                    nombre: u.nombre || u.correo || 'Asesor',
+                    nombre: u.nombre || u.correo || 'Usuario',
                     correo: u.correo || '',
                     rol: u.rol || 'Asesor',
-                    avatar: u.avatar || (u.nombre ? u.nombre.substring(0, 2).toUpperCase() : 'AS'),
+                    avatar: u.avatar || (u.nombre ? u.nombre.substring(0, 2).toUpperCase() : 'US'),
                     sesiones: u.sesiones || 0,
                     accesos: u.accesos || 0,
                     usoSLA: u.usoSLA || 0,
@@ -14357,16 +14426,15 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             });
 
             (window.CRONOS_ACCESS_LOGS || []).forEach(log => {
-                if (!isRoleAsesor(log)) return;
                 const id = (log.correo || log.usuario || log.nombre || '').toLowerCase().trim();
                 if (!id || id === 'sistema') return;
                 if (!userMap.has(id)) {
                     userMap.set(id, {
                         uid: id,
-                        nombre: log.usuario || log.nombre || log.correo || 'Asesor',
+                        nombre: log.usuario || log.nombre || log.correo || 'Usuario',
                         correo: log.correo || '',
                         rol: log.rol || 'Asesor',
-                        avatar: (log.usuario || 'AS').substring(0, 2).toUpperCase(),
+                        avatar: (log.usuario || 'US').substring(0, 2).toUpperCase(),
                         sesiones: 0,
                         accesos: 0,
                         usoSLA: 0,
@@ -14384,16 +14452,15 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             });
 
             (window.CRONOS_SLA_EVENTS || []).forEach(ev => {
-                if (!isRoleAsesor(ev)) return;
                 const id = (ev.correo || ev.usuario || '').toLowerCase().trim();
                 if (!id || id === 'sistema') return;
                 if (!userMap.has(id)) {
                     userMap.set(id, {
                         uid: id,
-                        nombre: ev.usuario || ev.correo || 'Asesor',
+                        nombre: ev.usuario || ev.correo || 'Usuario',
                         correo: ev.correo || '',
                         rol: ev.rol || 'Asesor',
-                        avatar: (ev.usuario || 'AS').substring(0, 2).toUpperCase(),
+                        avatar: (ev.usuario || 'US').substring(0, 2).toUpperCase(),
                         sesiones: 0,
                         accesos: 0,
                         usoSLA: 0,
@@ -14409,8 +14476,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 }
             });
 
-            // Filtrar estrictamente solo usuarios cuyo rol sea Asesor
-            const userList = Array.from(userMap.values()).filter(u => isRoleAsesor(u));
+            const userList = Array.from(userMap.values());
             userList.sort((a, b) => {
                 const scoreA = (a.sesiones * 3) + (a.accesos * 2) + (a.usoSLA * 2) + (a.tiempoAcumuladoSeconds || 0);
                 const scoreB = (b.sesiones * 3) + (b.accesos * 2) + (b.usoSLA * 2) + (b.tiempoAcumuladoSeconds || 0);
@@ -14418,7 +14484,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             });
 
             if (userList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 font-medium">Sin actividad de asesores registrada</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 font-medium">Sin actividad de usuarios registrada</td></tr>`;
                 return;
             }
 
@@ -14435,7 +14501,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                         <td class="p-2.5">
                             <div class="flex items-center gap-2">
                                 <div class="w-6 h-6 rounded-full bg-slate-800 text-white font-black text-[9px] flex items-center justify-center shrink-0">
-                                    ${usr.avatar || 'AS'}
+                                    ${usr.avatar || 'US'}
                                 </div>
                                 <div class="truncate max-w-[130px]">
                                     <div class="font-bold text-slate-800 truncate">${usr.nombre}</div>
@@ -14458,12 +14524,10 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             const tbody = document.getElementById('dash-actividades-tbody');
             if (!tbody || !window.CRONOS_ACCESS_LOGS) return;
 
-            // REGLA: Exclusivamente actividades operativas de Asesores
-            const asesorLogs = (window.CRONOS_ACCESS_LOGS || []).filter(l => isRoleAsesor(l));
-            const recentLogs = asesorLogs.slice(0, 10);
+            const recentLogs = window.CRONOS_ACCESS_LOGS.slice(0, 10);
 
             if (recentLogs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400 font-medium">Sin actividades recientes de asesores</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400 font-medium">Sin actividades recientes</td></tr>`;
                 return;
             }
 
@@ -14636,11 +14700,9 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
 
         function renderAuditoriaStats() {
             const todayStr = new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            // REGLA: Métricas operativas de auditoría exclusivas del rol Asesor
-            const asesorLogs = (window.CRONOS_ACCESS_LOGS || []).filter(l => isRoleAsesor(l));
-            const totalLogs = asesorLogs.length;
-            const logsHoy = asesorLogs.filter(l => l.fecha === todayStr).length;
-            const uniqueUsers = new Set(asesorLogs.map(l => l.usuario || l.nombre || l.correo)).size;
+            const totalLogs = window.CRONOS_ACCESS_LOGS.length;
+            const logsHoy = window.CRONOS_ACCESS_LOGS.filter(l => l.fecha === todayStr).length;
+            const uniqueUsers = new Set(window.CRONOS_ACCESS_LOGS.map(l => l.usuario)).size;
 
             const elTotal = document.getElementById('aud-card-total-logs');
             const elHoy = document.getElementById('aud-card-logs-hoy');
@@ -14660,16 +14722,12 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             const searchInput = document.getElementById('aud-search-input');
             const filterAction = document.getElementById('aud-filter-action');
             const filterModulo = document.getElementById('aud-filter-modulo');
-            const filterRol = document.getElementById('aud-filter-rol');
 
             const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
             const actionVal = filterAction ? filterAction.value : 'TODOS';
             const modVal = filterModulo ? filterModulo.value : 'TODOS';
-            const rolVal = filterRol ? filterRol.value : 'ASESORES';
 
             let filtered = window.CRONOS_ACCESS_LOGS.filter(log => {
-                // REGLA: Filtro de rol (Por defecto: Solo Asesores operativos)
-                if (rolVal === 'ASESORES' && !isRoleAsesor(log)) return false;
                 if (actionVal !== 'TODOS') {
                     const act = (log.accion || '').toUpperCase();
                     const filter = actionVal.toUpperCase();
@@ -14819,8 +14877,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             const actionVal = filterAction ? filterAction.value : 'TODOS';
 
             let filtered = window.CRONOS_SLA_EVENTS.filter(ev => {
-                // REGLA: ANALITICA CRONOS SLA - Mostrar exclusivamente eventos de ROL = Asesor
-                if (!isRoleAsesor(ev)) return false;
                 if (actionVal !== 'TODOS' && ev.accion !== actionVal) return false;
                 if (query) {
                     const str = `${ev.fecha} ${ev.hora} ${ev.usuario} ${ev.correo} ${ev.rol} ${ev.accion} ${ev.tiempoExacto} ${ev.estadoSLA}`.toLowerCase();
@@ -15138,15 +15194,14 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 const sel = document.getElementById('export-filter-user');
                 if (!sel) return;
                 const prev = sel.value || 'todos';
-                sel.innerHTML = '<option value="todos">Todos los Asesores Monitoreados</option>';
+                sel.innerHTML = '<option value="todos">Todos los Asesores y Usuarios</option>';
 
-                // Solo mostrar asesores en el selector de exportacion
-                const users = (window.CRONOS_USERS_DB || []).filter(u => isRoleAsesor(u));
+                const users = window.CRONOS_USERS_DB || [];
                 const sorted = [...users].sort((a, b) => (a.nombre || a.usuario || '').localeCompare(b.nombre || b.usuario || ''));
                 sorted.forEach(u => {
                     const opt = document.createElement('option');
                     opt.value = (u.correo || u.nombre || u.usuario || '').trim();
-                    opt.textContent = `${u.nombre || u.usuario || 'Asesor'} [Asesor]${u.correo ? ' — ' + u.correo : ''}`;
+                    opt.textContent = `${u.nombre || u.usuario || 'Usuario'} [${u.rol || 'Asesor'}]${u.correo ? ' • ' + u.correo : ''}`;
                     sel.appendChild(opt);
                 });
                 sel.value = prev;
@@ -15156,7 +15211,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 const previewBadge = document.getElementById('export-preview-badge');
                 if (!previewBadge) return;
 
-                previewBadge.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-emerald-600"></i> Verificando registros de asesores...`;
+                previewBadge.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-emerald-600"></i> Verificando registros...`;
 
                 try {
                     const cStart = document.getElementById('export-date-start')?.value;
@@ -15174,45 +15229,47 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     let countText = "";
                     if (this.currentModule === 'dashboard') {
                         const audLogs = (window.CRONOS_ACCESS_LOGS || []).filter(l => {
-                            if (!isRoleAsesor(l)) return false;
                             const ms = parseDocTimestamp(l);
                             return ms >= startMs && ms <= endMs;
                         });
                         const slaLogs = (window.CRONOS_SLA_EVENTS || []).filter(s => {
-                            if (!isRoleAsesor(s)) return false;
                             const ms = parseDocTimestamp(s);
                             return ms >= startMs && ms <= endMs;
                         });
                         countText = `${audLogs.length} logs auditoría • ${slaLogs.length} eventos SLA`;
                     } else if (this.currentModule === 'auditoria') {
                         let audLogs = (window.CRONOS_ACCESS_LOGS || []).filter(l => {
-                            if (!isRoleAsesor(l)) return false;
                             const ms = parseDocTimestamp(l);
                             return ms >= startMs && ms <= endMs;
                         });
                         if (userFilter !== 'todos') {
                             audLogs = audLogs.filter(l => (l.correo || l.usuario || l.nombre || '').toLowerCase().includes(userFilter.toLowerCase()));
                         }
+                        if (roleFilter !== 'todos') {
+                            audLogs = audLogs.filter(l => (l.rol || '').toLowerCase() === roleFilter.toLowerCase());
+                        }
                         if (actionFilter !== 'todas') {
                             audLogs = audLogs.filter(l => (l.accion || '').toUpperCase().includes(actionFilter.toUpperCase()));
                         }
-                        countText = `${audLogs.length} registros de asesores`;
+                        countText = `${audLogs.length} registros auditoría`;
                     } else if (this.currentModule === 'cronos_sla') {
                         let slaLogs = (window.CRONOS_SLA_EVENTS || []).filter(s => {
-                            if (!isRoleAsesor(s)) return false;
                             const ms = parseDocTimestamp(s);
                             return ms >= startMs && ms <= endMs;
                         });
                         if (userFilter !== 'todos') {
                             slaLogs = slaLogs.filter(s => (s.correo || s.usuario || '').toLowerCase().includes(userFilter.toLowerCase()));
                         }
+                        if (roleFilter !== 'todos') {
+                            slaLogs = slaLogs.filter(s => (s.rol || '').toLowerCase() === roleFilter.toLowerCase());
+                        }
                         if (slaStatusFilter !== 'todos') {
                             slaLogs = slaLogs.filter(s => (s.estadoSLA || '').toLowerCase().includes(slaStatusFilter.toLowerCase()));
                         }
-                        countText = `${slaLogs.length} eventos SLA de asesores`;
+                        countText = `${slaLogs.length} eventos SLA`;
                     }
 
-                    previewBadge.innerHTML = `<i class="fa-solid fa-database text-emerald-600 mr-1"></i> ${countText}`;
+                    previewBadge.innerHTML = `<i class="fa-solid fa-database text-emerald-600 mr-1"></i> Firestore / Caché: <strong>${countText}</strong>`;
                 } catch (e) {
                     previewBadge.innerHTML = `<span class="text-slate-500">Listo para consultar Firestore</span>`;
                 }
@@ -15274,10 +15331,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 let auditLogs = await this.fetchFirestoreHistorical('auditoria', startMs, endMs);
                 let slaEvents = await this.fetchFirestoreHistorical('cronos_sla', startMs, endMs);
 
-                // REGLA: EXPORTACIONES - Dashboard debe exportar UNICAMENTE informacion perteneciente a: ASESORES
-                auditLogs = auditLogs.filter(l => isRoleAsesor(l));
-                slaEvents = slaEvents.filter(s => isRoleAsesor(s));
-
                 if (userFilter && userFilter !== 'todos') {
                     const uLow = userFilter.toLowerCase().trim();
                     auditLogs = auditLogs.filter(l => (l.correo || l.usuario || l.nombre || '').toLowerCase().includes(uLow));
@@ -15320,38 +15373,38 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 });
                 const slaPromedioStr = countPauseSecs > 0 ? Math.round(sumPauseSecs / countPauseSecs) + "s" : "0s";
 
-                // EXACTAMENTE LOS 7 MODULOS OPERATIVOS MONITOREADOS
                 const moduleCounts = {
                     "Clave Secreta": 0,
                     "Tipificaciones": 0,
-                    "Tickets (Tecnológico)": 0,
-                    "Derivaciones (Discord)": 0,
-                    "Acuerdos de Voz (Grabación)": 0,
-                    "Directorio (Escalamiento)": 0,
-                    "CRONOS SLA": 0
+                    "Tickets Tecnológicos": 0,
+                    "Derivaciones Discord": 0,
+                    "Acuerdos de Voz": 0,
+                    "Dashboard": 0,
+                    "Auditoría": 0,
+                    "Analítica CRONOS SLA": 0,
+                    "Gestión de Usuarios": 0,
+                    "Otros": 0
                 };
                 auditLogs.forEach(l => {
                     const m = (l.modulo || l.accion || '').toLowerCase();
                     if (m.includes('clave') || m.includes('generator') || m.includes('secreta')) moduleCounts["Clave Secreta"]++;
                     else if (m.includes('tipificaci')) moduleCounts["Tipificaciones"]++;
-                    else if (m.includes('ticket') || m.includes('tecnol')) moduleCounts["Tickets (Tecnológico)"]++;
-                    else if (m.includes('derivaci') || m.includes('discord')) moduleCounts["Derivaciones (Discord)"]++;
-                    else if (m.includes('acuerdos') || m.includes('voz')) moduleCounts["Acuerdos de Voz (Grabación)"]++;
-                    else if (m.includes('directorio') || m.includes('escalamiento')) moduleCounts["Directorio (Escalamiento)"]++;
-                    else if (m.includes('cronos sla') || (m.includes('sla') && !m.includes('analitica'))) moduleCounts["CRONOS SLA"]++;
+                    else if (m.includes('ticket') || m.includes('tecnol')) moduleCounts["Tickets Tecnológicos"]++;
+                    else if (m.includes('derivaci') || m.includes('discord')) moduleCounts["Derivaciones Discord"]++;
+                    else if (m.includes('acuerdos') || m.includes('voz')) moduleCounts["Acuerdos de Voz"]++;
+                    else if (m.includes('dashboard')) moduleCounts["Dashboard"]++;
+                    else if (m.includes('auditor')) moduleCounts["Auditoría"]++;
+                    else if (m.includes('sla') || m.includes('analitica')) moduleCounts["Analítica CRONOS SLA"]++;
+                    else if (m.includes('usuario') || m.includes('gestion')) moduleCounts["Gestión de Usuarios"]++;
+                    else moduleCounts["Otros"]++;
                 });
-
-                if (moduleCounts["CRONOS SLA"] === 0 && slaEvents.length > 0) {
-                    moduleCounts["CRONOS SLA"] = slaEvents.length;
-                }
 
                 const totalModAccess = Object.values(moduleCounts).reduce((a, b) => a + b, 0);
 
                 const userActivityMap = new Map();
                 (window.CRONOS_USERS_DB || []).forEach(u => {
-                    if (!isRoleAsesor(u)) return; // Excluir perfiles administrativos
                     userActivityMap.set((u.correo || u.nombre).toLowerCase(), {
-                        nombre: u.nombre || u.usuario || "Asesor",
+                        nombre: u.nombre || u.usuario || "Usuario",
                         correo: u.correo || "",
                         rol: u.rol || "Asesor",
                         sesiones: 0,
@@ -15362,12 +15415,11 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 });
 
                 auditLogs.forEach(l => {
-                    if (!isRoleAsesor(l)) return;
                     const key = (l.correo || l.usuario || l.nombre || '').toLowerCase();
                     if (!key) return;
                     if (!userActivityMap.has(key)) {
                         userActivityMap.set(key, {
-                            nombre: l.usuario || l.nombre || "Asesor",
+                            nombre: l.usuario || l.nombre || "Usuario",
                             correo: l.correo || "",
                             rol: l.rol || "Asesor",
                             sesiones: 0,
@@ -15383,12 +15435,11 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 });
 
                 slaEvents.forEach(s => {
-                    if (!isRoleAsesor(s)) return;
                     const key = (s.correo || s.usuario || '').toLowerCase();
                     if (!key) return;
                     if (!userActivityMap.has(key)) {
                         userActivityMap.set(key, {
-                            nombre: s.usuario || "Asesor",
+                            nombre: s.usuario || "Usuario",
                             correo: s.correo || "",
                             rol: s.rol || "Asesor",
                             sesiones: 0,
@@ -15402,7 +15453,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 });
 
                 const rankingList = Array.from(userActivityMap.values())
-                    .filter(u => isRoleAsesor(u) && (userFilter === 'todos' ? (u.sesiones > 0 || u.accesos > 0 || u.usoSLA > 0) : true))
+                    .filter(u => userFilter === 'todos' ? (u.sesiones > 0 || u.accesos > 0 || u.usoSLA > 0) : true)
                     .sort((a, b) => ((b.sesiones + b.accesos + b.usoSLA) - (a.sesiones + a.accesos + a.usoSLA)));
 
                 const currentUser = window.CRONOS_CURRENT_USER || { nombre: "Administrador", rol: "Administrador" };
@@ -15566,8 +15617,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             // 2. AUDITORÍA HISTÓRICA
             async exportAuditoriaHistorical({ startMs, endMs, periodLabel, userFilter, roleFilter, actionFilter, format }) {
                 let logs = await this.fetchFirestoreHistorical('auditoria', startMs, endMs);
-                // REGLA: EXPORTACIONES - Auditoria Operativa debe exportar UNICAMENTE informacion perteneciente a: ASESORES
-                logs = logs.filter(l => isRoleAsesor(l));
 
                 if (userFilter && userFilter !== 'todos') {
                     const uLow = userFilter.toLowerCase().trim();
@@ -15673,8 +15722,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             // 3. ANALÍTICA CRONOS SLA HISTÓRICA
             async exportSLAHistorical({ startMs, endMs, periodLabel, userFilter, roleFilter, slaStatusFilter, format }) {
                 let events = await this.fetchFirestoreHistorical('cronos_sla', startMs, endMs);
-                // REGLA: EXPORTACIONES - Analitica CRONOS SLA debe exportar UNICAMENTE informacion perteneciente a: ASESORES
-                events = events.filter(s => isRoleAsesor(s));
 
                 if (userFilter && userFilter !== 'todos') {
                     const uLow = userFilter.toLowerCase().trim();
@@ -17485,24 +17532,24 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 if (tabDash) tabDash.className = adminActiveClass;
                 loadDashboardFirestoreData();
                 renderDashboard();
-                // Dashboard administrativo (sin metricas operativas)
+                trackModuleAccess('dashboard');
             } else if (target === 'auditoria' && contentAud) {
                 contentAud.classList.remove('hidden');
                 if (tabAud) tabAud.className = adminActiveClass;
                 renderAuditoriaModule();
-                // Auditoria administrativa (sin metricas operativas)
+                trackModuleAccess('auditoria');
             } else if (target === 'analitica-sla' && contentSLA) {
                 contentSLA.classList.remove('hidden');
                 if (tabSLA) tabSLA.className = adminActiveClass;
                 renderSLAModule();
-                // Analitica administrativa (sin metricas operativas)
+                trackModuleAccess('analitica_sla');
             } else if (target === 'gestion-usuarios' && contentUsr) {
                 contentUsr.classList.remove('hidden');
                 if (tabUsr) tabUsr.className = adminActiveClass;
                 renderUserManagementModule();
-                // Gestion de usuarios administrativa (sin metricas operativas)
+                trackModuleAccess('gestion_usuarios');
             } else if (target === 'exportaciones') {
-                // Centro de exportaciones (sin metricas operativas)
+                trackModuleAccess('exportaciones');
                 if (typeof window.openExportCenterModal === 'function') {
                     window.openExportCenterModal();
                 }
