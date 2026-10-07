@@ -1255,7 +1255,7 @@
                                 <i class="fa-solid fa-clock-rotate-left text-slate-400 w-4 text-center"></i>
                                 <span>Historial de Accesos</span>
                             </button>
-                            <button type="button" id="menu-opt-exports" style="display: none !important;"
+                            <button type="button" id="menu-opt-exports" style="display: none;"
                                 onclick="openExportCenterModal(); toggleUserDropdown(event);"
                                 class="w-full text-left px-4 py-2 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2.5 transition cursor-pointer">
                                 <i class="fa-solid fa-file-export text-slate-400 w-4 text-center"></i>
@@ -4502,7 +4502,7 @@
 
                         <!-- Botón: Centro de Exportaciones (Fase 4.0) -->
                         <button id="sidebar-btn-exports" onclick="openExportCenterModal()"
-                            style="display: none !important;"
+                            style="display: none;"
                             class="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-bold text-xs transition-all border border-slate-200/80 hover:border-emerald-300 group cursor-pointer text-left">
                             <div class="flex items-center gap-2.5">
                                 <div
@@ -12773,6 +12773,11 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 return getRoleBadgeStyle(rol);
             }
         };
+        window.RoleManager = RoleManager;
+        function hasPermission(permissionKey) {
+            return RoleManager.hasPermission(permissionKey);
+        }
+        window.hasPermission = hasPermission;
 
         /**
          * SessionManager: Control del ciclo de vida de sesiones, tiempos activos y tracking.
@@ -15154,29 +15159,97 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             tbody.innerHTML = html;
         }
 
+                // =========================================================================
+        // MÓDULO EXPORTACIONES - CENTRO AVANZADO HISTÓRICO (FIRESTORE)
+        // Versión: CRONOS FID • Versión JELI v4.1.6 • WIN OCT2026
         // =========================================================================
-        // FASE 4.0 - CENTRO AVANZADO DE EXPORTACIONES HISTÓRICAS (FIRESTORE)
-        // =========================================================================
+
+        // Garantía de resolución global de permisos para Exportaciones
+        function hasPermission(permissionKey) {
+            const user = window.CRONOS_CURRENT_USER || (typeof UserManager !== 'undefined' && UserManager.getCurrentUser ? UserManager.getCurrentUser() : null);
+            if (!user) return true;
+            const r = String(user.rol || '').trim();
+            if (r.toLowerCase().includes('admin') || r.toLowerCase().includes('supervisor') || r.toLowerCase().includes('coordinador') || r.toLowerCase().includes('calidad') || r.toLowerCase().includes('formador')) {
+                return true;
+            }
+            if (window.RoleManager && typeof window.RoleManager.hasPermission === 'function') {
+                return window.RoleManager.hasPermission(permissionKey);
+            }
+            const perms = (window.CRONOS_DEFAULT_PERMISSIONS && window.CRONOS_DEFAULT_PERMISSIONS[r]) || {};
+            return Boolean(perms[permissionKey] || perms.accesoTotal);
+        }
+        window.hasPermission = hasPermission;
+
+        // --- GENERACIÓN Y DESCARGA CSV ---
         function downloadCSV(filename, csvContent) {
-            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", filename);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            setTimeout(() => { URL.revokeObjectURL(url); }, 1500);
+            try {
+                const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => { URL.revokeObjectURL(url); }, 2000);
+                console.log("Archivo CSV generado");
+                console.log("Descarga completada");
+                return true;
+            } catch (error) {
+                console.error("Error Exportación:", error);
+                throw error;
+            }
+        }
+        function generateCSV(filename, csvContent) {
+            return downloadCSV(filename, csvContent);
         }
 
+        // --- GENERACIÓN Y DESCARGA XLSX ---
+        function downloadExcel(filename, workbook) {
+            try {
+                if (typeof XLSX !== 'undefined' && XLSX.writeFile) {
+                    XLSX.writeFile(workbook, filename);
+                    console.log("Archivo XLSX generado");
+                    console.log("Descarga completada");
+                    return true;
+                } else {
+                    throw new Error("Librería XLSX (SheetJS) no disponible.");
+                }
+            } catch (error) {
+                console.error("Error Exportación:", error);
+                throw error;
+            }
+        }
+        function generateExcel(filename, workbook) {
+            return downloadExcel(filename, workbook);
+        }
+
+        // --- NORMALIZADOR UNIVERSAL DE TIMESTAMPS HISTÓRICOS ---
         function parseDocTimestamp(doc) {
             if (!doc) return 0;
+            if (typeof doc === 'number' && doc > 0) return doc;
             if (typeof doc.timestamp === 'number' && doc.timestamp > 0) return doc.timestamp;
-            if (doc.fechaHora) {
-                const ms = new Date(doc.fechaHora).getTime();
+
+            // Soporte para objetos Firestore Timestamp
+            if (doc.timestamp && typeof doc.timestamp.toMillis === 'function') {
+                return doc.timestamp.toMillis();
+            }
+            if (doc.timestamp && typeof doc.timestamp.toDate === 'function') {
+                return doc.timestamp.toDate().getTime();
+            }
+            if (doc.timestamp && typeof doc.timestamp.seconds === 'number') {
+                return doc.timestamp.seconds * 1000 + (doc.timestamp.nanoseconds ? Math.round(doc.timestamp.nanoseconds / 1000000) : 0);
+            }
+
+            // ISO strings en fechaHora, createdAt, registradoEn
+            const isoStr = doc.fechaHora || doc.createdAt || doc.registradoEn || doc.fecha_hora;
+            if (isoStr) {
+                const ms = new Date(isoStr).getTime();
                 if (!isNaN(ms) && ms > 0) return ms;
             }
+
+            // Fechas en formato de texto dd/mm/aaaa o aaaa-mm-dd
             if (doc.fecha) {
                 const parts = String(doc.fecha).trim().split(/[\/\-\.]/);
                 if (parts.length === 3) {
@@ -15204,6 +15277,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             return 0;
         }
 
+        // --- GESTOR PRINCIPAL DEL MÓDULO EXPORTACIONES ---
         const ExportCenterManager = {
             currentModule: 'dashboard',
             currentPeriod: 'mes',
@@ -15241,7 +15315,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                         label = `Últimos 3 meses (90 días: ${new Date(startMs).toLocaleDateString('es-PE')} al ${now.toLocaleDateString('es-PE')})`;
                         break;
                     case '6meses':
-                        // RETENCIÓN MÍNIMA REQUERIDA: 180 DÍAS (6 MESES)
                         startMs = todayStart - (180 * 24 * 60 * 60 * 1000);
                         endMs = todayEnd;
                         label = `Últimos 6 meses (180 días - Retención Oficial: ${new Date(startMs).toLocaleDateString('es-PE')} al ${now.toLocaleDateString('es-PE')})`;
@@ -15259,71 +15332,87 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                         } else {
                             endMs = todayEnd;
                         }
+                        if (startMs > endMs) {
+                            const temp = startMs;
+                            startMs = endMs;
+                            endMs = temp;
+                        }
                         label = `Rango Personalizado (${customStart || 'Inicio'} al ${customEnd || 'Fin'})`;
                         break;
                     default:
-                        startMs = todayStart;
+                        startMs = todayStart - (30 * 24 * 60 * 60 * 1000);
                         endMs = todayEnd;
-                        label = "Hoy";
+                        label = `Últimos 30 días (${new Date(startMs).toLocaleDateString('es-PE')} al ${now.toLocaleDateString('es-PE')})`;
                 }
 
                 return { startMs, endMs, label };
             },
 
             async fetchFirestoreHistorical(collectionName, startMs, endMs) {
+                console.log("Consulta ejecutada");
                 const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
                 let records = [];
+                const seenKeys = new Set();
 
                 if (firestoreDb) {
                     try {
-                        const qSnap = await firestoreDb.collection(collectionName)
-                            .where('timestamp', '>=', startMs)
-                            .where('timestamp', '<=', endMs)
-                            .get();
-
-                        qSnap.forEach(doc => {
-                            records.push({ id: doc.id, ...doc.data() });
-                        });
-                        console.log(`[ExportCenter] ${collectionName} obtenido por timestamp: ${records.length} docs`);
-                    } catch (queryErr) {
-                        console.warn(`[ExportCenter] Query directa con where falló (${queryErr.message}). Ejecutando consulta de respaldo...`);
+                        let snap = null;
                         try {
-                            const allSnap = await firestoreDb.collection(collectionName).get();
-                            allSnap.forEach(doc => {
+                            snap = await firestoreDb.collection(collectionName).get();
+                        } catch (errDirect) {
+                            console.warn(`[ExportCenter] Consulta general ${collectionName} falló: ${errDirect.message}. Intentando filtro timestamp...`);
+                            try {
+                                snap = await firestoreDb.collection(collectionName)
+                                    .where('timestamp', '>=', startMs)
+                                    .where('timestamp', '<=', endMs)
+                                    .get();
+                            } catch (errQuery) {
+                                console.warn(`[ExportCenter] Consulta con where falló: ${errQuery.message}`);
+                            }
+                        }
+
+                        if (snap && snap.docs) {
+                            snap.forEach(doc => {
                                 const data = doc.data();
                                 const ms = parseDocTimestamp(data);
-                                if (ms >= startMs && ms <= endMs) {
-                                    records.push({ id: doc.id, ...data, timestamp: ms });
+                                const inRange = (startMs <= 0 || ms >= startMs) && (endMs <= 0 || ms <= endMs);
+                                if (inRange) {
+                                    const rec = { id: doc.id, ...data, timestamp: ms || data.timestamp };
+                                    records.push(rec);
+                                    seenKeys.add(doc.id);
+                                    const dedupeKey = `${(data.usuario || data.correo || '')}-${ms}-${(data.accion || '')}`;
+                                    seenKeys.add(dedupeKey);
                                 }
                             });
-                            console.log(`[ExportCenter] ${collectionName} obtenido via fallback: ${records.length} docs`);
-                        } catch (fallbackErr) {
-                            console.error(`[ExportCenter] Error en fallback de colección ${collectionName}:`, fallbackErr);
                         }
+                        console.log(`[ExportCenter] ${collectionName} obtenido de Firestore: ${records.length} docs`);
+                    } catch (errFirestore) {
+                        console.error(`[ExportCenter] Error al consultar colección ${collectionName}:`, errFirestore);
                     }
                 }
 
-                // Complementar con datos en memoria (CRONOS_ACCESS_LOGS o CRONOS_SLA_EVENTS)
+                // Complementar con datos en memoria sin depender únicamente de datos visibles
                 const localSource = collectionName === 'auditoria' ? (window.CRONOS_ACCESS_LOGS || []) : (window.CRONOS_SLA_EVENTS || []);
                 localSource.forEach(item => {
                     const ms = parseDocTimestamp(item);
-                    if (ms >= startMs && ms <= endMs) {
-                        const alreadyExists = records.some(r =>
-                            (r.id && item.id && r.id === item.id) ||
-                            (r.timestamp === ms && (r.accion === item.accion) && (r.usuario === item.usuario || r.correo === item.correo))
-                        );
-                        if (!alreadyExists) {
-                            records.push(item);
+                    const inRange = (startMs <= 0 || ms >= startMs) && (endMs <= 0 || ms <= endMs);
+                    if (inRange) {
+                        const itemId = item.id || '';
+                        const dedupeKey = `${(item.usuario || item.correo || '')}-${ms}-${(item.accion || '')}`;
+                        if ((!itemId || !seenKeys.has(itemId)) && !seenKeys.has(dedupeKey)) {
+                            records.push({ ...item, timestamp: ms });
+                            if (itemId) seenKeys.add(itemId);
+                            seenKeys.add(dedupeKey);
                         }
                     }
                 });
 
-                // Ordenar cronológicamente descendente
                 records.sort((a, b) => parseDocTimestamp(b) - parseDocTimestamp(a));
                 return records;
             },
 
             openModal(moduleKey = 'dashboard') {
+                console.log("Exportaciones abiertas");
                 if (typeof updateTopHeader === 'function') updateTopHeader('exportaciones');
                 if (!hasPermission('exportExcel')) {
                     showToast('Acceso denegado: Tu perfil no cuenta con permisos de exportación.', 'error');
@@ -15333,7 +15422,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 const modal = document.getElementById('modal-centro-exportaciones');
                 if (!modal) return;
 
-                this.setModule(moduleKey);
+                this.setModule(moduleKey || 'dashboard');
                 this.populateUserDropdown();
                 this.setPeriod(this.currentPeriod || 'mes');
                 this.setFormat(this.currentFormat || 'xlsx');
@@ -15429,7 +15518,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 const prev = sel.value || 'todos';
                 sel.innerHTML = '<option value="todos">Todos los Asesores Monitoreados</option>';
 
-                // Solo mostrar asesores en el selector de exportacion
                 const users = (window.CRONOS_USERS_DB || []).filter(u => isRoleAsesor(u));
                 const sorted = [...users].sort((a, b) => (a.nombre || a.usuario || '').localeCompare(b.nombre || b.usuario || ''));
                 sorted.forEach(u => {
@@ -15445,7 +15533,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 const previewBadge = document.getElementById('export-preview-badge');
                 if (!previewBadge) return;
 
-                previewBadge.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-emerald-600"></i> Verificando registros de asesores...`;
+                previewBadge.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-emerald-600"></i> Verificando registros...`;
 
                 try {
                     const cStart = document.getElementById('export-date-start')?.value;
@@ -15475,30 +15563,34 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                         countText = `${audLogs.length} logs auditoría • ${slaLogs.length} eventos SLA`;
                     } else if (this.currentModule === 'auditoria') {
                         let audLogs = (window.CRONOS_ACCESS_LOGS || []).filter(l => {
-                            if (!isRoleAsesor(l)) return false;
                             const ms = parseDocTimestamp(l);
                             return ms >= startMs && ms <= endMs;
                         });
                         if (userFilter !== 'todos') {
                             audLogs = audLogs.filter(l => (l.correo || l.usuario || l.nombre || '').toLowerCase().includes(userFilter.toLowerCase()));
                         }
+                        if (roleFilter !== 'todos') {
+                            audLogs = audLogs.filter(l => (l.rol || '').toLowerCase() === roleFilter.toLowerCase().trim());
+                        }
                         if (actionFilter !== 'todas') {
                             audLogs = audLogs.filter(l => (l.accion || '').toUpperCase().includes(actionFilter.toUpperCase()));
                         }
-                        countText = `${audLogs.length} registros de asesores`;
+                        countText = `${audLogs.length} registros auditoría`;
                     } else if (this.currentModule === 'cronos_sla') {
                         let slaLogs = (window.CRONOS_SLA_EVENTS || []).filter(s => {
-                            if (!isRoleAsesor(s)) return false;
                             const ms = parseDocTimestamp(s);
                             return ms >= startMs && ms <= endMs;
                         });
                         if (userFilter !== 'todos') {
                             slaLogs = slaLogs.filter(s => (s.correo || s.usuario || '').toLowerCase().includes(userFilter.toLowerCase()));
                         }
+                        if (roleFilter !== 'todos') {
+                            slaLogs = slaLogs.filter(s => (s.rol || '').toLowerCase() === roleFilter.toLowerCase().trim());
+                        }
                         if (slaStatusFilter !== 'todos') {
                             slaLogs = slaLogs.filter(s => (s.estadoSLA || '').toLowerCase().includes(slaStatusFilter.toLowerCase()));
                         }
-                        countText = `${slaLogs.length} eventos SLA de asesores`;
+                        countText = `${slaLogs.length} eventos CRONOS SLA`;
                     }
 
                     previewBadge.innerHTML = `<i class="fa-solid fa-database text-emerald-600 mr-1"></i> ${countText}`;
@@ -15544,11 +15636,11 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                         await this.exportSLAHistorical({ startMs, endMs, periodLabel, userFilter, roleFilter, slaStatusFilter, format });
                     }
 
-                    showToast(`Exportación histórica generada con éxito (${format.toUpperCase()}).`, 'success');
+                    showToast(`Exportación histórica completada con éxito (${format.toUpperCase()}).`, 'success');
                     this.closeModal();
-                } catch (err) {
-                    console.error("FIRESTORE ERROR [ExportCenter]:", err);
-                    showToast(`Error al generar exportación: ${err.message || 'Error desconocido'}`, 'error');
+                } catch (error) {
+                    console.error("Error Exportación:", error);
+                    showToast(`Error al generar exportación: ${error.message || 'Error desconocido'}`, 'error');
                 } finally {
                     this.isProcessing = false;
                     if (btn) {
@@ -15558,12 +15650,30 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 }
             },
 
-            // 1. DASHBOARD HISTÓRICO
+            async exportDirect({ moduleKey = 'dashboard', format = 'xlsx', period = 'mes', userFilter = 'todos', roleFilter = 'todos', actionFilter = 'todas', slaStatusFilter = 'todos' }) {
+                this.currentModule = moduleKey;
+                this.currentFormat = format;
+                this.currentPeriod = period;
+
+                const cStart = document.getElementById('export-date-start')?.value;
+                const cEnd = document.getElementById('export-date-end')?.value;
+                const { startMs, endMs, label: periodLabel } = this.getPeriodDateRange(period, cStart, cEnd);
+
+                if (moduleKey === 'dashboard') {
+                    return await this.exportDashboardHistorical({ startMs, endMs, periodLabel, userFilter, format });
+                } else if (moduleKey === 'auditoria') {
+                    return await this.exportAuditoriaHistorical({ startMs, endMs, periodLabel, userFilter, roleFilter, actionFilter, format });
+                } else if (moduleKey === 'cronos_sla') {
+                    return await this.exportSLAHistorical({ startMs, endMs, periodLabel, userFilter, roleFilter, slaStatusFilter, format });
+                }
+            },
+
+            // 1. DASHBOARD HISTÓRICO COMPLETO
             async exportDashboardHistorical({ startMs, endMs, periodLabel, userFilter, format }) {
                 let auditLogs = await this.fetchFirestoreHistorical('auditoria', startMs, endMs);
                 let slaEvents = await this.fetchFirestoreHistorical('cronos_sla', startMs, endMs);
 
-                // REGLA: EXPORTACIONES - Dashboard debe exportar UNICAMENTE informacion perteneciente a: ASESORES
+                // REGLA: Dashboard monitorea la operacion de Asesores
                 auditLogs = auditLogs.filter(l => isRoleAsesor(l));
                 slaEvents = slaEvents.filter(s => isRoleAsesor(s));
 
@@ -15572,6 +15682,9 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     auditLogs = auditLogs.filter(l => (l.correo || l.usuario || l.nombre || '').toLowerCase().includes(uLow));
                     slaEvents = slaEvents.filter(s => (s.correo || s.usuario || '').toLowerCase().includes(uLow));
                 }
+
+                const total = auditLogs.length + slaEvents.length;
+                console.log("Registros encontrados:", total);
 
                 const activeUsersSet = new Set();
                 auditLogs.forEach(l => {
@@ -15609,7 +15722,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 });
                 const slaPromedioStr = countPauseSecs > 0 ? Math.round(sumPauseSecs / countPauseSecs) + "s" : "0s";
 
-                // EXACTAMENTE LOS 7 MODULOS OPERATIVOS MONITOREADOS
                 const moduleCounts = {
                     "Clave Secreta": 0,
                     "Tipificaciones": 0,
@@ -15638,7 +15750,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
 
                 const userActivityMap = new Map();
                 (window.CRONOS_USERS_DB || []).forEach(u => {
-                    if (!isRoleAsesor(u)) return; // Excluir perfiles administrativos
+                    if (!isRoleAsesor(u)) return;
                     userActivityMap.set((u.correo || u.nombre).toLowerCase(), {
                         nombre: u.nombre || u.usuario || "Asesor",
                         correo: u.correo || "",
@@ -15704,7 +15816,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                         ["CENTRO DE CONTROL CRONOS FID • WIN - REPORTE HISTÓRICO EJECUTIVO"],
                         ["Fecha de Generación:", new Date().toLocaleString('es-PE'), "", "Generado por:", `${currentUser.nombre} (${currentUser.rol})`],
                         ["Periodo Evaluado:", periodLabel, "", "Filtro Asesor / Usuario:", userFilter === 'todos' ? 'Todos los Usuarios' : userFilter],
-                        ["Política de Retención:", "Mínimo 180 días de histórico garantizado en Firestore", "", "Fuente Oficial:", "Firestore"],
+                        ["Política de Retención:", "Mínimo 180 días de histórico garantizado en Firestore", "", "Fuente Oficial:", "Firestore Histórico"],
                         [],
                         ["MÉTRICA / INDICADOR HISTÓRICO", "VALOR REGISTRADO", "DETALLE"],
                         ["Usuarios Activos en Periodo", activeUsersSet.size, "Total colaboradores con actividad"],
@@ -15800,7 +15912,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     XLSX.utils.book_append_sheet(wb, wsSLA, "Eventos SLA Periodo");
 
                     const fname = `CRONOS_FID_Dashboard_Historico_${Date.now()}.xlsx`;
-                    XLSX.writeFile(wb, fname);
+                    downloadExcel(fname, wb);
                 } else {
                     let csv = "REPORTE HISTÓRICO - CENTRO DE CONTROL CRONOS FID • WIN\n";
                     csv += `Fecha de Generación:,"${new Date().toLocaleString('es-PE')}"\n`;
@@ -15837,6 +15949,12 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                         csv += `"${name}",${count},"${pct}"\n`;
                     });
 
+                    csv += "\n--- EVENTOS SLA REGISTRADOS ---\n";
+                    csv += "Fecha,Hora,Asesor,Correo,Acción,Tiempo,EstadoSLA\n";
+                    slaEvents.slice(0, 1000).forEach(s => {
+                        csv += `"${s.fecha || ''}","${s.hora || ''}","${s.usuario || ''}","${s.correo || ''}","${s.accion || ''}","${s.tiempoExacto || (s.tiempoSegundos ? s.tiempoSegundos + 's' : '00:00')}","${s.estadoSLA || 'Normal'}"\n`;
+                    });
+
                     csv += "\n--- ÚLTIMAS ACTIVIDADES REGISTRADAS ---\n";
                     csv += "Fecha,Hora,Usuario,Correo,Rol,Acción,Módulo,Detalle\n";
                     auditLogs.slice(0, 1000).forEach(l => {
@@ -15855,8 +15973,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             // 2. AUDITORÍA HISTÓRICA
             async exportAuditoriaHistorical({ startMs, endMs, periodLabel, userFilter, roleFilter, actionFilter, format }) {
                 let logs = await this.fetchFirestoreHistorical('auditoria', startMs, endMs);
-                // REGLA: EXPORTACIONES - Auditoria Operativa debe exportar UNICAMENTE informacion perteneciente a: ASESORES
-                logs = logs.filter(l => isRoleAsesor(l));
 
                 if (userFilter && userFilter !== 'todos') {
                     const uLow = userFilter.toLowerCase().trim();
@@ -15870,6 +15986,9 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 if (actionFilter && actionFilter !== 'todas') {
                     logs = logs.filter(l => (l.accion || '').toUpperCase().includes(actionFilter.toUpperCase().trim()));
                 }
+
+                const total = logs.length;
+                console.log("Registros encontrados:", total);
 
                 const currentUser = window.CRONOS_CURRENT_USER || { nombre: "Administrador", rol: "Administrador" };
 
@@ -15935,7 +16054,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     XLSX.utils.book_append_sheet(wb, wsStats, "Resumen Auditoría");
 
                     const fname = `CRONOS_FID_Auditoria_Historica_${Date.now()}.xlsx`;
-                    XLSX.writeFile(wb, fname);
+                    downloadExcel(fname, wb);
                 } else {
                     let csv = "BITÁCORA DE AUDITORÍA OPERATIVA HISTÓRICA - CRONOS FID • WIN\n";
                     csv += `Fecha de Generación:,"${new Date().toLocaleString('es-PE')}"\n`;
@@ -15959,15 +16078,13 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 }
             },
 
-            // 3. ANALÍTICA CRONOS SLA HISTÓRICA
+            // 3. ANALÍTICA CRONOS SLA HISTÓRICA (CAMPOS OBLIGATORIOS: correo, nombre, rol, accion, estado SLA, tiempo, fecha, hora)
             async exportSLAHistorical({ startMs, endMs, periodLabel, userFilter, roleFilter, slaStatusFilter, format }) {
                 let events = await this.fetchFirestoreHistorical('cronos_sla', startMs, endMs);
-                // REGLA: EXPORTACIONES - Analitica CRONOS SLA debe exportar UNICAMENTE informacion perteneciente a: ASESORES
-                events = events.filter(s => isRoleAsesor(s));
 
                 if (userFilter && userFilter !== 'todos') {
                     const uLow = userFilter.toLowerCase().trim();
-                    events = events.filter(s => (s.correo || s.usuario || '').toLowerCase().includes(uLow));
+                    events = events.filter(s => (s.correo || s.usuario || s.nombre || '').toLowerCase().includes(uLow));
                 }
 
                 if (roleFilter && roleFilter !== 'todos') {
@@ -15978,6 +16095,9 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     const stLow = slaStatusFilter.toLowerCase().trim();
                     events = events.filter(s => (s.estadoSLA || '').toLowerCase().includes(stLow));
                 }
+
+                const total = events.length;
+                console.log("Registros encontrados:", total);
 
                 const currentUser = window.CRONOS_CURRENT_USER || { nombre: "Administrador", rol: "Administrador" };
 
@@ -16011,6 +16131,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 if (format === 'xlsx') {
                     const wb = XLSX.utils.book_new();
 
+                    // Hoja principal con los campos requeridos: correo, nombre, rol, accion, estado SLA, tiempo, fecha, hora
                     const slaAOA = [
                         ["REGISTRO DE EVENTOS CRONOS SLA HISTÓRICO - CRONOS FID • WIN"],
                         ["Fecha de Generación:", new Date().toLocaleString('es-PE'), "", "Generado por:", `${currentUser.nombre} (${currentUser.rol})`],
@@ -16018,28 +16139,28 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                         ["Filtros Aplicados:", `Usuario: ${userFilter} | Rol: ${roleFilter} | Estado SLA: ${slaStatusFilter}`],
                         ["Retención Oficial:", "Mínimo 180 días de histórico garantizado en Firestore"],
                         [],
-                        ["N°", "FECHA", "HORA", "ASESOR / USUARIO", "CORREO INSTITUCIONAL", "ROL", "MÓDULO", "ACCIÓN", "TIEMPO EXACTO", "SEGUNDOS", "ESTADO SLA", "TIMESTAMP ISO"]
+                        ["N°", "CORREO INSTITUCIONAL", "NOMBRE DEL ASESOR", "ROL", "ACCIÓN OPERATIVA", "ESTADO SLA", "TIEMPO REGISTRADO", "FECHA", "HORA", "MÓDULO", "SEGUNDOS EXACTOS", "TIMESTAMP ISO"]
                     ];
 
                     events.forEach((s, i) => {
                         slaAOA.push([
                             i + 1,
+                            s.correo || "",
+                            s.nombre || s.usuario || "Asesor WIN",
+                            s.rol || "Asesor",
+                            s.accion || "",
+                            s.estadoSLA || "Normal",
+                            s.tiempoExacto || (s.tiempoSegundos ? s.tiempoSegundos + "s" : "00:00"),
                             s.fecha || "",
                             s.hora || "",
-                            s.usuario || "",
-                            s.correo || "",
-                            s.rol || "Asesor",
                             s.modulo || "CRONOS SLA",
-                            s.accion || "",
-                            s.tiempoExacto || "",
                             s.tiempoSegundos || 0,
-                            s.estadoSLA || "Normal",
                             s.fechaHora || ""
                         ]);
                     });
 
                     const wsSLA = XLSX.utils.aoa_to_sheet(slaAOA);
-                    wsSLA['!cols'] = [{ wch: 8 }, { wch: 12 }, { wch: 10 }, { wch: 25 }, { wch: 28 }, { wch: 15 }, { wch: 18 }, { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 16 }, { wch: 25 }];
+                    wsSLA['!cols'] = [{ wch: 8 }, { wch: 28 }, { wch: 28 }, { wch: 15 }, { wch: 20 }, { wch: 16 }, { wch: 18 }, { wch: 12 }, { wch: 10 }, { wch: 15 }, { wch: 12 }, { wch: 25 }];
                     XLSX.utils.book_append_sheet(wb, wsSLA, "Eventos SLA");
 
                     const resumenAOA = [
@@ -16065,7 +16186,7 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     XLSX.utils.book_append_sheet(wb, wsResumen, "Analitica Tiempos SLA");
 
                     const fname = `CRONOS_FID_SLA_Historico_${Date.now()}.xlsx`;
-                    XLSX.writeFile(wb, fname);
+                    downloadExcel(fname, wb);
                 } else {
                     let csv = "REGISTRO DE EVENTOS CRONOS SLA HISTÓRICO - CRONOS FID • WIN\n";
                     csv += `Fecha de Generación:,"${new Date().toLocaleString('es-PE')}"\n`;
@@ -16085,10 +16206,11 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     csv += `"Pausas",${cPau}\n`;
                     csv += `"Reinicios",${cRst}\n\n`;
 
+                    // Columnas obligatorias exactas: correo, nombre, rol, accion, estado SLA, tiempo, fecha, hora
                     csv += "--- DETALLE DE EVENTOS ---\n";
-                    csv += "N°,Fecha,Hora,Asesor,Correo,Rol,Modulo,Acción,TiempoExacto,Segundos,EstadoSLA,FechaHora_ISO\n";
+                    csv += "N°,Correo,Nombre,Rol,Accion,Estado_SLA,Tiempo,Fecha,Hora,Modulo,Segundos,FechaHora_ISO\n";
                     events.forEach((s, i) => {
-                        csv += `${i + 1},"${s.fecha || ''}","${s.hora || ''}","${s.usuario || ''}","${s.correo || ''}","${s.rol || 'Asesor'}","${s.modulo || 'CRONOS SLA'}","${s.accion || ''}","${s.tiempoExacto || ''}",${s.tiempoSegundos || 0},"${s.estadoSLA || 'Normal'}","${s.fechaHora || ''}"\n`;
+                        csv += `${i + 1},"${s.correo || ''}","${s.nombre || s.usuario || 'Asesor WIN'}","${s.rol || 'Asesor'}","${s.accion || ''}","${s.estadoSLA || 'Normal'}","${s.tiempoExacto || (s.tiempoSegundos ? s.tiempoSegundos + 's' : '00:00')}","${s.fecha || ''}","${s.hora || ''}","${s.modulo || 'CRONOS SLA'}",${s.tiempoSegundos || 0},"${s.fechaHora || ''}"\n`;
                     });
 
                     const fname = `CRONOS_FID_SLA_Historico_${Date.now()}.csv`;
@@ -16101,26 +16223,104 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             }
         };
 
+        // --- ENLACES Y ALIAS GLOBALES DE CONTROL Y COMPATIBILIDAD ---
         window.ExportCenterManager = ExportCenterManager;
-        window.openExportCenterModal = function (mod) { ExportCenterManager.openModal(mod); };
-        window.closeExportCenterModal = function () { ExportCenterManager.closeModal(); };
+
+        window.openExportCenterModal = function (mod) {
+            console.log("Exportaciones abiertas");
+            ExportCenterManager.openModal(mod);
+        };
+        window.closeExportCenterModal = function () {
+            ExportCenterManager.closeModal();
+        };
         window.setExportModule = function (mod) { ExportCenterManager.setModule(mod); };
         window.setExportPeriod = function (p) { ExportCenterManager.setPeriod(p); };
         window.setExportFormat = function (f) { ExportCenterManager.setFormat(f); };
         window.executeExportCenterDownload = function () { ExportCenterManager.executeDownload(); };
         window.updateExportPreviewCount = function () { ExportCenterManager.updatePreviewCount(); };
 
+        // 1. APERTURA DEL MÓDULO (Funciones requeridas)
+        function openExportaciones(modKey = 'dashboard') {
+            return window.openExportCenterModal(modKey);
+        }
+        function showExportaciones(modKey = 'dashboard') {
+            return window.openExportCenterModal(modKey);
+        }
+        function renderExportaciones(modKey = 'dashboard') {
+            return window.openExportCenterModal(modKey);
+        }
+        function switchModule(target) {
+            if (!target) target = 'dashboard';
+            const t = String(target).toLowerCase();
+            if (t.includes('export')) {
+                return window.openExportCenterModal();
+            }
+            if (typeof window.switchTab === 'function') {
+                return window.switchTab(target);
+            }
+        }
+        function changeSection(target) {
+            return switchModule(target);
+        }
+
+        window.openExportaciones = openExportaciones;
+        window.showExportaciones = showExportaciones;
+        window.renderExportaciones = renderExportaciones;
+        window.switchModule = switchModule;
+        window.changeSection = changeSection;
+
+        // 2 y 3. GENERACIÓN XLSX Y CSV PROGRAMÁTICA DIRECTA
+        async function exportExcel(modKey = 'dashboard', period = 'mes') {
+            try {
+                console.log("Exportaciones abiertas");
+                return await ExportCenterManager.exportDirect({
+                    moduleKey: modKey || 'dashboard',
+                    format: 'xlsx',
+                    period: period || 'mes'
+                });
+            } catch (error) {
+                console.error("Error Exportación:", error);
+                throw error;
+            }
+        }
+        function xlsxExport(modKey = 'dashboard', period = 'mes') {
+            return exportExcel(modKey, period);
+        }
+
+        async function exportCSV(modKey = 'dashboard', period = 'mes') {
+            try {
+                console.log("Exportaciones abiertas");
+                return await ExportCenterManager.exportDirect({
+                    moduleKey: modKey || 'dashboard',
+                    format: 'csv',
+                    period: period || 'mes'
+                });
+            } catch (error) {
+                console.error("Error Exportación:", error);
+                throw error;
+            }
+        }
+
+        window.downloadCSV = downloadCSV;
+        window.generateCSV = generateCSV;
+        window.downloadExcel = downloadExcel;
+        window.generateExcel = generateExcel;
+        window.exportExcel = exportExcel;
+        window.xlsxExport = xlsxExport;
+        window.exportCSV = exportCSV;
+
         function exportDashboardReport() {
-            openExportCenterModal('dashboard');
+            window.openExportCenterModal('dashboard');
         }
-
         function exportAuditoriaReport() {
-            openExportCenterModal('auditoria');
+            window.openExportCenterModal('auditoria');
         }
-
         function exportSLAReport() {
-            openExportCenterModal('cronos_sla');
+            window.openExportCenterModal('cronos_sla');
         }
+        window.exportDashboardReport = exportDashboardReport;
+        window.exportAuditoriaReport = exportAuditoriaReport;
+        window.exportSLAReport = exportSLAReport;
 
         function exportUsersReport() {
             if (!hasPermission('exportExcel')) {
