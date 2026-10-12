@@ -1,3 +1,25 @@
+<!--
+=========================================================
+
+CRONOS FID
+
+Versión:
+JELI v5.0.0 • WIN OCT2026
+
+Diseño Funcional
+Arquitectura Operativa
+Desarrollo Evolutivo
+
+Autor:
+
+Jhonny Leon Illescas
+
+Año:
+
+2026
+
+=========================================================
+-->
 <!DOCTYPE html>
 <html lang="es">
 
@@ -21,18 +43,10 @@
     <meta name="application-name" content="CRONOS FID">
     <meta name="apple-mobile-web-app-title" content="CRONOS FID">
     <meta name="theme-color" content="#FF5E00">
-    <meta name="author" content="Jhonny Eduar León Illescas - Fidelizaciones WIN">
-    <meta name="copyright" content="CRONOS FID - WIN 2026">
-    <meta name="version" content="4.1.6">
-
-    <!--
-      CRONOS FID
-      Plataforma de Fidelización Ágil de WIN
-      Autor: Jhonny Eduar León Illescas (jhleonill)
-      Area: Fidelizaciones WIN
-      Fecha: 2025
-      Hash de autenticidad: FID-WIN-2025-JELI
-    -->
+    <meta name="author" content="Jhonny Leon Illescas">
+    <meta name="generator" content="CRONOS FID - Jhonny Leon Illescas">
+    <meta name="copyright" content="2026 Jhonny Leon Illescas - CRONOS FID">
+    <meta name="version" content="JELI v5.0.0 • WIN OCT2026">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts para excelente tipografía -->
@@ -1082,6 +1096,116 @@
         </div>
     </div>
 
+    <!-- ================================================================= -->
+    <!-- MODAL: ACERCA DE CRONOS FID (EXCLUSIVO ADMINISTRADOR) -->
+    <!-- ================================================================= -->
+    <!-- ================================================================= -->
+    <!-- MODAL: ACERCA DE CRONOS FID (EXCLUSIVO ADMINISTRADOR) -->
+    <!-- ================================================================= -->
+    <div id="modal-about-cronos"
+        class="hidden fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-sm transition-all">
+        <div
+            class="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-pop">
+            <!-- Header -->
+            <div
+                class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-5 sm:p-6 flex items-center justify-between border-b-4 border-orange-500">
+                <div class="flex items-center gap-3.5">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center font-bold text-xl shadow-lg shadow-orange-500/30">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-lg font-black text-white tracking-tight">Acerca de CRONOS FID</h3>
+                            <span
+                                class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/40">
+                                Exclusivo Administrador
+                            </span>
+                        </div>
+                        <p class="text-xs text-orange-300/90 font-medium mt-0.5">Plataforma de Fidelización Ágil</p>
+                    </div>
+                </div>
+                <button onclick="closeAboutCronosModal()"
+                    class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-5 sm:p-6 space-y-4 bg-slate-50/80 text-slate-800 text-xs max-h-[80vh] overflow-y-auto">
+                <!-- Ficha Técnica Institucional -->
+                <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200/90 shadow-xs space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-2.5 gap-1">
+                        <span class="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Versión Oficial</span>
+                        <span class="font-black text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-200/80 text-[11px] sm:text-xs">
+                            CRONOS FID • Versión JELI v5.0.0 • WIN OCT2026
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-2.5 gap-1">
+                        <span class="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Arquitectura</span>
+                        <span class="font-bold text-slate-800 text-right">
+                            Arquitectura Cloud Serverless Firebase / Firestore
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-2.5 gap-1">
+                        <span class="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Desarrollador & Arquitecto</span>
+                        <div class="flex items-center gap-1.5 sm:justify-end">
+                            <i class="fa-solid fa-user-gear text-orange-500 text-xs"></i>
+                            <span class="font-black text-slate-900 text-xs sm:text-sm">Jhonatan Elihu Lozano Ilizarbe</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-2.5 gap-1">
+                        <span class="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Empresa / Operación</span>
+                        <span class="font-extrabold text-orange-600 bg-orange-50 px-2 py-0.5 rounded border border-orange-200">
+                            WIN Telecom
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-2.5 gap-1">
+                        <span class="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Entorno</span>
+                        <span class="font-semibold text-slate-800">
+                            Operación de Retenciones & Fidelización WIN 2026
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col gap-1.5 border-b border-slate-100 pb-3">
+                        <span class="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Propósito</span>
+                        <p class="text-slate-700 leading-relaxed font-normal bg-slate-50 p-2.5 rounded-lg border border-slate-200/60">
+                            Optimización de tiempos operativos, trazabilidad de acuerdos, cálculo automático de SLA y auditoría de eventos en tiempo real.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-1.5 pt-1">
+                        <span class="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Mensaje Institucional</span>
+                        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200/80 flex items-start gap-2.5 text-emerald-900 leading-relaxed font-medium">
+                            <i class="fa-solid fa-award text-emerald-600 mt-0.5 shrink-0 text-sm"></i>
+                            <span>Sistema desarrollado para potenciar la eficiencia operativa del equipo de Fidelizaciones WIN.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-amber-50 rounded-xl border border-amber-200/60 flex items-start gap-2.5 text-amber-900 text-[11px] leading-relaxed">
+                    <i class="fa-solid fa-shield-halved text-amber-600 mt-0.5 shrink-0 text-xs"></i>
+                    <div>
+                        <strong>Módulo Exclusivo:</strong> La visualización de autoría y detalles institucionales está restringida única y exclusivamente al rol de <strong>Administrador</strong>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-4 bg-white border-t border-slate-200 flex items-center justify-between">
+                <span class="text-[10px] text-slate-400 font-medium">WIN Telecom • Octubre 2026</span>
+                <button onclick="closeAboutCronosModal()"
+                    class="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-xs">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Encabezado Principal Naranja - CRONOS SLA Prioritario & Accesible -->
     <header id="main-header"
@@ -1266,6 +1390,12 @@
                                 class="w-full text-left px-4 py-2 hover:bg-slate-50 text-slate-600 flex items-center gap-2.5 transition cursor-pointer">
                                 <i class="fa-solid fa-gear text-slate-400 w-4 text-center"></i>
                                 <span>Configuracion</span>
+                            </button>
+                            <button type="button" id="menu-opt-about" style="display: none !important;"
+                                onclick="openAboutCronosModal(); toggleUserDropdown(event);"
+                                class="w-full text-left px-4 py-2 hover:bg-orange-50 hover:text-orange-600 flex items-center gap-2.5 transition cursor-pointer">
+                                <i class="fa-solid fa-circle-info text-slate-400 w-4 text-center"></i>
+                                <span>ℹ Acerca de CRONOS FID</span>
                             </button>
                         </div>
 
@@ -4113,7 +4243,7 @@
 
                     <!-- Tabla de Eventos CRONOS SLA -->
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-5">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4">
                             <div>
                                 <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
                                     <i class="fa-solid fa-stopwatch text-purple-600"></i> Registro de Eventos CRONOS SLA
@@ -4121,15 +4251,56 @@
                                 </h3>
                                 <p class="text-xs text-slate-500 mt-0.5">Eventos de cronometraje y alarmas emitidas en
                                     llamadas de clientes</p>
+
+                                <!-- Indicador de Filtro Visual Activo (Objetivo 5) -->
+                                <div id="sla-view-indicator"
+                                    class="mt-2.5 inline-flex items-center gap-2 px-3 py-1 bg-purple-50 border border-purple-200 text-purple-700 rounded-xl text-xs font-bold shadow-2xs">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-purple-600 animate-pulse"></span>
+                                    <span>Visualizando: <strong id="sla-view-indicator-text"
+                                            class="text-purple-950 font-black">Últimas 24 horas</strong></span>
+                                    <span id="sla-view-indicator-count"
+                                        class="bg-purple-200/80 text-purple-900 text-[10px] font-black px-2 py-0.5 rounded-full">0 registros</span>
+                                </div>
                             </div>
-                            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                                <div class="relative flex-1 md:w-56">
+
+                            <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
+                                <!-- Filtro Visual: Día | Semana | Mes (Objetivo 1) -->
+                                <div
+                                    class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-2xs">
+                                    <span
+                                        class="text-[10px] font-extrabold uppercase text-slate-500 px-2 flex items-center gap-1">
+                                        <i class="fa-regular fa-calendar-check text-purple-600"></i> Visualizar:
+                                    </span>
+                                    <label id="sla-btn-filter-dia" onclick="applySlaFilter('dia')"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer transition-all bg-purple-600 text-white font-black text-xs shadow-xs">
+                                        <input type="radio" name="sla-visual-period" value="dia" checked
+                                            onchange="applySlaFilter('dia')" class="w-3.5 h-3.5 accent-purple-600 cursor-pointer pointer-events-none">
+                                        <span>Día</span>
+                                    </label>
+                                    <label id="sla-btn-filter-semana" onclick="applySlaFilter('semana')"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer transition-all bg-white hover:bg-slate-200 text-slate-700 font-bold text-xs">
+                                        <input type="radio" name="sla-visual-period" value="semana"
+                                            onchange="applySlaFilter('semana')" class="w-3.5 h-3.5 accent-purple-600 cursor-pointer pointer-events-none">
+                                        <span>Semana</span>
+                                    </label>
+                                    <label id="sla-btn-filter-mes" onclick="applySlaFilter('mes')"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer transition-all bg-white hover:bg-slate-200 text-slate-700 font-bold text-xs">
+                                        <input type="radio" name="sla-visual-period" value="mes"
+                                            onchange="applySlaFilter('mes')" class="w-3.5 h-3.5 accent-purple-600 cursor-pointer pointer-events-none">
+                                        <span>Mes</span>
+                                    </label>
+                                </div>
+
+                                <!-- Búsqueda en vivo -->
+                                <div class="relative flex-1 sm:w-52">
                                     <i
                                         class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                                     <input type="text" id="sla-events-search" oninput="renderSLATable()"
                                         placeholder="Buscar evento SLA..."
                                         class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-800 font-medium outline-none focus:border-purple-500 transition-all">
                                 </div>
+
+                                <!-- Filtro de Acción -->
                                 <select id="sla-events-filter-action" onchange="renderSLATable()"
                                     class="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 font-bold outline-none focus:border-purple-500 transition-all cursor-pointer">
                                     <option value="TODOS">Todas las Acciones</option>
@@ -4164,6 +4335,36 @@
                                     <!-- Inyectado dinámicamente -->
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Barra de Paginación SLA (Objetivo 4) -->
+                        <div
+                            class="mt-4 pt-3.5 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600 font-medium">
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <span id="sla-pagination-info" class="font-bold text-slate-700">Mostrando 0 - 0 de 0 registros</span>
+                                <span class="text-slate-300 hidden sm:inline">|</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-slate-500 text-[11px] font-bold">Por página:</span>
+                                    <select id="sla-page-size" onchange="changeSLAPageSize(this.value)"
+                                        class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-700 outline-none focus:border-purple-500 cursor-pointer">
+                                        <option value="25" selected>25 registros</option>
+                                        <option value="50">50 registros</option>
+                                        <option value="100">100 registros</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button id="sla-btn-page-prev" onclick="changeSLAPage(-1)"
+                                    class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl font-bold text-slate-700 transition flex items-center gap-1.5 cursor-pointer">
+                                    <i class="fa-solid fa-chevron-left text-[10px]"></i> Anterior
+                                </button>
+                                <span id="sla-pagination-page"
+                                    class="font-black text-slate-800 px-3 py-1 bg-slate-50 border border-slate-200 rounded-xl text-xs">Página 1 de 1</span>
+                                <button id="sla-btn-page-next" onclick="changeSLAPage(1)"
+                                    class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl font-bold text-slate-700 transition flex items-center gap-1.5 cursor-pointer">
+                                    Siguiente <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -4524,6 +4725,29 @@
                             <i
                                 class="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
                         </button>
+
+                        <!-- Botón: Acerca de CRONOS FID (Exclusivo Administrador) -->
+                        <button id="sidebar-btn-about" onclick="openAboutCronosModal()"
+                            style="display: none !important;"
+                            class="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-orange-50 text-slate-700 hover:text-orange-800 font-bold text-xs transition-all border border-slate-200/80 hover:border-orange-300 group cursor-pointer text-left">
+                            <div class="flex items-center gap-2.5">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-white shadow-xs border border-slate-200 flex items-center justify-center text-slate-600 group-hover:text-orange-600 transition-colors">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                </div>
+                                <div>
+                                    <div
+                                        class="flex items-center gap-1.5 font-extrabold text-slate-800 group-hover:text-orange-800 transition-colors">
+                                        <span>Acerca de CRONOS</span>
+                                        <span
+                                            class="bg-orange-600 text-white text-[9px] px-1.5 py-0.2 rounded font-extrabold">Admin</span>
+                                    </div>
+                                    <div class="text-[10px] text-slate-400 font-normal">Identificación de Autoría</div>
+                                </div>
+                            </div>
+                            <i
+                                class="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </button>
                     </div>
                 </div>
             </aside>
@@ -4541,7 +4765,7 @@
                 <span class="text-zinc-500">|</span>
                 <span>Plataforma de Fidelización Ágil de WIN 2026</span>
                 <span class="text-zinc-500">|</span>
-                <span class="text-zinc-400 font-semibold">CRONOS FID • Versión JELI v4.1.6 • WIN OCT2026</span>
+                <span class="text-zinc-400 font-semibold">CRONOS FID • Versión JELI v5.0.0 • WIN OCT2026</span>
             </div>
 
             <!-- Derecha: Logotipo Corporativo -->
@@ -14308,6 +14532,13 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             const sidebarExports = document.getElementById('sidebar-btn-exports');
             if (sidebarExports) sidebarExports.style.display = (!isAsesor && (permissions.exportExcel || isAdminOrSup)) ? '' : 'none';
 
+            // Control Exclusivo: Acerca de CRONOS FID (Únicamente Rol = Administrador)
+            const isStrictAdmin = String(userRole).trim().toLowerCase() === 'administrador' || String(userRole).trim().toLowerCase() === 'admin';
+            const menuAbout = document.getElementById('menu-opt-about');
+            if (menuAbout) menuAbout.style.display = isStrictAdmin ? '' : 'none';
+            const sidebarAbout = document.getElementById('sidebar-btn-about');
+            if (sidebarAbout) sidebarAbout.style.display = isStrictAdmin ? '' : 'none';
+
             if (window.CRONOS_CURRENT_USER) {
                 if (typeof updateHeaderUserUI === 'function') {
                     updateHeaderUserUI(window.CRONOS_CURRENT_USER);
@@ -14318,53 +14549,120 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         }
         window.applyRolePermissions = applyRolePermissions;
 
+        // Extractor y normalizador estricto de Timestamp para eventos SLA
+        // Prioridad: fechaHora -> fecha + hora -> createdAt -> timestamp -> registradoEn
+        function getSLAEventTimestamp(ev) {
+            if (!ev) return 0;
+            if (typeof ev === 'number' && ev > 0) return ev > 1e11 ? ev : ev * 1000;
+
+            function parseDateTextToMs(text, fallbackTime) {
+                if (!text || typeof text !== 'string') return 0;
+                const str = text.trim();
+                const dmyMatch = str.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})(?:[,\sT]+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
+                if (dmyMatch) {
+                    const day = parseInt(dmyMatch[1], 10);
+                    const month = parseInt(dmyMatch[2], 10) - 1;
+                    const year = parseInt(dmyMatch[3], 10);
+                    let hh = dmyMatch[4] ? parseInt(dmyMatch[4], 10) : 0;
+                    let mm = dmyMatch[5] ? parseInt(dmyMatch[5], 10) : 0;
+                    let ss = dmyMatch[6] ? parseInt(dmyMatch[6], 10) : 0;
+                    if (fallbackTime && !dmyMatch[4]) {
+                        const tMatch = String(fallbackTime).match(/(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?/);
+                        if (tMatch) {
+                            hh = parseInt(tMatch[1], 10) || 0;
+                            mm = parseInt(tMatch[2], 10) || 0;
+                            ss = parseInt(tMatch[3], 10) || 0;
+                        }
+                    }
+                    const dt = new Date(year, month, day, hh, mm, ss);
+                    if (!isNaN(dt.getTime())) return dt.getTime();
+                }
+                const ymdMatch = str.match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})/);
+                if (ymdMatch) {
+                    const dt = new Date(str);
+                    if (!isNaN(dt.getTime()) && dt.getTime() > 0) return dt.getTime();
+                    const year = parseInt(ymdMatch[1], 10);
+                    const month = parseInt(ymdMatch[2], 10) - 1;
+                    const day = parseInt(ymdMatch[3], 10);
+                    const dtManual = new Date(year, month, day);
+                    if (!isNaN(dtManual.getTime())) return dtManual.getTime();
+                }
+                const genericDt = new Date(str).getTime();
+                if (!isNaN(genericDt) && genericDt > 0) return genericDt;
+                return 0;
+            }
+
+            // 1. PRIORIDAD MÁXIMA: fechaHora (la visualización debe filtrar según fechaHora)
+            if (ev.fechaHora) {
+                if (typeof ev.fechaHora === 'string') {
+                    const ms = parseDateTextToMs(ev.fechaHora, ev.hora);
+                    if (ms > 0) return ms;
+                } else if (typeof ev.fechaHora === 'number' && ev.fechaHora > 0) {
+                    return ev.fechaHora > 1e11 ? ev.fechaHora : ev.fechaHora * 1000;
+                } else if (ev.fechaHora && typeof ev.fechaHora.toMillis === 'function') {
+                    return ev.fechaHora.toMillis();
+                } else if (ev.fechaHora && typeof ev.fechaHora.toDate === 'function') {
+                    return ev.fechaHora.toDate().getTime();
+                } else if (ev.fechaHora && ev.fechaHora.seconds) {
+                    return ev.fechaHora.seconds * 1000 + (ev.fechaHora.nanoseconds ? Math.round(ev.fechaHora.nanoseconds / 1000000) : 0);
+                }
+            }
+
+            // 2. fecha + hora (campo de fecha explícito del registro en formato DD/MM/AAAA)
+            if (ev.fecha && ev.fecha !== '—' && ev.fecha !== 'N/A') {
+                const ms = parseDateTextToMs(ev.fecha, ev.hora);
+                if (ms > 0) return ms;
+            }
+
+            // 3. createdAt
+            if (ev.createdAt) {
+                if (typeof ev.createdAt === 'string') {
+                    const ms = parseDateTextToMs(ev.createdAt, ev.hora);
+                    if (ms > 0) return ms;
+                } else if (typeof ev.createdAt === 'number' && ev.createdAt > 0) {
+                    return ev.createdAt > 1e11 ? ev.createdAt : ev.createdAt * 1000;
+                } else if (ev.createdAt && typeof ev.createdAt.toMillis === 'function') {
+                    return ev.createdAt.toMillis();
+                } else if (ev.createdAt && typeof ev.createdAt.toDate === 'function') {
+                    return ev.createdAt.toDate().getTime();
+                } else if (ev.createdAt && ev.createdAt.seconds) {
+                    return ev.createdAt.seconds * 1000 + (ev.createdAt.nanoseconds ? Math.round(ev.createdAt.nanoseconds / 1000000) : 0);
+                }
+            }
+
+            // 4. timestamp
+            if (typeof ev.timestamp === 'number' && ev.timestamp > 0) {
+                return ev.timestamp > 1e11 ? ev.timestamp : ev.timestamp * 1000;
+            } else if (ev.timestamp && typeof ev.timestamp.toMillis === 'function') {
+                return ev.timestamp.toMillis();
+            } else if (ev.timestamp && typeof ev.timestamp.toDate === 'function') {
+                return ev.timestamp.toDate().getTime();
+            } else if (ev.timestamp && typeof ev.timestamp.seconds === 'number') {
+                return ev.timestamp.seconds * 1000 + (ev.timestamp.nanoseconds ? Math.round(ev.timestamp.nanoseconds / 1000000) : 0);
+            }
+
+            // 5. registradoEn
+            if (ev.registradoEn) {
+                if (typeof ev.registradoEn === 'string') {
+                    const ms = parseDateTextToMs(ev.registradoEn, ev.hora);
+                    if (ms > 0) return ms;
+                } else if (typeof ev.registradoEn.toMillis === 'function') {
+                    return ev.registradoEn.toMillis();
+                } else if (ev.registradoEn.seconds) {
+                    return ev.registradoEn.seconds * 1000;
+                }
+            }
+
+            return 0;
+        }
+        window.getSLAEventTimestamp = getSLAEventTimestamp;
+
         // Normalizador universal de documentos SLA
         function normalizeSLADoc(docOrData, docId = null) {
             const d = (docOrData && typeof docOrData.data === 'function') ? docOrData.data() : (docOrData || {});
             const id = (docOrData && docOrData.id) ? docOrData.id : (docId || d.id || ('sla-' + Math.random().toString(36).substr(2, 9)));
 
-            let timeMs = 0;
-            if (typeof d.timestamp === 'number' && d.timestamp > 0) {
-                timeMs = d.timestamp;
-            } else if (d.timestamp && typeof d.timestamp.toMillis === 'function') {
-                timeMs = d.timestamp.toMillis();
-            } else if (d.timestamp && d.timestamp.seconds) {
-                timeMs = d.timestamp.seconds * 1000;
-            } else if (d.fechaHora) {
-                const t = new Date(d.fechaHora).getTime();
-                if (!isNaN(t) && t > 0) timeMs = t;
-            } else if (d.createdAt) {
-                const t = typeof d.createdAt.toMillis === 'function' ? d.createdAt.toMillis() : new Date(d.createdAt).getTime();
-                if (!isNaN(t) && t > 0) timeMs = t;
-            } else if (d.registradoEn) {
-                const t = typeof d.registradoEn.toMillis === 'function' ? d.registradoEn.toMillis() : new Date(d.registradoEn).getTime();
-                if (!isNaN(t) && t > 0) timeMs = t;
-            }
-
-            if (timeMs === 0 && d.fecha) {
-                const parts = String(d.fecha).trim().split(/[\/\-\.]/);
-                if (parts.length === 3) {
-                    let day, month, year;
-                    if (parts[0].length === 4) {
-                        year = parseInt(parts[0], 10);
-                        month = parseInt(parts[1], 10) - 1;
-                        day = parseInt(parts[2], 10);
-                    } else {
-                        day = parseInt(parts[0], 10);
-                        month = parseInt(parts[1], 10) - 1;
-                        year = parseInt(parts[2], 10);
-                    }
-                    let hh = 0, mm = 0, ss = 0;
-                    if (d.hora) {
-                        const hParts = String(d.hora).trim().split(':');
-                        hh = parseInt(hParts[0], 10) || 0;
-                        mm = parseInt(hParts[1], 10) || 0;
-                        ss = parseInt(hParts[2], 10) || 0;
-                    }
-                    const dt = new Date(year, month, day, hh, mm, ss);
-                    if (!isNaN(dt.getTime())) timeMs = dt.getTime();
-                }
-            }
+            const timeMs = getSLAEventTimestamp(d);
 
             let fFecha = d.fecha || '';
             let fHora = d.hora || '';
@@ -15013,6 +15311,135 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         // =========================================================================
         // MÓDULO DE ANALÍTICA CRONOS SLA EN TIEMPO REAL
         // =========================================================================
+        // Estado Global de Visualización, Paginación y Retención SLA
+        window.currentSLATimeFilter = 'dia'; // 'dia' (24h) | 'semana' (7d) | 'mes' (30d)
+        window.slaCurrentPage = 1;
+        window.slaPageSize = 25; // 25 | 50 | 100 registros por página
+        window.CRONOS_SLA_RETENTION_DAYS = 180; // Retención histórica máxima: 180 días (6 meses)
+
+        function getSLATimeFilterCutoff(filterKey) {
+            const now = Date.now();
+            const key = (filterKey || '').toLowerCase().trim();
+            if (key === 'dia' || key === 'día') return now - (24 * 60 * 60 * 1000); // Últimas 24 horas
+            if (key === 'semana') return now - (7 * 24 * 60 * 60 * 1000); // Últimos 7 días
+            if (key === 'mes') return now - (30 * 24 * 60 * 60 * 1000); // Últimos 30 días
+            return now - (24 * 60 * 60 * 1000);
+        }
+        window.getSLATimeFilterCutoff = getSLATimeFilterCutoff;
+
+        function applySlaFilter(filterKey) {
+            let key = (filterKey || '').toLowerCase().trim();
+            if (key === 'día') key = 'dia';
+            if (!['dia', 'semana', 'mes'].includes(key)) key = 'dia';
+            window.currentSLATimeFilter = key;
+            window.slaCurrentPage = 1;
+
+            // Actualizar estado y estilos de los botones/radio de filtro visual
+            ['dia', 'semana', 'mes'].forEach(k => {
+                const btn = document.getElementById(`sla-btn-filter-${k}`);
+                const radio = document.querySelector(`input[name="sla-visual-period"][value="${k}"]`);
+                if (radio) radio.checked = (k === key);
+                if (btn) {
+                    if (k === key) {
+                        btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer transition-all bg-purple-600 text-white font-black text-xs shadow-xs";
+                    } else {
+                        btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer transition-all bg-white hover:bg-slate-200 text-slate-700 font-bold text-xs";
+                    }
+                }
+            });
+
+            renderSLATable();
+        }
+        window.applySlaFilter = applySlaFilter;
+        window.setSLATimeFilter = applySlaFilter;
+        window.filterEvents = function(k) { if (k) applySlaFilter(k); else renderSLATable(); };
+        window.loadFilteredEvents = function(k) { if (k) applySlaFilter(k); else renderSLATable(); };
+        window.loadEvents = function() { return renderSLAModule(); };
+        window.renderEvents = function() { renderSLATable(); };
+
+        function changeSLAPage(delta) {
+            window.slaCurrentPage = (window.slaCurrentPage || 1) + delta;
+            renderSLATable();
+        }
+        window.changeSLAPage = changeSLAPage;
+
+        function changeSLAPageSize(size) {
+            window.slaPageSize = parseInt(size, 10) || 25;
+            window.slaCurrentPage = 1;
+            renderSLATable();
+        }
+        window.changeSLAPageSize = changeSLAPageSize;
+
+        function calculateSLAMetrics(events) {
+            let slaIni = 0, slaPau = 0, slaRst = 0;
+            let sla45 = 0, sla60 = 0, sla70 = 0;
+            let sumPauseSecs = 0, countPauseSecs = 0;
+
+            (events || []).forEach(ev => {
+                const acc = (ev.accion || '').toLowerCase().trim();
+                const secs = typeof ev.tiempoSegundos === 'number' ? ev.tiempoSegundos : (parseInt(ev.tiempoSegundos) || 0);
+
+                if (acc === 'iniciar' || acc === 'reanudar' || acc.includes('inici')) {
+                    slaIni++;
+                } else if (acc === 'pausa' || acc.includes('paus')) {
+                    slaPau++;
+                } else if (acc === 'reinicio' || acc.includes('reinici')) {
+                    slaRst++;
+                }
+
+                if (acc.includes('45s') || (secs >= 45 && secs < 60)) {
+                    sla45++;
+                }
+                if (acc.includes('60s') || (secs >= 60 && secs <= 70)) {
+                    sla60++;
+                }
+                if (acc.includes('70s') || secs > 70) {
+                    sla70++;
+                }
+
+                if (secs > 0) {
+                    sumPauseSecs += secs;
+                    countPauseSecs++;
+                }
+            });
+
+            const slaPromedio = countPauseSecs > 0 ? Math.round(sumPauseSecs / countPauseSecs) + "s" : "0s";
+            return { slaIni, slaPau, slaRst, slaPromedio, sla45, sla60, sla70 };
+        }
+        window.calculateSLAMetrics = calculateSLAMetrics;
+
+        function renderSLAMetricsCards(events = null) {
+            let targetEvents = events;
+            if (!targetEvents) {
+                const now = Date.now();
+                const cutoff180Ms = now - (window.CRONOS_SLA_RETENTION_DAYS * 24 * 60 * 60 * 1000);
+                const periodCutoff = getSLATimeFilterCutoff(window.currentSLATimeFilter || 'dia');
+                targetEvents = (window.CRONOS_SLA_EVENTS || []).filter(ev => {
+                    if (!isRoleAsesor(ev)) return false;
+                    const ts = getSLAEventTimestamp(ev);
+                    return ts >= cutoff180Ms && ts >= periodCutoff;
+                });
+            }
+
+            const m = calculateSLAMetrics(targetEvents);
+
+            const elIni = document.getElementById('sla-metric-inicios');
+            const elPau = document.getElementById('sla-metric-pausas');
+            const elRst = document.getElementById('sla-metric-reinicios');
+            const elAvg = document.getElementById('sla-metric-promedio');
+            const el45 = document.getElementById('sla-metric-45s');
+            const el60 = document.getElementById('sla-metric-60s');
+            const el70 = document.getElementById('sla-metric-70s');
+
+            if (elIni) elIni.textContent = m.slaIni;
+            if (elPau) elPau.textContent = m.slaPau;
+            if (elRst) elRst.textContent = m.slaRst;
+            if (elAvg) elAvg.textContent = m.slaPromedio;
+            if (el45) el45.textContent = m.sla45;
+            if (el60) el60.textContent = m.sla60;
+            if (el70) el70.textContent = m.sla70;
+        }
+
         async function renderSLAModule() {
             const tbody = document.getElementById('sla-events-tbody');
             if (tbody && (!window.CRONOS_SLA_EVENTS || window.CRONOS_SLA_EVENTS.length === 0)) {
@@ -15024,6 +15451,8 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 if (firestoreDb) {
                     let snapshot = null;
                     let queryMethod = '';
+                    const cutoff180Ms = Date.now() - (window.CRONOS_SLA_RETENTION_DAYS * 24 * 60 * 60 * 1000);
+
                     try {
                         snapshot = await firestoreDb.collection('cronos_sla').orderBy('fechaHora', 'desc').limit(1000).get();
                         queryMethod = "orderBy('fechaHora','desc').limit(1000)";
@@ -15044,35 +15473,34 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     if (snapshot && !snapshot.empty) {
                         const events = [];
                         snapshot.forEach(doc => {
-                            events.push(normalizeSLADoc(doc));
+                            const ev = normalizeSLADoc(doc);
+                            const evTs = getSLAEventTimestamp(ev);
+                            // OBJETIVO 2: Retención lógica estricta de 180 días (6 meses)
+                            if (evTs >= cutoff180Ms) {
+                                events.push(ev);
+                            }
                         });
-                        events.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                        events.sort((a, b) => getSLAEventTimestamp(b) - getSLAEventTimestamp(a));
                         window.CRONOS_SLA_EVENTS = events;
 
                         const totalRegistros = snapshot.size;
-                        const registros = events;
                         const ultimaFecha = events.length > 0 ? (events[0].fechaHora || events[0].fecha || (events[0].timestamp ? new Date(events[0].timestamp).toLocaleString('es-PE') : '—')) : 'Ninguna';
                         const total = events.length;
 
-                        console.log("Total registros cronos_sla:", totalRegistros);
-                        console.log("Registros SLA encontrados:", registros);
+                        console.log("Total registros cronos_sla en Firestore:", totalRegistros);
+                        console.log("Registros SLA dentro de retención 180 días:", total);
                         console.log("Última fecha encontrada:", ultimaFecha);
                         console.log("Consulta Firestore SLA ejecutada");
-                        console.log("Total SLA cargados:", total);
                         console.log(`[SLAModule] Consulta exitosa usando método: ${queryMethod}`);
                     } else if (snapshot && snapshot.empty) {
+                        window.CRONOS_SLA_EVENTS = [];
                         console.log("Total registros cronos_sla: 0");
-                        console.log("Registros SLA encontrados: []");
-                        console.log("Última fecha encontrada: Ninguna");
-                        console.log("Consulta Firestore SLA ejecutada");
-                        console.log("Total SLA cargados: 0");
                     }
                 }
             } catch (error) {
                 console.error('[SLAModule] Error al cargar cronos_sla desde Firestore:', error);
             }
 
-            renderSLAMetricsCards();
             renderSLATable();
             renderDashboardMetricsOnly();
 
@@ -15080,26 +15508,6 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 try { initRealtimeListeners(); } catch (e) { }
             }
             console.log("Analítica SLA actualizada");
-        }
-
-        function renderSLAMetricsCards() {
-            const m = calculateRealDashboardMetrics();
-
-            const elIni = document.getElementById('sla-metric-inicios');
-            const elPau = document.getElementById('sla-metric-pausas');
-            const elRst = document.getElementById('sla-metric-reinicios');
-            const elAvg = document.getElementById('sla-metric-promedio');
-            const el45 = document.getElementById('sla-metric-45s');
-            const el60 = document.getElementById('sla-metric-60s');
-            const el70 = document.getElementById('sla-metric-70s');
-
-            if (elIni) elIni.textContent = m.slaIni;
-            if (elPau) elPau.textContent = m.slaPau;
-            if (elRst) elRst.textContent = m.slaRst;
-            if (elAvg) elAvg.textContent = m.slaPromedio;
-            if (el45) el45.textContent = m.sla45;
-            if (el60) el60.textContent = m.sla60;
-            if (el70) el70.textContent = m.sla70;
         }
 
         function renderSLATable() {
@@ -15112,9 +15520,44 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
             const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
             const actionVal = filterAction ? filterAction.value : 'TODOS';
 
-            let filtered = window.CRONOS_SLA_EVENTS.filter(ev => {
-                // REGLA: ANALITICA CRONOS SLA - Mostrar exclusivamente eventos de ROL = Asesor
+            const now = Date.now();
+            // OBJETIVO 2: RETENCIÓN HISTÓRICA LÓGICA (180 días = 6 meses)
+            const cutoff180Ms = now - ((window.CRONOS_SLA_RETENTION_DAYS || 180) * 24 * 60 * 60 * 1000);
+
+            // OBJETIVO 1: FILTRO VISUAL (Día: 24h, Semana: 7d, Mes: 30d)
+            const activeFilter = window.currentSLATimeFilter || 'dia';
+            const periodCutoff = getSLATimeFilterCutoff(activeFilter);
+            const fechaMinima = new Date(periodCutoff).toISOString();
+            const filtro = (activeFilter === 'dia' ? 'Día' : (activeFilter === 'semana' ? 'Semana' : 'Mes'));
+
+            // Filtrar eventos base que cumplen rol Asesor y retención histórica de 180 días
+            const retainedAsesorEvents = window.CRONOS_SLA_EVENTS.filter(ev => {
                 if (!isRoleAsesor(ev)) return false;
+                const ts = getSLAEventTimestamp(ev);
+                return ts >= cutoff180Ms;
+            });
+
+            const total = retainedAsesorEvents.length;
+
+            // Eventos dentro de la ventana de tiempo seleccionada (Día, Semana o Mes) según fechaHora
+            const periodEvents = retainedAsesorEvents.filter(ev => {
+                const ts = getSLAEventTimestamp(ev);
+                return ts >= periodCutoff;
+            });
+
+            const totalFiltrado = periodEvents.length;
+
+            // LOGS OBLIGATORIOS REQUERIDOS
+            console.log("Filtro seleccionado:", filtro);
+            console.log("Registros antes del filtro:", total);
+            console.log("Registros filtrados:", totalFiltrado);
+            console.log("Fecha mínima aplicada:", fechaMinima);
+
+            // Actualizar las 7 tarjetas de métricas según el período visual activo
+            renderSLAMetricsCards(periodEvents);
+
+            // Filtros secundarios: búsqueda y acción
+            let filtered = periodEvents.filter(ev => {
                 if (actionVal !== 'TODOS' && ev.accion !== actionVal) return false;
                 if (query) {
                     const str = `${ev.fecha} ${ev.hora} ${ev.usuario} ${ev.correo} ${ev.rol} ${ev.accion} ${ev.tiempoExacto} ${ev.estadoSLA}`.toLowerCase();
@@ -15123,13 +15566,56 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 return true;
             });
 
+            // OBJETIVO 5: INDICADOR DE FILTRO CLARO
+            const indicatorText = document.getElementById('sla-view-indicator-text');
+            const indicatorCount = document.getElementById('sla-view-indicator-count');
+            if (indicatorText) {
+                if (activeFilter === 'dia') indicatorText.textContent = "Últimas 24 horas";
+                else if (activeFilter === 'semana') indicatorText.textContent = "Últimos 7 días";
+                else if (activeFilter === 'mes') indicatorText.textContent = "Últimos 30 días";
+            }
+            if (indicatorCount) {
+                indicatorCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'registro' : 'registros'}`;
+            }
+
+            // OBJETIVO 4: PAGINACIÓN (25, 50, 100 registros por página)
+            const pageSize = window.slaPageSize || 25;
+            const totalRecords = filtered.length;
+            const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
+            if (window.slaCurrentPage > totalPages) window.slaCurrentPage = totalPages;
+            if (window.slaCurrentPage < 1) window.slaCurrentPage = 1;
+
+            const startIdx = (window.slaCurrentPage - 1) * pageSize;
+            const endIdx = Math.min(startIdx + pageSize, totalRecords);
+            const pageItems = filtered.slice(startIdx, endIdx);
+
+            // Actualizar controles de paginación en el DOM
+            const pagInfo = document.getElementById('sla-pagination-info');
+            const pagPage = document.getElementById('sla-pagination-page');
+            const btnPrev = document.getElementById('sla-btn-page-prev');
+            const btnNext = document.getElementById('sla-btn-page-next');
+            const selectPageSize = document.getElementById('sla-page-size');
+
+            if (pagInfo) {
+                pagInfo.textContent = `Mostrando ${totalRecords > 0 ? (startIdx + 1) : 0} - ${endIdx} de ${totalRecords} registros`;
+            }
+            if (pagPage) {
+                pagPage.textContent = `Página ${window.slaCurrentPage} de ${totalPages}`;
+            }
+            if (btnPrev) btnPrev.disabled = (window.slaCurrentPage <= 1);
+            if (btnNext) btnNext.disabled = (window.slaCurrentPage >= totalPages || totalRecords === 0);
+            if (selectPageSize && selectPageSize.value != pageSize) {
+                selectPageSize.value = String(pageSize);
+            }
+
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 font-medium">No se encontraron eventos de CRONOS SLA registrados.</td></tr>`;
+                const periodLabel = activeFilter === 'dia' ? 'en las últimas 24 horas' : (activeFilter === 'semana' ? 'en los últimos 7 días' : 'en los últimos 30 días');
+                tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-slate-400 font-medium"><i class="fa-solid fa-clock-rotate-left mr-2 text-purple-400 text-lg"></i> No se encontraron eventos de CRONOS SLA ${periodLabel}.</td></tr>`;
                 return;
             }
 
             let html = '';
-            filtered.forEach(ev => {
+            pageItems.forEach(ev => {
                 const style = getRoleBadgeStyle(ev.rol);
 
                 let stateBadge = 'bg-emerald-100 text-emerald-800 font-semibold';
@@ -15158,6 +15644,77 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
 
             tbody.innerHTML = html;
         }
+
+        // =========================================================================
+        // MECANISMO DE RETENCIÓN Y DEPURACIÓN HISTÓRICA (CRONOS SLA - MÁXIMO 180 DÍAS)
+        // =========================================================================
+        async function purgeExpiredSLARecords({ retentionDays = 180, dryRun = true } = {}) {
+            const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore() : null);
+            if (!firestoreDb) {
+                console.warn("[Depuración SLA] Firestore DB no disponible");
+                return { success: false, message: "Firestore DB no disponible" };
+            }
+
+            const cutoffMs = Date.now() - (retentionDays * 24 * 60 * 60 * 1000);
+            const cutoffDate = new Date(cutoffMs).toLocaleString('es-PE');
+            console.log(`[Depuración SLA] Analizando registros anteriores a: ${cutoffDate} (${retentionDays} días de retención)...`);
+
+            try {
+                const snap = await firestoreDb.collection('cronos_sla').get();
+                const expiredDocs = [];
+
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    const ms = parseDocTimestamp(data);
+                    if (ms > 0 && ms < cutoffMs) {
+                        expiredDocs.push({ id: doc.id, fecha: data.fecha || 'N/A', hora: data.hora || 'N/A', ms });
+                    }
+                });
+
+                console.log(`[Depuración SLA] Documentos con antigüedad > ${retentionDays} días detectados: ${expiredDocs.length}`);
+
+                if (dryRun) {
+                    console.warn(`[Depuración SLA Modo Seguro (Dry-Run)] Operación simulada. NO se eliminó ningún documento de Firestore.`);
+                    console.log(`[Depuración SLA] Para ejecutar eliminación física definitiva ejecute: purgeExpiredSLARecords({ retentionDays: 180, dryRun: false })`);
+                    return {
+                        success: true,
+                        dryRun: true,
+                        retentionDays,
+                        cutoffDate,
+                        totalExpired: expiredDocs.length,
+                        sample: expiredDocs.slice(0, 5)
+                    };
+                }
+
+                // Eliminación física segura por lotes (Firestore batch máximo 500)
+                let deletedTotal = 0;
+                const queue = [...expiredDocs];
+                while (queue.length > 0) {
+                    const batchChunk = queue.splice(0, 450);
+                    const batch = firestoreDb.batch();
+                    batchChunk.forEach(item => {
+                        batch.delete(firestoreDb.collection('cronos_sla').doc(item.id));
+                    });
+                    await batch.commit();
+                    deletedTotal += batchChunk.length;
+                    console.log(`[Depuración SLA] Lote eliminado (${batchChunk.length} docs). Progreso: ${deletedTotal}/${expiredDocs.length}`);
+                }
+
+                console.log(`[Depuración SLA] Depuración física finalizada. Total documentos eliminados: ${deletedTotal}`);
+                if (typeof renderSLAModule === 'function') renderSLAModule();
+                return {
+                    success: true,
+                    dryRun: false,
+                    deletedTotal,
+                    retentionDays,
+                    cutoffDate
+                };
+            } catch (err) {
+                console.error("[Depuración SLA] Error al depurar registros en Firestore:", err);
+                return { success: false, error: err.message };
+            }
+        }
+        window.purgeExpiredSLARecords = purgeExpiredSLARecords;
 
                 // =========================================================================
         // MÓDULO EXPORTACIONES - CENTRO AVANZADO HISTÓRICO (FIRESTORE)
@@ -15228,8 +15785,12 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         // --- NORMALIZADOR UNIVERSAL DE TIMESTAMPS HISTÓRICOS ---
         function parseDocTimestamp(doc) {
             if (!doc) return 0;
-            if (typeof doc === 'number' && doc > 0) return doc;
-            if (typeof doc.timestamp === 'number' && doc.timestamp > 0) return doc.timestamp;
+            if (typeof doc === 'number' && doc > 0) return doc > 1e11 ? doc : doc * 1000;
+            if (typeof getSLAEventTimestamp === 'function') {
+                const ts = getSLAEventTimestamp(doc);
+                if (ts > 0) return ts;
+            }
+            if (typeof doc.timestamp === 'number' && doc.timestamp > 0) return doc.timestamp > 1e11 ? doc.timestamp : doc.timestamp * 1000;
 
             // Soporte para objetos Firestore Timestamp
             if (doc.timestamp && typeof doc.timestamp.toMillis === 'function') {
@@ -15337,12 +15898,23 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                             startMs = endMs;
                             endMs = temp;
                         }
+                        // Clampear retención máxima de 180 días para cronos_sla
+                        if (this.currentModule === 'cronos_sla') {
+                            const max180Limit = Date.now() - (180 * 24 * 60 * 60 * 1000);
+                            if (startMs < max180Limit) startMs = max180Limit;
+                        }
                         label = `Rango Personalizado (${customStart || 'Inicio'} al ${customEnd || 'Fin'})`;
                         break;
                     default:
                         startMs = todayStart - (30 * 24 * 60 * 60 * 1000);
                         endMs = todayEnd;
                         label = `Últimos 30 días (${new Date(startMs).toLocaleDateString('es-PE')} al ${now.toLocaleDateString('es-PE')})`;
+                }
+
+                // Clampear 180 días de retención para cronos_sla
+                if (this.currentModule === 'cronos_sla') {
+                    const max180Limit = Date.now() - (180 * 24 * 60 * 60 * 1000);
+                    if (startMs < max180Limit) startMs = max180Limit;
                 }
 
                 return { startMs, endMs, label };
@@ -15354,20 +15926,31 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                 let records = [];
                 const seenKeys = new Set();
 
+                // RETENCIÓN LÓGICA MÁXIMA DE 180 DÍAS (6 MESES) PARA cronos_sla
+                const max180CutoffMs = Date.now() - (180 * 24 * 60 * 60 * 1000);
+                let effectiveStartMs = startMs;
+                if (collectionName === 'cronos_sla') {
+                    if (!effectiveStartMs || effectiveStartMs < max180CutoffMs) {
+                        effectiveStartMs = max180CutoffMs;
+                    }
+                }
+
                 if (firestoreDb) {
                     try {
                         let snap = null;
                         try {
-                            snap = await firestoreDb.collection(collectionName).get();
-                        } catch (errDirect) {
-                            console.warn(`[ExportCenter] Consulta general ${collectionName} falló: ${errDirect.message}. Intentando filtro timestamp...`);
+                            // Consulta directa a Firestore por rango
+                            snap = await firestoreDb.collection(collectionName)
+                                .where('timestamp', '>=', effectiveStartMs)
+                                .where('timestamp', '<=', endMs)
+                                .get();
+                            console.log(`[ExportCenter] Consulta where timestamp ejecutada para ${collectionName}: ${snap.size} docs`);
+                        } catch (errWhere) {
+                            console.warn(`[ExportCenter] Consulta con where falló (${errWhere.message}). Consultando colección ${collectionName}...`);
                             try {
-                                snap = await firestoreDb.collection(collectionName)
-                                    .where('timestamp', '>=', startMs)
-                                    .where('timestamp', '<=', endMs)
-                                    .get();
-                            } catch (errQuery) {
-                                console.warn(`[ExportCenter] Consulta con where falló: ${errQuery.message}`);
+                                snap = await firestoreDb.collection(collectionName).get();
+                            } catch (errDirect) {
+                                console.error(`[ExportCenter] Error al consultar colección ${collectionName}:`, errDirect);
                             }
                         }
 
@@ -15375,9 +15958,12 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                             snap.forEach(doc => {
                                 const data = doc.data();
                                 const ms = parseDocTimestamp(data);
-                                const inRange = (startMs <= 0 || ms >= startMs) && (endMs <= 0 || ms <= endMs);
+                                const satisfiesRetention = (collectionName !== 'cronos_sla') || (ms >= max180CutoffMs);
+                                const inRange = satisfiesRetention && (effectiveStartMs <= 0 || ms >= effectiveStartMs) && (endMs <= 0 || ms <= endMs);
                                 if (inRange) {
-                                    const rec = { id: doc.id, ...data, timestamp: ms || data.timestamp };
+                                    const rec = (collectionName === 'cronos_sla' && typeof normalizeSLADoc === 'function')
+                                        ? normalizeSLADoc({ id: doc.id, ...data, timestamp: ms || data.timestamp })
+                                        : { id: doc.id, ...data, timestamp: ms || data.timestamp };
                                     records.push(rec);
                                     seenKeys.add(doc.id);
                                     const dedupeKey = `${(data.usuario || data.correo || '')}-${ms}-${(data.accion || '')}`;
@@ -15391,11 +15977,12 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     }
                 }
 
-                // Complementar con datos en memoria sin depender únicamente de datos visibles
+                // Complementar con datos en memoria dentro del rango sin depender del filtro visual de la tabla
                 const localSource = collectionName === 'auditoria' ? (window.CRONOS_ACCESS_LOGS || []) : (window.CRONOS_SLA_EVENTS || []);
                 localSource.forEach(item => {
                     const ms = parseDocTimestamp(item);
-                    const inRange = (startMs <= 0 || ms >= startMs) && (endMs <= 0 || ms <= endMs);
+                    const satisfiesRetention = (collectionName !== 'cronos_sla') || (ms >= max180CutoffMs);
+                    const inRange = satisfiesRetention && (effectiveStartMs <= 0 || ms >= effectiveStartMs) && (endMs <= 0 || ms <= endMs);
                     if (inRange) {
                         const itemId = item.id || '';
                         const dedupeKey = `${(item.usuario || item.correo || '')}-${ms}-${(item.accion || '')}`;
@@ -17312,6 +17899,32 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
         }
 
         // =========================================================================
+        // ACERCA DE CRONOS FID • EXCLUSIVO ADMINISTRADOR
+        // =========================================================================
+        function openAboutCronosModal() {
+            const userRole = (window.CRONOS_CURRENT_USER && window.CRONOS_CURRENT_USER.rol) ? window.CRONOS_CURRENT_USER.rol : 'Asesor';
+            const isStrictAdmin = String(userRole).trim().toLowerCase() === 'administrador' || String(userRole).trim().toLowerCase() === 'admin';
+            if (!isStrictAdmin) {
+                if (typeof showToast === 'function') {
+                    showToast('Acceso denegado: Este módulo es exclusivo para el rol de Administrador.', 'error');
+                }
+                return;
+            }
+            const modal = document.getElementById('modal-about-cronos');
+            if (modal) modal.classList.remove('hidden');
+            const dropdown = document.getElementById('user-dropdown-menu');
+            if (dropdown) dropdown.classList.add('hidden');
+        }
+
+        function closeAboutCronosModal() {
+            const modal = document.getElementById('modal-about-cronos');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        window.openAboutCronosModal = openAboutCronosModal;
+        window.closeAboutCronosModal = closeAboutCronosModal;
+
+        // =========================================================================
         // HISTORIAL DE ACCESOS Y AUDITORÍA EN TIEMPO REAL DESDE CLOUD FIRESTORE
         // =========================================================================
         window.CRONOS_FIRESTORE_AUDIT_LOGS = [];
@@ -17409,8 +18022,13 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
 
                 const handleSlaDocs = (snapshot) => {
                     const events = [];
+                    const cutoff180Ms = Date.now() - ((window.CRONOS_SLA_RETENTION_DAYS || 180) * 24 * 60 * 60 * 1000);
                     snapshot.forEach(doc => {
-                        events.push(normalizeSLADoc(doc));
+                        const ev = normalizeSLADoc(doc);
+                        // OBJETIVO 2: Retención lógica estricta de 180 días
+                        if ((ev.timestamp || 0) >= cutoff180Ms) {
+                            events.push(ev);
+                        }
                     });
 
                     events.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
@@ -17421,8 +18039,8 @@ Por favor contactar para brindar información del proceso y coordinar visita.`
                     const ultimaFecha = events.length > 0 ? (events[0].fechaHora || events[0].fecha || (events[0].timestamp ? new Date(events[0].timestamp).toLocaleString('es-PE') : '—')) : 'Ninguna';
                     const total = events.length;
 
-                    console.log("Total registros cronos_sla:", totalRegistros);
-                    console.log("Registros SLA encontrados:", registros);
+                    console.log("Total registros cronos_sla en Firestore:", totalRegistros);
+                    console.log("Registros SLA retenidos (180 días):", total);
                     console.log("Última fecha encontrada:", ultimaFecha);
                     console.log("Consulta Firestore SLA ejecutada");
                     console.log("Total SLA cargados:", total);
